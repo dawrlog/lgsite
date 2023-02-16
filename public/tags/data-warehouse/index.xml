@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Data Warehouse on Dataware Logistics</title>
+    <link>https://www.dawrlog.com/tags/data-warehouse/</link>
+    <description>Recent content in Data Warehouse on Dataware Logistics</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Sat, 24 Dec 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://www.dawrlog.com/tags/data-warehouse/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Redshift Query Queues: The Complete Guide</title>
+      <link>https://www.dawrlog.com/posts/9/</link>
+      <pubDate>Fri, 19 Nov 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/posts/9/</guid>
+      <description>Hey everyone, hope everything is well.
+Even the most potent database is still prone to the terrifying error any database system can face: query bottlenecks.
+Sometimes the systems that manage our queries can&amp;rsquo;t process in the same way as we do. So our questions return accurate results as a result of extra processing power.
+In this article, I&amp;rsquo;ll present how Redshift query queues work. We&amp;rsquo;ll also cover how concurrency works at a high level on Redshift.</description>
+    </item>
+    
+    <item>
+      <title>Incremental Loading: The Smarter Way to Update Data</title>
+      <link>https://www.dawrlog.com/posts/8/</link>
+      <pubDate>Sat, 24 Dec 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/posts/8/</guid>
+      <description>Hey everyone, hope everything is well.
+A data warehouse aims to make sense of a specific subject over time by analyzing historical data. This system, also called the decision-making support system, can tackle trends as diverse as the percentage of client churn or beer consumption trends within a geographical area.
+Incremental loading is one of those crucial issues you need to consider when defining your load pipelines.
+In this post, I&amp;rsquo;ll explain what incremental loading is and why it&amp;rsquo;s so important.</description>
+    </item>
+    
+    <item>
+      <title>Argo Workflow ETL Examples.</title>
+      <link>https://www.dawrlog.com/posts/5/</link>
+      <pubDate>Sun, 14 Aug 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/posts/5/</guid>
+      <description>This post explores using Argo Workflows to orchestrate your data pipelines. To start, let&amp;rsquo;s refresh on what ETL is while designing our work&amp;rsquo;s high-level architecture. I&amp;rsquo;ll demonstrate how to set up your data pipelines to follow the structure more naturally. Then, we&amp;rsquo;ll see how to achieve the same result using directed acyclic graphs (DAGs). Last, I&amp;rsquo;ll summarize what we saw and present reasons to guide your choice of approach based on your project complexity.</description>
+    </item>
+    
+    <item>
+      <title>Archiving Argo Workflows: Postgres Database Setup</title>
+      <link>https://www.dawrlog.com/posts/2/</link>
+      <pubDate>Mon, 11 Apr 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/posts/2/</guid>
+      <description>Hello everyone, I hope you are doing well!
+If you’re familiar with Argo Workflows, you already know that it can drive your CI/CD pipelines, manage your ETL processes, and orchestrate any set of tasks you can imagine for a Kubernetes cluster. But did you know that Argo knows how to archive the results of its workflows to a SQL database, too?
+In this post, I&amp;rsquo;ll show how Argo Workflows archives workflow state into persistent storage using a Postgres database.</description>
+    </item>
+    
+    <item>
+      <title>BigQuery Data Types Examined &amp; Explained</title>
+      <link>https://www.dawrlog.com/posts/10/</link>
+      <pubDate>Wed, 12 Jan 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/posts/10/</guid>
+      <description>Hey everyone, today I would like to talk about Bigquery, the datawarehouse managed service by Google Cloud. And I would like to explore its datatypes.
+Google Cloud Platform has long been the cloud provider of choice for web analytics, with the impressive BigQuery being Google&amp;rsquo;s massively parallel processing (aka MPP) option. MPP databases are very common on Hadoop ecosystems.
+BigQuery is very friendly to its users (let&amp;rsquo;s agree that BigQuery is as pleasant as its SQL knowledge), which fosters new users.</description>
+    </item>
+    
+    <item>
+      <title>Data Warehouse Design: The good, the bad, the ugly</title>
+      <link>https://www.dawrlog.com/posts/1/</link>
+      <pubDate>Sun, 19 Sep 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/posts/1/</guid>
+      <description>Hey everyone, hope everything is well.
+One of the significant challenges in handling data comes from the massive amount of data your organization is most likely generating constantly. Having the ability to react quickly and accurately turns into a differential item among competitors.
+More and more companies are becoming aware of the need to handle data wisely.
+They&amp;rsquo;re looking for ways of getting the most out of their information. And this is probably where they first hear about data warehouses.</description>
+    </item>
+    
+    <item>
+      <title>How To Analyze PostgreSQL Data in Power BI.</title>
+      <link>https://www.dawrlog.com/posts/7/</link>
+      <pubDate>Tue, 31 Aug 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/posts/7/</guid>
+      <description>Hello all!
+Today I want to discuss one of the dataviz tools that is getting more and more adoption; Power BI. Power BI increases its adoption among the most experienced users each day. Thanks to being a user-friendly tool with various data sources to connect to, it helps analyze distinct data sources within the same console.
+In this post, I&amp;rsquo;ll show you how to import your data stored on PostgreSQL with a desktop version of Power BI.</description>
+    </item>
+    
+    <item>
+      <title>AWS Redshift Spectrum, Athena, and S3: Everything You Need to Know</title>
+      <link>https://www.dawrlog.com/posts/11/</link>
+      <pubDate>Thu, 08 Jul 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/posts/11/</guid>
+      <description>Hey everyone, today I would like to present you how to explore your raw data stored by AWS S3 by using AWS managed analytical managed services. Today we will cover both AWS Redshift Spectrum and AWS Athena on our tutorial.
+One of the significant challenges to data-driven companies comes when integrating different application systems.
+Major public cloud providers, such as Amazon Web Services or Google Cloud Platform, offer robust products that are ready for your analytics needs.</description>
+    </item>
+    
+  </channel>
+</rss>

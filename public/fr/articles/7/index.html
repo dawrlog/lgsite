@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="fr" dir="fr">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Comment fouiller vos données utilisant Power BI. | Logistique Dataware</title>
+<meta name="keywords" content="PowerBI, Development, Data Warehouse">
+<meta name="description" content="Bonjour à tous !
+Aujourd&rsquo;hui, j&rsquo;aimerais vous parler d&rsquo;un des outils de dataviz qui est de plus en plus adopté : Power BI. Power BI augmente chaque jour son adoption parmi les utilisateurs les plus expérimentés. Grâce à sa convivialité et à la possibilité de se connecter à diverses sources de données, il permet d&rsquo;analyser des sources de données distinctes au sein d&rsquo;une même console.
+Dans ce billet, je vais vous montrer comment importer vos données stockées sur PostgreSQL avec une version de bureau de Power BI.">
+<meta name="author" content="Daniel Paes">
+<link rel="canonical" href="https://blog.panoply.io/how-to-analyze-postgresql-data-in-power-bi">
+<meta name="google-site-verification" content="4599922566">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.css" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://www.dawrlog.com/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://www.dawrlog.com/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://www.dawrlog.com/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://www.dawrlog.com/apple-touch-icon.png">
+<link rel="mask-icon" href="https://www.dawrlog.com/apple-touch-icon.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="fr" href="https://www.dawrlog.com/fr/articles/7/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --hljs-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><meta property="og:title" content="Comment fouiller vos données utilisant Power BI." />
+<meta property="og:description" content="Bonjour à tous !
+Aujourd&rsquo;hui, j&rsquo;aimerais vous parler d&rsquo;un des outils de dataviz qui est de plus en plus adopté : Power BI. Power BI augmente chaque jour son adoption parmi les utilisateurs les plus expérimentés. Grâce à sa convivialité et à la possibilité de se connecter à diverses sources de données, il permet d&rsquo;analyser des sources de données distinctes au sein d&rsquo;une même console.
+Dans ce billet, je vais vous montrer comment importer vos données stockées sur PostgreSQL avec une version de bureau de Power BI." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://www.dawrlog.com/fr/articles/7/" />
+<meta property="og:image" content="https://user-images.githubusercontent.com/78096758/217084532-056cc5c4-eb8c-4474-b607-aea6cc4a03d2.png" /><meta property="article:section" content="articles" />
+<meta property="article:published_time" content="2021-08-31T00:00:00+00:00" />
+<meta property="article:modified_time" content="2021-08-31T00:00:00+00:00" /><meta property="og:site_name" content="Logistique Dataware" />
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="https://user-images.githubusercontent.com/78096758/217084532-056cc5c4-eb8c-4474-b607-aea6cc4a03d2.png" />
+<meta name="twitter:title" content="Comment fouiller vos données utilisant Power BI."/>
+<meta name="twitter:description" content="Bonjour à tous !
+Aujourd&rsquo;hui, j&rsquo;aimerais vous parler d&rsquo;un des outils de dataviz qui est de plus en plus adopté : Power BI. Power BI augmente chaque jour son adoption parmi les utilisateurs les plus expérimentés. Grâce à sa convivialité et à la possibilité de se connecter à diverses sources de données, il permet d&rsquo;analyser des sources de données distinctes au sein d&rsquo;une même console.
+Dans ce billet, je vais vous montrer comment importer vos données stockées sur PostgreSQL avec une version de bureau de Power BI."/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Articles",
+      "item": "https://www.dawrlog.com/fr/articles/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Comment fouiller vos données utilisant Power BI.",
+      "item": "https://www.dawrlog.com/fr/articles/7/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Comment fouiller vos données utilisant Power BI.",
+  "name": "Comment fouiller vos données utilisant Power BI.",
+  "description": "Bonjour à tous !\nAujourd\u0026rsquo;hui, j\u0026rsquo;aimerais vous parler d\u0026rsquo;un des outils de dataviz qui est de plus en plus adopté : Power BI. Power BI augmente chaque jour son adoption parmi les utilisateurs les plus expérimentés. Grâce à sa convivialité et à la possibilité de se connecter à diverses sources de données, il permet d\u0026rsquo;analyser des sources de données distinctes au sein d\u0026rsquo;une même console.\nDans ce billet, je vais vous montrer comment importer vos données stockées sur PostgreSQL avec une version de bureau de Power BI.",
+  "keywords": [
+    "PowerBI", "Development", "Data Warehouse"
+  ],
+  "articleBody": "Bonjour à tous !\nAujourd’hui, j’aimerais vous parler d’un des outils de dataviz qui est de plus en plus adopté : Power BI. Power BI augmente chaque jour son adoption parmi les utilisateurs les plus expérimentés. Grâce à sa convivialité et à la possibilité de se connecter à diverses sources de données, il permet d’analyser des sources de données distinctes au sein d’une même console.\nDans ce billet, je vais vous montrer comment importer vos données stockées sur PostgreSQL avec une version de bureau de Power BI.\nJe commencerai par expliquer ce qu’est Power BI et ce qu’il fait. Ensuite, je vous proposerai une option pour créer une instance locale afin d’explorer vos données PostgreSQL avec Power BI.\nJe vous suggère de sauter la section “Configurer votre environnement local” si vous avez déjà PostgreSQL et Power BI en cours d’exécution ou si vous êtes familier avec les boîtes Vagrant.\nCependant, je vous encourage à y jeter un œil si vous avez un peu de temps libre. Tirer parti de Vagrant peut être une option précieuse pour créer vos preuves de concept en douceur avec des outils d’automatisation.\nUne fois l’infrastructure prise en charge, nous allons configurer Power BI pour qu’il se connecte à votre instance PostgreSQL existante, explorer quelques données sur votre instance Power BI, et les transformer avant son chargement final, en créant un graphique à partir de vos données nouvellement importées.\nQu’est-ce que Power BI ? Power BI est un outil de visualisation de données créé par Microsoft ; il existe différentes versions axées sur d’autres cas d’utilisation. Vous pouvez essayer PowerBI gratuitement sur Azure, l’option Microsoft pour le cloud public, afin d’interagir avec vos services existants tels que l’entrepôt de données en tant que service Azure Synapse.\nUne autre option consiste à l’installer sur vos “services sur site” en utilisant une passerelle de données sur site.\nAu fur et à mesure que Power BI gagne en maturité, sa popularité augmente naturellement, en grande partie grâce à certaines capacités intéressantes offertes à ses utilisateurs.\nPar exemple, il est facile et rapide de charger vos données structurées comme source dans Power BI. Cela vous permet de comprendre les tendances de vos données et d’obtenir les réponses dont vous avez besoin plus rapidement que d’habitude, ce qui fait le bonheur des utilisateurs les plus exigeants, car il est possible d’explorer davantage de sources de données.\nEt n’oubliez pas : de meilleures données donnent de meilleurs résultats!\nCela étant dit, si vous avez encore du mal à consommer vos données correctement, il serait bon d’auditer vos pipelines de données. Vous auriez besoin de nettoyer vos données, ce qui consiste à traiter tous les mauvais aspects pour votre analyse. En effet, le format des données depuis leur source peut ne pas être prêt pour l’analyse.\nMaintenant que nous avons compris ce qu’est Power BI, voyons-la en action. Nous allons nous plonger dans sa connexion à PostgreSQL, l’une des options de bases de données relationnelles les plus utilisées.\nConnecter PostgreSQL à Power BI, configurer votre environnement local\nSi vous avez déjà une instance PostgreSQL, passez à la section suivante Créer une connexion à la base de données. Pour ceux qui n’ont pas d’instance, commençons par en créer une.\nTout d’abord, téléchargez PostgreSQL et Power BI (Windows uniquement). Mais attendez, supposez que vous êtes comme moi et que vous n’aimez pas avoir une machine Windows ?\nJe vous suggère d’utiliser Vagrant.\nVous n’avez jamais entendu parler de Vagrant ou ne l’avez jamais utilisé ? Pas de problème ! Jetez un œil à cette introduction rapide pour un cours intensif.\nAprès cela, ou si vous êtes déjà familiarisé avec Vagrant, vous êtes prêt à suivre les étapes suivantes :\nPour commencer, vous devez télécharger Vagrant et la machine Windows utilisée comme image de base. Une fois que Vagrant est configuré, vous pouvez télécharger Power BI Desktop de l’intérieur ; un client VirtualBox peut faire l’affaire. Pour suivre, téléchargez la base de données que nous allons utiliser depuis ici. Ainsi, vous pourrez suivre l’évolution de la situation avec une instance locale de Power BI sur votre machine. Créez une connexion à la base de données\nPour commencer, sélectionnez l’option Obtenir des données après avoir ouvert Power BI ; cela ouvrira une fenêtre dans laquelle vous indiquerez le type de stockage ou de base de données dans lequel vos données sont stockées. La popup montrera toutes les sources de données auxquelles Power BI peut accéder.\nPour notre exercice, nous allons sélectionner la base de données PostgreSQL, comme indiqué ci-dessous.\nOption de base de données PostgreSQL sur la fenêtre “Get Data”\n!Option de base de données PostgreSQL sur la fenêtre “Get Data” (Obtenir des données)\nUne fois sélectionnée, Power BI vous demandera de confirmer le nom d’utilisateur et le mot de passe la première fois que vous vous connecterez à cette base de données. Il n’est pas nécessaire de répéter cette validation lorsque vous vous connectez en tant que même utilisateur sur le même serveur déjà utilisé.\nAssurez-vous simplement que l’utilisateur PostgreSQL spécifié dispose des permissions requises sur la base de données où réside votre table.\nUne fois authentifié sur le serveur, vous devrez spécifier le serveur et la base de données. Pour cela, il suffit d’ajouter l’adresse de votre serveur PowerBI, ou localhost si vous avez une instance locale de PostgreSQL, pour accéder à la base de données où vous allez sélectionner vos tables. Nous allons sélectionner l’option Import pour le mode de connectivité des données puisque nous allons transformer certaines données avant de les utiliser.\nL’option DirectConnect, comme son nom l’indique, ne crée pas ce cache nécessaire ; je recommande toujours d’utiliser Import au lieu de DirectQuery. L’un des défauts les plus importants de DirectQuery est qu’il ne permet pas la transformation des données pendant le chargement.\nLa base de données PostgreSQL obtient l’écran de données.\nPour faire court, laissez les options avancées inchangées et cliquez sur OK.\nPower BI vous informera avant de continuer dans le cas où votre connexion n’est pas cryptée. Si vous cliquez sur Cancel, l’importation sera interrompue. Je vous encourage à explorer davantage l’option SQL Statement, car elle offre plus de choix pour transformer vos données tout en les chargeant.\nVous pouvez trouver plus de détails et même un exemple fonctionnel sur cette page sur les native database queries de Microsoft.\nTransformer les données pendant leur chargement dans votre datastore\nMaintenant que nous avons pris soin de notre connexion, il est temps de la faire travailler pour nous. Sur l’écran suivant, vous pouvez sélectionner vos tableaux. Une fois que vous les aurez sélectionnés, vous aurez la possibilité de les charger tels quels ou de les transformer avant de les utiliser. Dans ce tutoriel, je vais séparer le premier mot des autres en utilisant le délimiteur le plus à gauche ; en choisissant transformer, une nouvelle fenêtre (comme celle ci-dessous) apparaîtra.\nDans le champ Sélectionner ou entrer le délimiteur, laissez les options restantes avec délimiteur d’espace et caractère de citation inchangées. Cela transformera le champ chaîne de caractères en deux champs enfants.\nOptions de fractionnement pour l’importation de données\nUne fois que vous aurez confirmé la modification, vous reviendrez à l’écran précédent. Il reflétera maintenant les changements que vous avez appliqués sur l’écran Split Columns.\nIl est bon de rappeler que vous pouvez toujours supprimer ces modifications, même après la confirmation précédente.\nCes résultats ne sont pas définitifs sur les sources de données utilisées par les tableaux de bord ; ils sont plutôt sur des composants temporaires. Vous pouvez donc toujours revenir en arrière si vous souhaitez ajouter ou modifier certains détails supplémentaires.\nUne fois que tous vos paramètres sont comme vous le souhaitez, sélectionnez l’option Close \u0026 Apply pour valider vos changements, comme indiqué ci-dessous.\n!- Preview Get Data after transformation changes Aperçu de Get Data après les changements de transformation.\nFélicitations ! Vous venez d’importer vos données de PostgreSQL dans Power BI.\nDémarrez votre voyage de données\nAujourd’hui, nous avons effleuré l’intégration de Power BI et de PostgreSQL et expliqué comment Power BI pouvait améliorer votre exploration des données sur les bases de données PostgreSQL grâce à son interface très conviviale.\nPower BI vous permet d’interagir avec les données à leurs débuts. Pourquoi ne pas enrichir vos données directement à partir de la réplication de la source ? N’oubliez pas quels sont vos réels besoins.\nIl peut être difficile d’avoir une vue complète de votre historique analyse des tendances des données.\nCela dit, une bonne chose à avoir à l’esprit est d’éviter, ou du moins de limiter lorsque c’est possible, l’utilisation de Power BI sur des données non traitées.\nLes données à l’état brut sont plutôt destinées à des fins opérationnelles. Pour les analyses sensibles au facteur temps, vous devriez toujours choisir d’utiliser des informations traitées qui donnent de meilleurs aperçus des données d’application dans leur état brut.\nÀ+!\n",
+  "wordCount" : "1469",
+  "inLanguage": "fr",
+  "image":"https://user-images.githubusercontent.com/78096758/217084532-056cc5c4-eb8c-4474-b607-aea6cc4a03d2.png","datePublished": "2021-08-31T00:00:00Z",
+  "dateModified": "2021-08-31T00:00:00Z",
+  "author":{
+    "@type": "Person",
+    "name": "Daniel Paes"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://www.dawrlog.com/fr/articles/7/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Logistique Dataware",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://www.dawrlog.com/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://www.dawrlog.com/fr/" accesskey="h" title="Logistique Dataware (Alt + H)">Logistique Dataware</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+                <ul class="lang-switch"><li>|</li>
+                    <li>
+                        <a href="https://www.dawrlog.com/" title="English"
+                            aria-label=":us:">🇺🇸</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://www.dawrlog.com/fr/apropos" title="À Propos">
+                    <span>À Propos</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://www.dawrlog.com/fr/articles/" title="Articles">
+                    <span>Articles</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://calendly.com/dawrlog" title="Contactez-nous">
+                    <span>Contactez-nous</span>&nbsp;
+                    <svg fill="none" shape-rendering="geometricPrecision" stroke="currentColor" stroke-linecap="round"
+                        stroke-linejoin="round" stroke-width="2.5" viewBox="0 0 24 24" height="12" width="12">
+                        <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"></path>
+                        <path d="M15 3h6v6"></path>
+                        <path d="M10 14L21 3"></path>
+                    </svg>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    <div class="breadcrumbs"><a href="https://www.dawrlog.com/fr/">Accueil</a>&nbsp;»&nbsp;<a href="https://www.dawrlog.com/fr/articles/">Articles</a></div>
+    <h1 class="post-title">
+      Comment fouiller vos données utilisant Power BI.
+    </h1>
+    <div class="post-meta"><span title='2021-08-31 00:00:00 +0000 UTC'>août 31, 2021</span>&nbsp;·&nbsp;7 min&nbsp;·&nbsp;Daniel Paes
+
+</div>
+  </header> 
+<figure class="entry-cover"><img loading="lazy" src="https://user-images.githubusercontent.com/78096758/217084532-056cc5c4-eb8c-4474-b607-aea6cc4a03d2.png" alt="">
+        
+</figure><div class="toc">
+    <details >
+        <summary accesskey="c" title="(Alt + C)">
+            <span class="details">Table des matières</span>
+        </summary>
+
+        <div class="inner"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#h2quest-ce-que-power-bi--h2br-"><h2>Qu&rsquo;est-ce que Power BI ? </h2><br /></a></li>
+    <li><a href="#h2connecter-postgresql-à-power-bi-configurer-votre-environnement-localh2br-"><h2>Connecter PostgreSQL à Power BI, configurer votre environnement local</h2><br /></a></li>
+    <li><a href="#h2créez-une-connexion-à-la-base-de-donnéesh2br-"><h2>Créez une connexion à la base de données</h2><br /></a></li>
+    <li><a href="#h2transformer-les-données-pendant-leur-chargement-dans-votre-datastoreh2br-"><h2>Transformer les données pendant leur chargement dans votre datastore</h2><br /></a></li>
+    <li><a href="#h2démarrez-votre-voyage-de-donnéesh2br-"><h2>Démarrez votre voyage de données</h2><br /></a></li>
+  </ul>
+</nav>
+        </div>
+    </details>
+</div>
+
+  <div class="post-content"><p>Bonjour à tous !</p>
+<p>Aujourd&rsquo;hui, j&rsquo;aimerais vous parler d&rsquo;un des outils de dataviz qui est de plus en plus adopté : <a href="https://powerbi.microsoft.com/en-au/">Power BI</a>. Power BI augmente chaque jour son adoption parmi les utilisateurs les plus expérimentés. Grâce à sa convivialité et à la possibilité de se connecter à diverses sources de données, il permet d&rsquo;analyser des sources de données distinctes au sein d&rsquo;une même console.</p>
+<p>Dans ce billet, je vais vous montrer comment importer vos données stockées sur PostgreSQL avec une version de bureau de Power BI.</p>
+<p>Je commencerai par expliquer ce qu&rsquo;est Power BI et ce qu&rsquo;il fait. Ensuite, je vous proposerai une option pour créer une instance locale afin d&rsquo;explorer vos données PostgreSQL avec Power BI.</p>
+<p>Je vous suggère de sauter la section &ldquo;Configurer votre environnement local&rdquo; si vous avez déjà PostgreSQL et Power BI en cours d&rsquo;exécution ou si vous êtes familier avec les <a href="https://www.vagrantup.com/docs/boxes">boîtes Vagrant</a>.</p>
+<p>Cependant, je vous encourage à y jeter un œil si vous avez un peu de temps libre. Tirer parti de Vagrant peut être une option précieuse pour créer vos preuves de concept en douceur avec des outils d&rsquo;automatisation.</p>
+<p>Une fois l&rsquo;infrastructure prise en charge, nous allons configurer Power BI pour qu&rsquo;il se connecte à votre instance PostgreSQL existante, explorer quelques données sur votre instance Power BI, et les transformer avant son chargement final, en créant un graphique à partir de vos données nouvellement importées.</p>
+<h2 id="h2quest-ce-que-power-bi--h2br-"><h2>Qu&rsquo;est-ce que Power BI ? </h2><br /><a hidden class="anchor" aria-hidden="true" href="#h2quest-ce-que-power-bi--h2br-">#</a></h2>
+<p>Power BI est un outil de visualisation de données créé par Microsoft ; il existe différentes versions axées sur d&rsquo;autres cas d&rsquo;utilisation. Vous pouvez essayer PowerBI gratuitement sur <a href="https://azure.microsoft.com/en-ca">Azure</a>, l&rsquo;option Microsoft pour le cloud public, afin d&rsquo;interagir avec vos services existants tels que l&rsquo;entrepôt de données en tant que service <a href="https://azure.microsoft.com/en-us/products/synapse-analytics/#overview">Azure Synapse</a>.</p>
+<p>Une autre option consiste à l&rsquo;installer sur vos &ldquo;services sur site&rdquo; en utilisant une <a href="https://docs.microsoft.com/en-us/power-bi/connect-data/service-gateway-onprem">passerelle de données sur site</a>.</p>
+<p>Au fur et à mesure que Power BI gagne en maturité, sa popularité augmente naturellement, en grande partie grâce à certaines capacités intéressantes offertes à ses utilisateurs.</p>
+<p>Par exemple, il est facile et rapide de charger vos données structurées comme source dans Power BI. Cela vous permet de comprendre les tendances de vos données et d&rsquo;obtenir les réponses dont vous avez besoin plus rapidement que d&rsquo;habitude, ce qui fait le bonheur des utilisateurs les plus exigeants, car il est possible d&rsquo;explorer davantage de sources de données.</p>
+<p>Et n&rsquo;oubliez pas : <strong>de meilleures données donnent de meilleurs résultats!</strong></p>
+<p>Cela étant dit, si vous avez encore du mal à consommer vos données correctement, il serait bon d&rsquo;auditer vos pipelines de données. Vous auriez besoin de nettoyer vos données, ce qui consiste à traiter tous les mauvais aspects pour votre analyse. En effet, le format des données depuis leur source peut ne pas être prêt pour l&rsquo;analyse.</p>
+<p>Maintenant que nous avons compris ce qu&rsquo;est Power BI, voyons-la en action. Nous allons nous plonger dans sa connexion à PostgreSQL, l&rsquo;une des options de bases de données relationnelles les plus utilisées.</p>
+<h2 id="h2connecter-postgresql-à-power-bi-configurer-votre-environnement-localh2br-"><h2>Connecter PostgreSQL à Power BI, configurer votre environnement local</h2><br /><a hidden class="anchor" aria-hidden="true" href="#h2connecter-postgresql-à-power-bi-configurer-votre-environnement-localh2br-">#</a></h2>
+<p>Si vous avez déjà une instance PostgreSQL, passez à la section suivante <strong>Créer une connexion à la base de données</strong>.
+Pour ceux qui n&rsquo;ont pas d&rsquo;instance, commençons par en créer une.</p>
+<p>Tout d&rsquo;abord, téléchargez <a href="https://www.postgresql.org/download/">PostgreSQL</a> et <a href="https://powerbi.microsoft.com/en-us/downloads/">Power BI</a> (Windows uniquement). Mais attendez, supposez que vous êtes comme moi et que vous n&rsquo;aimez pas avoir une machine Windows ?</p>
+<p>Je vous suggère d&rsquo;utiliser <a href="https://www.vagrantup.com/">Vagrant</a>.</p>
+<p>Vous n&rsquo;avez jamais entendu parler de Vagrant ou ne l&rsquo;avez jamais utilisé ? Pas de problème ! Jetez un œil à cette <a href="https://www.vagrantup.com/intro">introduction rapide</a> pour un cours intensif.</p>
+<p>Après cela, ou si vous êtes déjà familiarisé avec Vagrant, vous êtes prêt à suivre les étapes suivantes :</p>
+<ul>
+<li>Pour commencer, vous devez <a href="https://www.vagrantup.com/downloads">télécharger Vagrant</a> et la machine Windows utilisée comme <a href="https://app.vagrantup.com/gusztavvargadr/boxes/windows-10">image de base</a>.</li>
+<li>Une fois que Vagrant est configuré, vous pouvez <a href="https://powerbi.microsoft.com/en-us/downloads/">télécharger Power BI Desktop</a> de l&rsquo;intérieur ; un client <a href="https://www.virtualbox.org/wiki/Downloads">VirtualBox</a> peut faire l&rsquo;affaire.</li>
+<li>Pour suivre, téléchargez la base de données que nous allons utiliser depuis <a href="https://www.postgresqltutorial.com/postgresql-sample-database/">ici</a>. Ainsi, vous pourrez suivre l&rsquo;évolution de la situation avec une instance locale de Power BI sur votre machine.</li>
+</ul>
+<h2 id="h2créez-une-connexion-à-la-base-de-donnéesh2br-"><h2>Créez une connexion à la base de données</h2><br /><a hidden class="anchor" aria-hidden="true" href="#h2créez-une-connexion-à-la-base-de-donnéesh2br-">#</a></h2>
+<p>Pour commencer, sélectionnez l&rsquo;option Obtenir des données après avoir ouvert Power BI ; cela ouvrira une fenêtre dans laquelle vous indiquerez le type de stockage ou de base de données dans lequel vos données sont stockées. La popup montrera toutes les sources de données auxquelles Power BI peut accéder.</p>
+<p>Pour notre exercice, nous allons sélectionner la base de données <strong>PostgreSQL</strong>, comme indiqué ci-dessous.</p>
+<p><img loading="lazy" src="/img/posts/PostgreSQL-db-get-data-ui.png" alt="Option de base de données PostgreSQL sur la fenêtre Get Data"  />
+
+<em>Option de base de données PostgreSQL sur la fenêtre &ldquo;Get Data&rdquo;</em></p>
+<p>!Option de base de données PostgreSQL sur la fenêtre &ldquo;Get Data&rdquo; (Obtenir des données)</p>
+<p>Une fois sélectionnée, Power BI vous demandera de confirmer le nom d&rsquo;utilisateur et le mot de passe la première fois que vous vous connecterez à cette base de données. Il n&rsquo;est pas nécessaire de répéter cette validation lorsque vous vous connectez en tant que même utilisateur sur le même serveur déjà utilisé.</p>
+<p>Assurez-vous simplement que l&rsquo;utilisateur PostgreSQL spécifié dispose des <strong>permissions requises</strong> sur la base de données où réside votre table.</p>
+<p>Une fois authentifié sur le serveur, vous devrez spécifier le serveur et la base de données. Pour cela, il suffit d&rsquo;ajouter l&rsquo;adresse de votre serveur PowerBI, ou <code>localhost</code> si vous avez une instance locale de PostgreSQL, pour accéder à la base de données où vous allez sélectionner vos tables. Nous allons sélectionner l&rsquo;option <strong>Import</strong> pour le mode de connectivité des données puisque nous allons transformer certaines données avant de les utiliser.</p>
+<p>L&rsquo;option <strong>DirectConnect</strong>, comme son nom l&rsquo;indique, ne crée pas ce cache nécessaire ; je recommande toujours d&rsquo;utiliser <strong>Import</strong> au lieu de <strong>DirectQuery</strong>. L&rsquo;un des défauts les plus importants de DirectQuery est qu&rsquo;il ne permet pas la transformation des données pendant le chargement.</p>
+<p><img loading="lazy" src="/img/posts/PostgreSQL-gets-data-ui.png" alt="La base de données PostgreSQL obtient l&amp;rsquo;écran de données"  />
+</p>
+<p><em>La base de données PostgreSQL obtient l&rsquo;écran de données</em>.</p>
+<p>Pour faire court, laissez les options avancées inchangées et cliquez sur OK.</p>
+<p>Power BI vous informera avant de continuer dans le cas où votre connexion n&rsquo;est pas cryptée. Si vous cliquez sur <strong>Cancel</strong>, l&rsquo;importation sera interrompue. Je vous encourage à explorer davantage l&rsquo;option <strong>SQL Statement</strong>, car elle offre plus de choix pour transformer vos données tout en les chargeant.</p>
+<p>Vous pouvez trouver plus de détails et même un exemple fonctionnel sur cette page sur les <a href="https://user-images.githubusercontent.com/78096758/217086916-21252609-df76-48d0-9978-1344de6d8ea3.png">native database queries</a> de Microsoft.</p>
+<h2 id="h2transformer-les-données-pendant-leur-chargement-dans-votre-datastoreh2br-"><h2>Transformer les données pendant leur chargement dans votre datastore</h2><br /><a hidden class="anchor" aria-hidden="true" href="#h2transformer-les-données-pendant-leur-chargement-dans-votre-datastoreh2br-">#</a></h2>
+<p>Maintenant que nous avons pris soin de notre connexion, il est temps de la faire travailler pour nous.
+Sur l&rsquo;écran suivant, vous pouvez sélectionner vos tableaux. Une fois que vous les aurez sélectionnés, vous aurez la possibilité de les charger tels quels ou de les transformer avant de les utiliser. Dans ce tutoriel, je vais séparer le premier mot des autres en utilisant le délimiteur le plus à gauche ; en choisissant <strong>transformer</strong>, une nouvelle fenêtre (comme celle ci-dessous) apparaîtra.</p>
+<p>Dans le champ <strong>Sélectionner ou entrer le délimiteur</strong>, laissez les options restantes avec <strong>délimiteur d&rsquo;espace</strong> et <strong>caractère de citation</strong> inchangées. Cela transformera le champ chaîne de caractères en deux champs enfants.</p>
+<p><img loading="lazy" src="https://user-images.githubusercontent.com/78096758/217087430-60688d2e-ea51-4bf1-adf0-116381d49622.png" alt="Options de fractionnement pour l&amp;rsquo;importation de données"  />
+</p>
+<p>Options de fractionnement pour l&rsquo;importation de données</p>
+<p>Une fois que vous aurez confirmé la modification, vous reviendrez à l&rsquo;écran précédent. Il reflétera maintenant les changements que vous avez appliqués sur l&rsquo;écran <strong>Split Columns</strong>.</p>
+<p>Il est bon de rappeler que vous pouvez toujours supprimer ces modifications, même après la confirmation précédente.</p>
+<p>Ces résultats ne sont pas définitifs sur les sources de données utilisées par les tableaux de bord ; ils sont plutôt sur des composants temporaires. Vous pouvez donc toujours revenir en arrière si vous souhaitez ajouter ou modifier certains détails supplémentaires.</p>
+<p>Une fois que tous vos paramètres sont comme vous le souhaitez, sélectionnez l&rsquo;option <strong>Close &amp; Apply</strong> pour valider vos changements, comme indiqué ci-dessous.</p>
+<p>!- <a href="https://user-images.githubusercontent.com/78096758/217087847-e6eb4702-1ecc-4426-b3f9-aca84351e968.png">Preview Get Data after transformation changes</a>
+<em>Aperçu de <code>Get Data</code> après les changements de transformation.</em></p>
+<p>Félicitations ! Vous venez d&rsquo;importer vos données de PostgreSQL dans Power BI.</p>
+<h2 id="h2démarrez-votre-voyage-de-donnéesh2br-"><h2>Démarrez votre voyage de données</h2><br /><a hidden class="anchor" aria-hidden="true" href="#h2démarrez-votre-voyage-de-donnéesh2br-">#</a></h2>
+<p>Aujourd&rsquo;hui, nous avons effleuré l&rsquo;intégration de Power BI et de PostgreSQL et expliqué comment Power BI pouvait améliorer votre exploration des données sur les bases de données PostgreSQL grâce à son interface très conviviale.</p>
+<p>Power BI vous permet d&rsquo;interagir avec les données à leurs débuts. Pourquoi ne pas enrichir vos données directement à partir de la réplication de la source ? N&rsquo;oubliez pas quels sont vos <strong>réels besoins</strong>.</p>
+<p>Il peut être difficile d&rsquo;avoir une vue complète de votre historique <a href="https://en.wikipedia.org/wiki/Trend_analysis">analyse des tendances des données</a>.</p>
+<p>Cela dit, une bonne chose à avoir à l&rsquo;esprit est d&rsquo;éviter, ou du moins de limiter lorsque c&rsquo;est possible, l&rsquo;utilisation de Power BI sur des données non traitées.</p>
+<p>Les données à l&rsquo;état brut sont plutôt destinées à des fins opérationnelles. Pour les analyses sensibles au facteur temps, vous devriez toujours choisir d&rsquo;utiliser des informations traitées qui donnent de meilleurs aperçus des données d&rsquo;application dans leur état brut.</p>
+<p>À+!</p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+<nav class="paginav">
+  <a class="prev" href="https://www.dawrlog.com/fr/articles/1/">
+    <span class="title">« Page précédente</span>
+    <br>
+    <span>Les défis pour l&#39;architecture d&#39;un Data Warehouse.</span>
+  </a>
+  <a class="next" href="https://www.dawrlog.com/fr/articles/11/">
+    <span class="title">Page suivante »</span>
+    <br>
+    <span>Le connaissance de base pour l&#39;exploration des données utilisant AWS Redshift Spectrum, Athena et S3.</span>
+  </a>
+</nav>
+
+
+<div class="share-buttons">
+    <a target="_blank" rel="noopener noreferrer" aria-label="share Comment fouiller vos données utilisant Power BI. on twitter"
+        href="https://twitter.com/intent/tweet/?text=Comment%20fouiller%20vos%20donn%c3%a9es%20utilisant%20Power%20BI.&amp;url=https%3a%2f%2fwww.dawrlog.com%2ffr%2farticles%2f7%2f&amp;hashtags=PowerBI%2cDevelopment%2cDataWarehouse">
+        <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+            <path
+                d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-253.927,424.544c135.939,0 210.268,-112.643 210.268,-210.268c0,-3.218 0,-6.437 -0.153,-9.502c14.406,-10.421 26.973,-23.448 36.935,-38.314c-13.18,5.824 -27.433,9.809 -42.452,11.648c15.326,-9.196 26.973,-23.602 32.49,-40.92c-14.252,8.429 -30.038,14.56 -46.896,17.931c-13.487,-14.406 -32.644,-23.295 -53.946,-23.295c-40.767,0 -73.87,33.104 -73.87,73.87c0,5.824 0.613,11.494 1.992,16.858c-61.456,-3.065 -115.862,-32.49 -152.337,-77.241c-6.284,10.881 -9.962,23.601 -9.962,37.088c0,25.594 13.027,48.276 32.95,61.456c-12.107,-0.307 -23.448,-3.678 -33.41,-9.196l0,0.92c0,35.862 25.441,65.594 59.311,72.49c-6.13,1.686 -12.72,2.606 -19.464,2.606c-4.751,0 -9.348,-0.46 -13.946,-1.38c9.349,29.426 36.628,50.728 68.965,51.341c-25.287,19.771 -57.164,31.571 -91.8,31.571c-5.977,0 -11.801,-0.306 -17.625,-1.073c32.337,21.15 71.264,33.41 112.95,33.41Z" />
+        </svg>
+    </a>
+    <a target="_blank" rel="noopener noreferrer" aria-label="share Comment fouiller vos données utilisant Power BI. on linkedin"
+        href="https://www.linkedin.com/shareArticle?mini=true&amp;url=https%3a%2f%2fwww.dawrlog.com%2ffr%2farticles%2f7%2f&amp;title=Comment%20fouiller%20vos%20donn%c3%a9es%20utilisant%20Power%20BI.&amp;summary=Comment%20fouiller%20vos%20donn%c3%a9es%20utilisant%20Power%20BI.&amp;source=https%3a%2f%2fwww.dawrlog.com%2ffr%2farticles%2f7%2f">
+        <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+            <path
+                d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-288.985,423.278l0,-225.717l-75.04,0l0,225.717l75.04,0Zm270.539,0l0,-129.439c0,-69.333 -37.018,-101.586 -86.381,-101.586c-39.804,0 -57.634,21.891 -67.617,37.266l0,-31.958l-75.021,0c0.995,21.181 0,225.717 0,225.717l75.02,0l0,-126.056c0,-6.748 0.486,-13.492 2.474,-18.315c5.414,-13.475 17.767,-27.434 38.494,-27.434c27.135,0 38.007,20.707 38.007,51.037l0,120.768l75.024,0Zm-307.552,-334.556c-25.674,0 -42.448,16.879 -42.448,39.002c0,21.658 16.264,39.002 41.455,39.002l0.484,0c26.165,0 42.452,-17.344 42.452,-39.002c-0.485,-22.092 -16.241,-38.954 -41.943,-39.002Z" />
+        </svg>
+    </a>
+    <a target="_blank" rel="noopener noreferrer" aria-label="share Comment fouiller vos données utilisant Power BI. on reddit"
+        href="https://reddit.com/submit?url=https%3a%2f%2fwww.dawrlog.com%2ffr%2farticles%2f7%2f&title=Comment%20fouiller%20vos%20donn%c3%a9es%20utilisant%20Power%20BI.">
+        <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+            <path
+                d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-3.446,265.638c0,-22.964 -18.616,-41.58 -41.58,-41.58c-11.211,0 -21.361,4.457 -28.841,11.666c-28.424,-20.508 -67.586,-33.757 -111.204,-35.278l18.941,-89.121l61.884,13.157c0.756,15.734 13.642,28.29 29.56,28.29c16.407,0 29.706,-13.299 29.706,-29.701c0,-16.403 -13.299,-29.702 -29.706,-29.702c-11.666,0 -21.657,6.792 -26.515,16.578l-69.105,-14.69c-1.922,-0.418 -3.939,-0.042 -5.585,1.036c-1.658,1.073 -2.811,2.761 -3.224,4.686l-21.152,99.438c-44.258,1.228 -84.046,14.494 -112.837,35.232c-7.468,-7.164 -17.589,-11.591 -28.757,-11.591c-22.965,0 -41.585,18.616 -41.585,41.58c0,16.896 10.095,31.41 24.568,37.918c-0.639,4.135 -0.99,8.328 -0.99,12.576c0,63.977 74.469,115.836 166.33,115.836c91.861,0 166.334,-51.859 166.334,-115.836c0,-4.218 -0.347,-8.387 -0.977,-12.493c14.564,-6.47 24.735,-21.034 24.735,-38.001Zm-119.474,108.193c-20.27,20.241 -59.115,21.816 -70.534,21.816c-11.428,0 -50.277,-1.575 -70.522,-21.82c-3.007,-3.008 -3.007,-7.882 0,-10.889c3.003,-2.999 7.882,-3.003 10.885,0c12.777,12.781 40.11,17.317 59.637,17.317c19.522,0 46.86,-4.536 59.657,-17.321c3.016,-2.999 7.886,-2.995 10.885,0.008c3.008,3.011 3.003,7.882 -0.008,10.889Zm-5.23,-48.781c-16.373,0 -29.701,-13.324 -29.701,-29.698c0,-16.381 13.328,-29.714 29.701,-29.714c16.378,0 29.706,13.333 29.706,29.714c0,16.374 -13.328,29.698 -29.706,29.698Zm-160.386,-29.702c0,-16.381 13.328,-29.71 29.714,-29.71c16.369,0 29.689,13.329 29.689,29.71c0,16.373 -13.32,29.693 -29.689,29.693c-16.386,0 -29.714,-13.32 -29.714,-29.693Z" />
+        </svg>
+    </a>
+    <a target="_blank" rel="noopener noreferrer" aria-label="share Comment fouiller vos données utilisant Power BI. on facebook"
+        href="https://facebook.com/sharer/sharer.php?u=https%3a%2f%2fwww.dawrlog.com%2ffr%2farticles%2f7%2f">
+        <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+            <path
+                d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-106.468,0l0,-192.915l66.6,0l12.672,-82.621l-79.272,0l0,-53.617c0,-22.603 11.073,-44.636 46.58,-44.636l36.042,0l0,-70.34c0,0 -32.71,-5.582 -63.982,-5.582c-65.288,0 -107.96,39.569 -107.96,111.204l0,62.971l-72.573,0l0,82.621l72.573,0l0,192.915l-191.104,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Z" />
+        </svg>
+    </a>
+    <a target="_blank" rel="noopener noreferrer" aria-label="share Comment fouiller vos données utilisant Power BI. on whatsapp"
+        href="https://api.whatsapp.com/send?text=Comment%20fouiller%20vos%20donn%c3%a9es%20utilisant%20Power%20BI.%20-%20https%3a%2f%2fwww.dawrlog.com%2ffr%2farticles%2f7%2f">
+        <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+            <path
+                d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-58.673,127.703c-33.842,-33.881 -78.847,-52.548 -126.798,-52.568c-98.799,0 -179.21,80.405 -179.249,179.234c-0.013,31.593 8.241,62.428 23.927,89.612l-25.429,92.884l95.021,-24.925c26.181,14.28 55.659,21.807 85.658,21.816l0.074,0c98.789,0 179.206,-80.413 179.247,-179.243c0.018,-47.895 -18.61,-92.93 -52.451,-126.81Zm-126.797,275.782l-0.06,0c-26.734,-0.01 -52.954,-7.193 -75.828,-20.767l-5.441,-3.229l-56.386,14.792l15.05,-54.977l-3.542,-5.637c-14.913,-23.72 -22.791,-51.136 -22.779,-79.287c0.033,-82.142 66.867,-148.971 149.046,-148.971c39.793,0.014 77.199,15.531 105.329,43.692c28.128,28.16 43.609,65.592 43.594,105.4c-0.034,82.149 -66.866,148.983 -148.983,148.984Zm81.721,-111.581c-4.479,-2.242 -26.499,-13.075 -30.604,-14.571c-4.105,-1.495 -7.091,-2.241 -10.077,2.241c-2.986,4.483 -11.569,14.572 -14.182,17.562c-2.612,2.988 -5.225,3.364 -9.703,1.12c-4.479,-2.241 -18.91,-6.97 -36.017,-22.23c-13.314,-11.876 -22.304,-26.542 -24.916,-31.026c-2.612,-4.484 -0.279,-6.908 1.963,-9.14c2.016,-2.007 4.48,-5.232 6.719,-7.847c2.24,-2.615 2.986,-4.484 4.479,-7.472c1.493,-2.99 0.747,-5.604 -0.374,-7.846c-1.119,-2.241 -10.077,-24.288 -13.809,-33.256c-3.635,-8.733 -7.327,-7.55 -10.077,-7.688c-2.609,-0.13 -5.598,-0.158 -8.583,-0.158c-2.986,0 -7.839,1.121 -11.944,5.604c-4.105,4.484 -15.675,15.32 -15.675,37.364c0,22.046 16.048,43.342 18.287,46.332c2.24,2.99 31.582,48.227 76.511,67.627c10.685,4.615 19.028,7.371 25.533,9.434c10.728,3.41 20.492,2.929 28.209,1.775c8.605,-1.285 26.499,-10.833 30.231,-21.295c3.732,-10.464 3.732,-19.431 2.612,-21.298c-1.119,-1.869 -4.105,-2.99 -8.583,-5.232Z" />
+        </svg>
+    </a>
+    <a target="_blank" rel="noopener noreferrer" aria-label="share Comment fouiller vos données utilisant Power BI. on telegram"
+        href="https://telegram.me/share/url?text=Comment%20fouiller%20vos%20donn%c3%a9es%20utilisant%20Power%20BI.&amp;url=https%3a%2f%2fwww.dawrlog.com%2ffr%2farticles%2f7%2f">
+        <svg version="1.1" xml:space="preserve" viewBox="2 2 28 28" height="30px" width="30px" fill="currentColor">
+            <path
+                d="M26.49,29.86H5.5a3.37,3.37,0,0,1-2.47-1,3.35,3.35,0,0,1-1-2.47V5.48A3.36,3.36,0,0,1,3,3,3.37,3.37,0,0,1,5.5,2h21A3.38,3.38,0,0,1,29,3a3.36,3.36,0,0,1,1,2.46V26.37a3.35,3.35,0,0,1-1,2.47A3.38,3.38,0,0,1,26.49,29.86Zm-5.38-6.71a.79.79,0,0,0,.85-.66L24.73,9.24a.55.55,0,0,0-.18-.46.62.62,0,0,0-.41-.17q-.08,0-16.53,6.11a.59.59,0,0,0-.41.59.57.57,0,0,0,.43.52l4,1.24,1.61,4.83a.62.62,0,0,0,.63.43.56.56,0,0,0,.4-.17L16.54,20l4.09,3A.9.9,0,0,0,21.11,23.15ZM13.8,20.71l-1.21-4q8.72-5.55,8.78-5.55c.15,0,.23,0,.23.16a.18.18,0,0,1,0,.06s-2.51,2.3-7.52,6.8Z" />
+        </svg>
+    </a>
+</div>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+    <span>&copy; 2023 <a href="https://www.dawrlog.com/fr/">Logistique Dataware</a>; <br /> created with 🧡 on 🐧 machines running ☸️ pods.</span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a><script src='https://storage.ko-fi.com/cdn/scripts/overlay-widget.js'></script>
+<script>
+  kofiWidgetOverlay.draw('dawrlog', {
+    'type': 'floating-chat',
+    'floating-chat.donateButton.text': 'Tip jar',
+    'floating-chat.donateButton.background-color': '#794bc4',
+    'floating-chat.donateButton.text-color': '#fff'
+  });
+</script>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = 'Copier';
+
+        function copyingDone() {
+            copybutton.innerHTML = 'Copié !';
+            setTimeout(() => {
+                copybutton.innerHTML = 'Copier';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script>
+</body>
+
+</html>

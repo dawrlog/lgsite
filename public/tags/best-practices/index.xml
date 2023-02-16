@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Best Practices on Dataware Logistics</title>
+    <link>https://www.dawrlog.com/tags/best-practices/</link>
+    <description>Recent content in Best Practices on Dataware Logistics</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Sat, 24 Dec 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://www.dawrlog.com/tags/best-practices/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Redshift Query Queues: The Complete Guide</title>
+      <link>https://www.dawrlog.com/posts/9/</link>
+      <pubDate>Fri, 19 Nov 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/posts/9/</guid>
+      <description>Hey everyone, hope everything is well.
+Even the most potent database is still prone to the terrifying error any database system can face: query bottlenecks.
+Sometimes the systems that manage our queries can&amp;rsquo;t process in the same way as we do. So our questions return accurate results as a result of extra processing power.
+In this article, I&amp;rsquo;ll present how Redshift query queues work. We&amp;rsquo;ll also cover how concurrency works at a high level on Redshift.</description>
+    </item>
+    
+    <item>
+      <title>Incremental Loading: The Smarter Way to Update Data</title>
+      <link>https://www.dawrlog.com/posts/8/</link>
+      <pubDate>Sat, 24 Dec 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/posts/8/</guid>
+      <description>Hey everyone, hope everything is well.
+A data warehouse aims to make sense of a specific subject over time by analyzing historical data. This system, also called the decision-making support system, can tackle trends as diverse as the percentage of client churn or beer consumption trends within a geographical area.
+Incremental loading is one of those crucial issues you need to consider when defining your load pipelines.
+In this post, I&amp;rsquo;ll explain what incremental loading is and why it&amp;rsquo;s so important.</description>
+    </item>
+    
+    <item>
+      <title>gRPC vs REST: Which Is Right for Your Application and Why?</title>
+      <link>https://www.dawrlog.com/posts/13/</link>
+      <pubDate>Sun, 18 Dec 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/posts/13/</guid>
+      <description>Hello everyone, today we revisit the REST architecture, while comparing it to the gRPC calls.
+A microservices framework sometimes looks like a dream, but it can be a nightmare when processing data. Transiting the data with less latency is not enough nowadays. It also needs to easily connect with systems. And not only does the speed matter, but it also needs to scale to fit your computing needs while not bleeding your infrastructure costs.</description>
+    </item>
+    
+    <item>
+      <title>Archiving Argo Workflows: Postgres Database Setup</title>
+      <link>https://www.dawrlog.com/posts/2/</link>
+      <pubDate>Mon, 11 Apr 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/posts/2/</guid>
+      <description>Hello everyone, I hope you are doing well!
+If you’re familiar with Argo Workflows, you already know that it can drive your CI/CD pipelines, manage your ETL processes, and orchestrate any set of tasks you can imagine for a Kubernetes cluster. But did you know that Argo knows how to archive the results of its workflows to a SQL database, too?
+In this post, I&amp;rsquo;ll show how Argo Workflows archives workflow state into persistent storage using a Postgres database.</description>
+    </item>
+    
+    <item>
+      <title>How to Mitigate DDoS Attacks on Your APIs.</title>
+      <link>https://www.dawrlog.com/posts/3/</link>
+      <pubDate>Fri, 18 Mar 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/posts/3/</guid>
+      <description>It&amp;rsquo;s frustrating how a project&amp;rsquo;s delivery dates are sometimes so tight that you neglect the quality of your development application. Thanks to weak security policies, it&amp;rsquo;s even worse when your security team can&amp;rsquo;t catch the damage before it&amp;rsquo;s too late. To help you with that, I want to talk about targeted DDoS attacks and what they do to your application programming interface, also known as API endpoints. I&amp;rsquo;ll explain what DDoS is and the problems it can cause.</description>
+    </item>
+    
+    <item>
+      <title>How to Value Stream DataOps?</title>
+      <link>https://www.dawrlog.com/posts/12/</link>
+      <pubDate>Wed, 24 Nov 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/posts/12/</guid>
+      <description>Hello everyone, today we will check how to properly value stream your DataOps initiative.
+Enhancements on data ingestion made evident the amount of data lost when generating insights. However, without guidance from methodologies like The DataOps Manifesto, some companies are still struggling to blend data pipelines from legacy databases, such as an ADABAS database, with new ones, such as MongoDB or Neo4j.
+And it’s always good to point out that these legacy systems aren’t easy to let go of.</description>
+    </item>
+    
+    <item>
+      <title>What Is the Identity and Access Provisioning Lifecycle?</title>
+      <link>https://www.dawrlog.com/posts/14/</link>
+      <pubDate>Sat, 02 Oct 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/posts/14/</guid>
+      <description>Hello everyone, today I want to revisit what is Identity and Access provisioning lifecycle phases.
+With so much data being generated every second, it makes sense that data leakages are one of the biggest nightmares of any data-driven company. These days, we learn fast that weak security policies can be costly. This article will present one of the techniques to maintain your data secured: the identity and access provisioning lifecycle.</description>
+    </item>
+    
+    <item>
+      <title>Data Warehouse Design: The good, the bad, the ugly</title>
+      <link>https://www.dawrlog.com/posts/1/</link>
+      <pubDate>Sun, 19 Sep 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/posts/1/</guid>
+      <description>Hey everyone, hope everything is well.
+One of the significant challenges in handling data comes from the massive amount of data your organization is most likely generating constantly. Having the ability to react quickly and accurately turns into a differential item among competitors.
+More and more companies are becoming aware of the need to handle data wisely.
+They&amp;rsquo;re looking for ways of getting the most out of their information. And this is probably where they first hear about data warehouses.</description>
+    </item>
+    
+  </channel>
+</rss>

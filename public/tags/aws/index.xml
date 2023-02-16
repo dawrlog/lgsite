@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>AWS on Dataware Logistics</title>
+    <link>https://www.dawrlog.com/tags/aws/</link>
+    <description>Recent content in AWS on Dataware Logistics</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Fri, 19 Nov 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://www.dawrlog.com/tags/aws/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Redshift Query Queues: The Complete Guide</title>
+      <link>https://www.dawrlog.com/posts/9/</link>
+      <pubDate>Fri, 19 Nov 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/posts/9/</guid>
+      <description>Hey everyone, hope everything is well.
+Even the most potent database is still prone to the terrifying error any database system can face: query bottlenecks.
+Sometimes the systems that manage our queries can&amp;rsquo;t process in the same way as we do. So our questions return accurate results as a result of extra processing power.
+In this article, I&amp;rsquo;ll present how Redshift query queues work. We&amp;rsquo;ll also cover how concurrency works at a high level on Redshift.</description>
+    </item>
+    
+    <item>
+      <title>AWS Redshift Spectrum, Athena, and S3: Everything You Need to Know</title>
+      <link>https://www.dawrlog.com/posts/11/</link>
+      <pubDate>Thu, 08 Jul 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/posts/11/</guid>
+      <description>Hey everyone, today I would like to present you how to explore your raw data stored by AWS S3 by using AWS managed analytical managed services. Today we will cover both AWS Redshift Spectrum and AWS Athena on our tutorial.
+One of the significant challenges to data-driven companies comes when integrating different application systems.
+Major public cloud providers, such as Amazon Web Services or Google Cloud Platform, offer robust products that are ready for your analytics needs.</description>
+    </item>
+    
+  </channel>
+</rss>

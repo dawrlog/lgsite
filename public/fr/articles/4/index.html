@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="fr" dir="fr">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Moyens de debug un workflow Argo. | Logistique Dataware</title>
+<meta name="keywords" content="Kubernetes, Argo, Development">
+<meta name="description" content="Bonjour à tous,
+Aujourd&rsquo;hui, je voudrais vous expliquer comment déboguer vos flux de travail Argo, ce qui est pratique lorsque vous avez besoin de plus de détails sur votre environnement. Voyons les deux approches différentes pour déboguer vos déploiements de workflows Argo.
+Tout d&rsquo;abord, nous utiliserons l&rsquo;Interface de ligne de commande Argo, ou CLI pour faire court. Les commandes CLI d&rsquo;Argo couvrent la plupart des erreurs les plus courantes rencontrées avec les workflows, telles que les mauvaises configurations.">
+<meta name="author" content="Daniel Paes">
+<link rel="canonical" href="https://pipekit.io/blog/debug-argo-workflow">
+<meta name="google-site-verification" content="4599922566">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.css" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://www.dawrlog.com/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://www.dawrlog.com/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://www.dawrlog.com/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://www.dawrlog.com/apple-touch-icon.png">
+<link rel="mask-icon" href="https://www.dawrlog.com/apple-touch-icon.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="fr" href="https://www.dawrlog.com/fr/articles/4/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --hljs-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><meta property="og:title" content="Moyens de debug un workflow Argo." />
+<meta property="og:description" content="Bonjour à tous,
+Aujourd&rsquo;hui, je voudrais vous expliquer comment déboguer vos flux de travail Argo, ce qui est pratique lorsque vous avez besoin de plus de détails sur votre environnement. Voyons les deux approches différentes pour déboguer vos déploiements de workflows Argo.
+Tout d&rsquo;abord, nous utiliserons l&rsquo;Interface de ligne de commande Argo, ou CLI pour faire court. Les commandes CLI d&rsquo;Argo couvrent la plupart des erreurs les plus courantes rencontrées avec les workflows, telles que les mauvaises configurations." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://www.dawrlog.com/fr/articles/4/" />
+<meta property="og:image" content="https://user-images.githubusercontent.com/78096758/217076830-73285776-ed08-4782-a0d0-e0a1226a0d38.png" /><meta property="article:section" content="articles" />
+<meta property="article:published_time" content="2022-05-15T00:00:00+00:00" />
+<meta property="article:modified_time" content="2022-05-15T00:00:00+00:00" /><meta property="og:site_name" content="Logistique Dataware" />
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="https://user-images.githubusercontent.com/78096758/217076830-73285776-ed08-4782-a0d0-e0a1226a0d38.png" />
+<meta name="twitter:title" content="Moyens de debug un workflow Argo."/>
+<meta name="twitter:description" content="Bonjour à tous,
+Aujourd&rsquo;hui, je voudrais vous expliquer comment déboguer vos flux de travail Argo, ce qui est pratique lorsque vous avez besoin de plus de détails sur votre environnement. Voyons les deux approches différentes pour déboguer vos déploiements de workflows Argo.
+Tout d&rsquo;abord, nous utiliserons l&rsquo;Interface de ligne de commande Argo, ou CLI pour faire court. Les commandes CLI d&rsquo;Argo couvrent la plupart des erreurs les plus courantes rencontrées avec les workflows, telles que les mauvaises configurations."/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Articles",
+      "item": "https://www.dawrlog.com/fr/articles/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Moyens de debug un workflow Argo.",
+      "item": "https://www.dawrlog.com/fr/articles/4/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Moyens de debug un workflow Argo.",
+  "name": "Moyens de debug un workflow Argo.",
+  "description": "Bonjour à tous,\nAujourd\u0026rsquo;hui, je voudrais vous expliquer comment déboguer vos flux de travail Argo, ce qui est pratique lorsque vous avez besoin de plus de détails sur votre environnement. Voyons les deux approches différentes pour déboguer vos déploiements de workflows Argo.\nTout d\u0026rsquo;abord, nous utiliserons l\u0026rsquo;Interface de ligne de commande Argo, ou CLI pour faire court. Les commandes CLI d\u0026rsquo;Argo couvrent la plupart des erreurs les plus courantes rencontrées avec les workflows, telles que les mauvaises configurations.",
+  "keywords": [
+    "Kubernetes", "Argo", "Development"
+  ],
+  "articleBody": "Bonjour à tous,\nAujourd’hui, je voudrais vous expliquer comment déboguer vos flux de travail Argo, ce qui est pratique lorsque vous avez besoin de plus de détails sur votre environnement. Voyons les deux approches différentes pour déboguer vos déploiements de workflows Argo.\nTout d’abord, nous utiliserons l’Interface de ligne de commande Argo, ou CLI pour faire court. Les commandes CLI d’Argo couvrent la plupart des erreurs les plus courantes rencontrées avec les workflows, telles que les mauvaises configurations. Ensuite, nous verrons comment déboguer les workflows en utilisant l’interface utilisateur d’Argo Workflows. Une fois que nous en aurons terminé avec les outils natifs d’Argo, nous terminerons par la façon de déboguer votre environnement à l’aide de kubectl.\nL’interface de ligne de commande d’Argo Workflows\nL’interface en ligne de commande (CLI) d’Argo Workflows rend les interactions avec votre cluster simples. Je vais présenter ci-dessous comment exécuter des commandes Argo directement depuis votre cluster Kubernetes sur un espace de nom appelé argo. N’oubliez pas que vous pouvez rapidement adapter le code présenté ci-dessous à votre environnement. Pour le reproduire dans votre environnement, changez l’option en -n namespace où namespace est l’espace de nom Kubernetes où vous avez déployé Argo.\nÉtat du flux de travail avec argo list Je veux couvrir deux commandes : argo list et argo get. Avec argo list, vous pouvez identifier rapidement le statut de tous les workflows déployés sur l’espace de nom Kubernetes fourni. Et vous pouvez examiner de près chaque workflow avec la commande argo get. Bien que les deux commandes ne soient pas dépendantes l’une de l’autre, leur combinaison devrait répondre à la plupart de vos questions sur l’exécution des pods. Je suggère d’utiliser le drapeau -A comme indiqué ci-dessous. Cela élargira la recherche de tous vos espaces de noms.\nargo list -A Comme vous pouvez le voir, la commande renvoie sous forme de tableau un état mis à jour de tous les workflows de votre environnement par espace de noms. Cette présentation est utile pour les contrôles de santé automatisés de vos services.\nDans les cas où vous souhaitez concentrer votre recherche sur un espace de noms spécifique, la commande argo list peut également rechercher un seul espace de noms grâce à la balise -n. Ceci est utile lorsque vous avez des flux de travail similaires déployés sur différents espaces de noms, un scénario très répandu dans la gestion des environnements multi-tenant. Ainsi, dans des cas comme celui-ci, il est préférable d’exécuter argo list -n , où est l’espace de noms audité.\nVérifier vos flux de travail avec kubectl\nIl existe des scénarios où la sortie de l’Argo CLI ne fournit pas assez d’informations pour une analyse complète d’un pod.\nPar exemple, dans certains cas, votre serveur Argo ne sera pas capable d’accéder à votre clé de jeton, et il serait utile de voir comment votre plan de contrôle a résolu cette valeur. Pour ce faire, vous pouvez utiliser les commandes kubectl pour explorer la configuration et la santé de votre instance Argo Workflows. Si les services dépendants ne sont pas accessibles, cette méthode vous sera utile.\nArgo Workflows déploie trois conteneurs dans chaque pod, et tous sont accessibles à l’aide des commandes kubectl, comme mentionné précédemment.\nGetting your Argo deployment details with Kubernetes native commands Here we’re looking at the k8s cluster as a whole. Using the command below, you can retrieve high-level info about the health of your deployed services.\nkubectl get svc,po -n argo -o wide This presents you with information about the k8s control plane for your argo namespace. From here, you can use kubectl describe for more detailed information.\nArgo and Kubernetes use the same pod name for their deployed components. Bear that in mind if you plan to automate your pipelines with a mix of kubectl and Argo Workflows CLI combinations for your observability strategy.\nSo, use kubectl describe to view how Kubernetes sees your pod deployment. This should resemble what you see on the Argo console UI.\nKubectl generates a lot of output, so pipe it through more or less.\nkubectl describe -n argo pod/dag-sum-pm8rp-2964331963 | less It is good to note that the pod name will be the same in both kubectl and Argo CLI commands. Vous n’aurez aucune surprise en choisissant celle que vous préférez utiliser dans votre analyse tant que vous utilisez le même nom de pod. Ainsi, l’exécution de kubectl logs -n argo pod/dag-swtgb-320908401 -c main ou argo logs -n argo dag-swtgb dag-swtgb-320908401 -c main ; imprimera alors la trace d’audit de votre conteneur principal à l’intérieur du pod Kubernetes dag-swtgb-320908401 mais en utilisant des interfaces de ligne de commande différentes.\nVous pouvez également explorer les conteneurs init et wait de la même manière qu’en utilisant les commandes CLI du workflow Argo. Bien que légèrement différent, il renverra les données détaillées des déploiements Kubernetes. C’est un choix personnel de savoir si vous voulez utiliser kubectl ou les commandes natives d’Argo.\nPlus de détails avec argo get\nUne fois que vous avez le service dont vous avez besoin et son espace de nom, vous pouvez voir plus de détails avec la commande argo get. L’exécution de la commande suivante vous donnera un message consolidé par étape du workflow Argo. Dans notre exemple, le workflow dag-swtgb existe sur l’espace de nom argo.\nargo get -n argo dag-swtgb L’exécution de la même commande sans l’option -o yaml renverra une sortie comme celle ci-dessous avec une vue plus consolidée. Il est utile de voir le message produit par vos pods problématiques.\nSortie de la commande get d’Argo avec des erreurs\nGo Deeper with argo logs Les déploiements Argo partagent les déploiements de flux de travail de chaque pod sur les conteneurs principal, init et wait. Je couvrirai comment y accéder en utilisant kubectl dans un peu, mais vous pouvez également y accéder en utilisant les journaux Argo sur le pod désiré.\nJe dois également préciser que si votre pod ne démarre pas, ces conteneurs ne démarreront pas non plus.\nVous pouvez suivre les logs d’un workflow avec les logs d’Argo.\nConsidérez cette session de ligne de commande :\n``sh argo -n argo submit sum.yaml\net sa sortie : Nom : dag-sum-gm5sv Espace de nom : argo ServiceAccount : unset (sera exécuté avec le ServiceAccount par défaut) Statut : En attente Créé : Tue Apr 05 12:53:30 -0400 (now) Progression :\nCe flux de travail n’a pas de contexte de sécurité défini. Vous pouvez exécuter vos pods de workflow de manière plus sécurisée en le définissant. Pour en savoir plus, rendez-vous sur https://argoproj.github.io/argo-workflows/workflow-pod-security-context/\nLorsque vous soumettez un nouveau workflow, Argo vous donne son nom. Passez ce nom aux logs d'argo avec le namesapce et l'option `--follow` : ```sh argo -n argo logs dag-sum-gm5sv --follow Sortie :\ndag-sum-gm5sv-899595302 : time=\"2022-04-05T16:53:32.791Z\" level=info msg=\"capturing logs\" argo=true dag-sum-gm5sv-899595302 : 2 dag-sum-gm5sv-508066804 : time=\"2022-04-05T16:53:33.072Z\" level=info msg=\"capturing logs\" argo=true dag-sum-gm5sv-508066804 : 2 dag-sum-gm5sv-844819 : time=\"2022-04-05T16:53:42.984Z\" level=info msg=\"capturing logs\" argo=true dag-sum-gm5sv-844819 : 4 Argo affichera les logs à l’écran au fur et à mesure de la progression du workflow.\nSi vous ne souhaitez pas utiliser la ligne de commande, vous pouvez également le faire via l’interface utilisateur des workflows Argo.\nVoir les événements de vos workflows Argo dans la console UI\nEnfin, vous pouvez également déboguer votre environnement Argo en utilisant l’interface console qu’il fournit. Ce service est accessible en suivant l’une des étapes mentionnées dans leur docs, mais dans ce cas, nous ferons un simple port forward entre le déploiement Kubernetes et l’hôte. Le code présenté ici peut fonctionner sans problème sur des machines Linux et macOS. Ces environnements vous permettent de lier le port entre votre poste de travail et votre cluster Kubernetes en tant que processus d’arrière-plan avec cette commande: kubectl -n argo port-forward svc/argo-server 2746:2746 \u0026. Le service étant accessible depuis l’hôte, vous pouvez faire pointer n’importe quel navigateur web sur l’adresse https://localhost:2746.\nConclusion\nVous avez vu comment déboguer les composants des workflows Argo à l’aide de la CLI et de l’interface utilisateur Argo, ou des commandes kubectl. Les étapes que j’ai décrites ici peuvent vous aider à comprendre ce qui se passe dans votre environnement.\nÀ+!\n",
+  "wordCount" : "1344",
+  "inLanguage": "fr",
+  "image":"https://user-images.githubusercontent.com/78096758/217076830-73285776-ed08-4782-a0d0-e0a1226a0d38.png","datePublished": "2022-05-15T00:00:00Z",
+  "dateModified": "2022-05-15T00:00:00Z",
+  "author":{
+    "@type": "Person",
+    "name": "Daniel Paes"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://www.dawrlog.com/fr/articles/4/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Logistique Dataware",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://www.dawrlog.com/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://www.dawrlog.com/fr/" accesskey="h" title="Logistique Dataware (Alt + H)">Logistique Dataware</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+                <ul class="lang-switch"><li>|</li>
+                    <li>
+                        <a href="https://www.dawrlog.com/" title="English"
+                            aria-label=":us:">🇺🇸</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://www.dawrlog.com/fr/apropos" title="À Propos">
+                    <span>À Propos</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://www.dawrlog.com/fr/articles/" title="Articles">
+                    <span>Articles</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://calendly.com/dawrlog" title="Contactez-nous">
+                    <span>Contactez-nous</span>&nbsp;
+                    <svg fill="none" shape-rendering="geometricPrecision" stroke="currentColor" stroke-linecap="round"
+                        stroke-linejoin="round" stroke-width="2.5" viewBox="0 0 24 24" height="12" width="12">
+                        <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"></path>
+                        <path d="M15 3h6v6"></path>
+                        <path d="M10 14L21 3"></path>
+                    </svg>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    <div class="breadcrumbs"><a href="https://www.dawrlog.com/fr/">Accueil</a>&nbsp;»&nbsp;<a href="https://www.dawrlog.com/fr/articles/">Articles</a></div>
+    <h1 class="post-title">
+      Moyens de debug un workflow Argo.
+    </h1>
+    <div class="post-meta"><span title='2022-05-15 00:00:00 +0000 UTC'>mai 15, 2022</span>&nbsp;·&nbsp;7 min&nbsp;·&nbsp;Daniel Paes
+
+</div>
+  </header> 
+<figure class="entry-cover"><img loading="lazy" src="https://user-images.githubusercontent.com/78096758/217076830-73285776-ed08-4782-a0d0-e0a1226a0d38.png" alt="">
+        
+</figure><div class="toc">
+    <details >
+        <summary accesskey="c" title="(Alt + C)">
+            <span class="details">Table des matières</span>
+        </summary>
+
+        <div class="inner"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#h2linterface-de-ligne-de-commande-dargo-workflowsh2br-"><h2>L&rsquo;interface de ligne de commande d&rsquo;Argo Workflows</h2><br /></a>
+      <ul>
+        <li><a href="#h3état-du-flux-de-travail-avec-argo-list-h3br-"><h3>État du flux de travail avec argo list </h3><br /></a></li>
+        <li><a href="#h3vérifier-vos-flux-de-travail-avec-kubectlh3br-"><h3>Vérifier vos flux de travail avec kubectl</h3><br /></a></li>
+        <li><a href="#h3getting-your-argo-deployment-details-with-kubernetes-native-commands-h3br-"><h3>Getting your Argo deployment details with Kubernetes native commands </h3><br /></a></li>
+        <li><a href="#h3plus-de-détails-avec-argo-geth3br-"><h3>Plus de détails avec argo get</h3><br /></a></li>
+        <li><a href="#h3go-deeper-with-argo-logs-h3br-"><h3>Go Deeper with argo logs </h3><br /></a></li>
+      </ul>
+    </li>
+    <li><a href="#h2voir-les-événements-de-vos-workflows-argo-dans-la-console-uih2br-"><h2>Voir les événements de vos workflows Argo dans la console UI</h2><br /></a></li>
+    <li><a href="#h3conclusionh3br-"><h3>Conclusion</h3><br /></a></li>
+  </ul>
+</nav>
+        </div>
+    </details>
+</div>
+
+  <div class="post-content"><p>Bonjour à tous,</p>
+<p>Aujourd&rsquo;hui, je voudrais vous expliquer comment déboguer vos <a href="https://argoproj.github.io/argo-workflows/">flux de travail Argo</a>, ce qui est pratique lorsque vous avez besoin de plus de détails sur votre environnement. Voyons les deux approches différentes pour déboguer vos déploiements de workflows Argo.</p>
+<p>Tout d&rsquo;abord, nous utiliserons l&rsquo;<a href="https://argoproj.github.io/argo-workflows/cli/argo/">Interface de ligne de commande Argo</a>, ou CLI pour faire court. Les commandes CLI d&rsquo;Argo couvrent la plupart des erreurs les plus courantes rencontrées avec les workflows, telles que les mauvaises configurations. Ensuite, nous verrons comment déboguer les workflows en utilisant l&rsquo;interface utilisateur d&rsquo;Argo Workflows. Une fois que nous en aurons terminé avec les outils natifs d&rsquo;Argo, nous terminerons par la façon de déboguer votre environnement à l&rsquo;aide de kubectl.</p>
+<h2 id="h2linterface-de-ligne-de-commande-dargo-workflowsh2br-"><h2>L&rsquo;interface de ligne de commande d&rsquo;Argo Workflows</h2><br /><a hidden class="anchor" aria-hidden="true" href="#h2linterface-de-ligne-de-commande-dargo-workflowsh2br-">#</a></h2>
+<p>L&rsquo;interface en ligne de commande (CLI) d&rsquo;Argo Workflows rend les interactions avec votre cluster simples. Je vais présenter ci-dessous comment exécuter des commandes Argo directement depuis votre cluster Kubernetes sur un espace de nom appelé argo. N&rsquo;oubliez pas que vous pouvez rapidement adapter le code présenté ci-dessous à votre environnement. Pour le reproduire dans votre environnement, changez l&rsquo;option en <code>-n namespace</code> où <code>namespace</code> est l&rsquo;espace de nom Kubernetes où vous avez déployé Argo.</p>
+<h3 id="h3état-du-flux-de-travail-avec-argo-list-h3br-"><h3>État du flux de travail avec argo list </h3><br /><a hidden class="anchor" aria-hidden="true" href="#h3état-du-flux-de-travail-avec-argo-list-h3br-">#</a></h3>
+<p>Je veux couvrir deux commandes : <code>argo list</code> et <code>argo get</code>. Avec argo list, vous pouvez identifier rapidement le statut de tous les workflows déployés sur l&rsquo;espace de nom Kubernetes fourni. Et vous pouvez examiner de près chaque workflow avec la commande <code>argo get</code>. Bien que les deux commandes ne soient pas dépendantes l&rsquo;une de l&rsquo;autre, leur combinaison devrait répondre à la plupart de vos questions sur l&rsquo;exécution des pods. Je suggère d&rsquo;utiliser le drapeau <code>-A</code> comme indiqué ci-dessous. Cela élargira la recherche de tous vos espaces de noms.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">argo list -A
+</span></span></code></pre></div><p>Comme vous pouvez le voir, la commande renvoie sous forme de tableau un état mis à jour de tous les workflows de votre environnement par espace de noms. Cette présentation est utile pour les contrôles de santé automatisés de vos services.<br />
+<img loading="lazy" src="https://user-images.githubusercontent.com/78096758/217077056-227dc5d5-0def-43a9-a0b3-e36de0039d22.png" alt="Describe Output"  />
+
+<br />
+Dans les cas où vous souhaitez concentrer votre recherche sur un espace de noms spécifique, la commande argo list peut également rechercher un seul espace de noms grâce à la balise -n. Ceci est utile lorsque vous avez des flux de travail similaires déployés sur différents espaces de noms, un scénario très répandu dans la gestion des environnements <a href="https://whatis.techtarget.com/definition/multi-tenancy">multi-tenant</a>. Ainsi, dans des cas comme celui-ci, il est préférable d&rsquo;exécuter argo list -n <namespace>, où <namespace> est l&rsquo;espace de noms audité.</p>
+<h3 id="h3vérifier-vos-flux-de-travail-avec-kubectlh3br-"><h3>Vérifier vos flux de travail avec kubectl</h3><br /><a hidden class="anchor" aria-hidden="true" href="#h3vérifier-vos-flux-de-travail-avec-kubectlh3br-">#</a></h3>
+<p>Il existe des scénarios où la sortie de l&rsquo;Argo CLI ne fournit pas assez d&rsquo;informations pour une analyse complète d&rsquo;un pod.</p>
+<p>Par exemple, dans certains cas, votre serveur Argo ne sera pas capable d&rsquo;accéder à votre clé de jeton, et il serait utile de voir comment votre plan de contrôle a résolu cette valeur. Pour ce faire, vous pouvez utiliser les commandes kubectl pour explorer la configuration et la santé de votre instance Argo Workflows. Si les services dépendants ne sont pas accessibles, cette méthode vous sera utile.</p>
+<p>Argo Workflows déploie trois conteneurs dans chaque pod, et tous sont accessibles à l&rsquo;aide des commandes kubectl, comme mentionné précédemment.</p>
+<h3 id="h3getting-your-argo-deployment-details-with-kubernetes-native-commands-h3br-"><h3>Getting your Argo deployment details with Kubernetes native commands </h3><br /><a hidden class="anchor" aria-hidden="true" href="#h3getting-your-argo-deployment-details-with-kubernetes-native-commands-h3br-">#</a></h3>
+<p>Here we’re looking at the k8s cluster as a whole. Using the command below, you can retrieve high-level info about the health of your deployed services.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">kubectl get svc,po -n argo -o wide 
+</span></span></code></pre></div><p>This presents you with information about the k8s control plane for your argo namespace. From here, you can use <code>kubectl describe</code> for more detailed information.</p>
+<p>Argo and Kubernetes use the same pod name for their deployed components. Bear that in mind if you plan to automate your pipelines with a mix of kubectl and Argo Workflows CLI combinations for your observability strategy.</p>
+<p>So, use <code>kubectl describe</code> to view how Kubernetes sees your pod deployment. This should resemble what you see on the Argo console UI.</p>
+<p>Kubectl generates a lot of output, so pipe it through <em>more</em> or <em>less</em>.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">kubectl describe -n argo pod/dag-sum-pm8rp-2964331963 <span class="p">|</span> less 
+</span></span></code></pre></div><br />
+<p><img loading="lazy" src="https://user-images.githubusercontent.com/78096758/217077276-14039df0-187f-4afa-b17e-218d29662afb.png" alt="Describe Output"  />
+</p>
+<p>It is good to note that the pod name will be the same in both kubectl and Argo CLI commands. Vous n&rsquo;aurez aucune surprise en choisissant celle que vous préférez utiliser dans votre analyse tant que vous utilisez le même nom de pod. Ainsi, l&rsquo;exécution de <code>kubectl logs -n argo pod/dag-swtgb-320908401 -c main</code> ou <code>argo logs -n argo dag-swtgb dag-swtgb-320908401 -c main</code> ; imprimera alors la trace d&rsquo;audit de votre conteneur principal à l&rsquo;intérieur du pod Kubernetes <em><strong>dag-swtgb-320908401</strong></em> mais en utilisant des interfaces de ligne de commande différentes.</p>
+<p>Vous pouvez également explorer les conteneurs init et wait de la même manière qu&rsquo;en utilisant les commandes CLI du workflow Argo. Bien que légèrement différent, il renverra les données détaillées des déploiements Kubernetes. C&rsquo;est un choix personnel de savoir si vous voulez utiliser kubectl ou les commandes natives d&rsquo;Argo.</p>
+<h3 id="h3plus-de-détails-avec-argo-geth3br-"><h3>Plus de détails avec argo get</h3><br /><a hidden class="anchor" aria-hidden="true" href="#h3plus-de-détails-avec-argo-geth3br-">#</a></h3>
+<p>Une fois que vous avez le service dont vous avez besoin et son espace de nom, vous pouvez voir plus de détails avec la commande <em>argo get</em>. L&rsquo;exécution de la commande suivante vous donnera un message consolidé par étape du workflow Argo. Dans notre exemple, le workflow <code>dag-swtgb</code> existe sur l&rsquo;espace de nom argo.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">argo get -n argo dag-swtgb
+</span></span></code></pre></div><p>L&rsquo;exécution de la même commande sans l&rsquo;option <code>-o yaml</code> renverra une sortie comme celle ci-dessous avec une vue plus consolidée. Il est utile de voir le message produit par vos pods problématiques.</p>
+<p><img loading="lazy" src="https://user-images.githubusercontent.com/78096758/217077803-21d66573-2398-4912-857e-507be51a3b89.png" alt="Décrire la sortie"  />
+
+<em>Sortie de la commande get d&rsquo;Argo avec des erreurs</em></p>
+<h3 id="h3go-deeper-with-argo-logs-h3br-"><h3>Go Deeper with argo logs </h3><br /><a hidden class="anchor" aria-hidden="true" href="#h3go-deeper-with-argo-logs-h3br-">#</a></h3>
+<p>Les déploiements Argo partagent les déploiements de flux de travail de chaque pod sur les conteneurs principal, init et wait. Je couvrirai comment y accéder en utilisant kubectl dans un peu, mais vous pouvez également y accéder en utilisant les journaux Argo sur le pod désiré.</p>
+<p>Je dois également préciser que si votre pod ne démarre pas, ces conteneurs ne démarreront pas non plus.</p>
+<p>Vous pouvez suivre les logs d&rsquo;un workflow avec les logs d&rsquo;Argo.</p>
+<p>Considérez cette session de ligne de commande :</p>
+<p>``sh
+argo -n argo submit sum.yaml</p>
+<pre tabindex="0"><code>
+et sa sortie :
+</code></pre><p>Nom : dag-sum-gm5sv
+Espace de nom : argo
+ServiceAccount : unset (sera exécuté avec le ServiceAccount par défaut)
+Statut :              En attente
+Créé :             Tue Apr 05 12:53:30 -0400 (now)
+Progression :</p>
+<p>Ce flux de travail n&rsquo;a pas de contexte de sécurité défini. Vous pouvez exécuter vos pods de workflow de manière plus sécurisée en le définissant.
+Pour en savoir plus, rendez-vous sur <a href="https://argoproj.github.io/argo-workflows/workflow-pod-security-context/">https://argoproj.github.io/argo-workflows/workflow-pod-security-context/</a></p>
+<pre tabindex="0"><code>
+Lorsque vous soumettez un nouveau workflow, Argo vous donne son nom.
+
+Passez ce nom aux logs d&#39;argo avec le namesapce et l&#39;option `--follow` :
+
+```sh
+argo -n argo logs dag-sum-gm5sv --follow 
+</code></pre><p>Sortie :</p>
+<pre tabindex="0"><code>dag-sum-gm5sv-899595302 : time=&#34;2022-04-05T16:53:32.791Z&#34; level=info msg=&#34;capturing logs&#34; argo=true
+dag-sum-gm5sv-899595302 : 2
+dag-sum-gm5sv-508066804 : time=&#34;2022-04-05T16:53:33.072Z&#34; level=info msg=&#34;capturing logs&#34; argo=true
+dag-sum-gm5sv-508066804 : 2
+dag-sum-gm5sv-844819 : time=&#34;2022-04-05T16:53:42.984Z&#34; level=info msg=&#34;capturing logs&#34; argo=true
+dag-sum-gm5sv-844819 : 4 
+</code></pre><p>Argo affichera les logs à l&rsquo;écran au fur et à mesure de la progression du workflow.</p>
+<p>Si vous ne souhaitez pas utiliser la ligne de commande, vous pouvez également le faire via l&rsquo;interface utilisateur des workflows Argo.</p>
+<h2 id="h2voir-les-événements-de-vos-workflows-argo-dans-la-console-uih2br-"><h2>Voir les événements de vos workflows Argo dans la console UI</h2><br /><a hidden class="anchor" aria-hidden="true" href="#h2voir-les-événements-de-vos-workflows-argo-dans-la-console-uih2br-">#</a></h2>
+<p>Enfin, vous pouvez également déboguer votre environnement Argo en utilisant l&rsquo;interface console qu&rsquo;il fournit. Ce service est accessible en suivant l&rsquo;une des étapes mentionnées dans leur docs, mais dans ce cas, nous ferons un simple port forward entre le déploiement Kubernetes et l&rsquo;hôte. Le code présenté ici peut fonctionner sans problème sur des machines Linux et macOS. Ces environnements vous permettent de lier le port entre votre poste de travail et votre cluster Kubernetes en tant que processus d&rsquo;arrière-plan avec cette commande: <br /></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">kubectl -n argo port-forward svc/argo-server 2746:2746 <span class="p">&amp;</span>. 
+</span></span></code></pre></div><p>Le service étant accessible depuis l&rsquo;hôte, vous pouvez faire pointer n&rsquo;importe quel navigateur web sur l&rsquo;adresse <code>https://localhost:2746</code>.</p>
+<p><img loading="lazy" src="https://user-images.githubusercontent.com/78096758/217078031-42a1dc57-a062-4f74-8ccb-2c9cc85f6b03.png" alt="Décrire la sortie"  />
+</p>
+<h2 id="h3conclusionh3br-"><h3>Conclusion</h3><br /><a hidden class="anchor" aria-hidden="true" href="#h3conclusionh3br-">#</a></h2>
+<p>Vous avez vu comment déboguer les composants des workflows Argo à l&rsquo;aide de la CLI et de l&rsquo;interface utilisateur Argo, ou des commandes kubectl. Les étapes que j&rsquo;ai décrites ici peuvent vous aider à comprendre ce qui se passe dans votre environnement.</p>
+<p>À+!</p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+<nav class="paginav">
+  <a class="prev" href="https://www.dawrlog.com/fr/articles/6/">
+    <span class="title">« Page précédente</span>
+    <br>
+    <span>Les 10 optimales workflows Argo; avec examples.</span>
+  </a>
+  <a class="next" href="https://www.dawrlog.com/fr/articles/2/">
+    <span class="title">Page suivante »</span>
+    <br>
+    <span>Archivage des Argo Workflows dans une instance Postgres: Quoi a faire pour configurer votre entrepôt de données</span>
+  </a>
+</nav>
+
+
+<div class="share-buttons">
+    <a target="_blank" rel="noopener noreferrer" aria-label="share Moyens de debug un workflow Argo. on twitter"
+        href="https://twitter.com/intent/tweet/?text=Moyens%20de%20debug%20un%20workflow%20Argo.&amp;url=https%3a%2f%2fwww.dawrlog.com%2ffr%2farticles%2f4%2f&amp;hashtags=Kubernetes%2cArgo%2cDevelopment">
+        <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+            <path
+                d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-253.927,424.544c135.939,0 210.268,-112.643 210.268,-210.268c0,-3.218 0,-6.437 -0.153,-9.502c14.406,-10.421 26.973,-23.448 36.935,-38.314c-13.18,5.824 -27.433,9.809 -42.452,11.648c15.326,-9.196 26.973,-23.602 32.49,-40.92c-14.252,8.429 -30.038,14.56 -46.896,17.931c-13.487,-14.406 -32.644,-23.295 -53.946,-23.295c-40.767,0 -73.87,33.104 -73.87,73.87c0,5.824 0.613,11.494 1.992,16.858c-61.456,-3.065 -115.862,-32.49 -152.337,-77.241c-6.284,10.881 -9.962,23.601 -9.962,37.088c0,25.594 13.027,48.276 32.95,61.456c-12.107,-0.307 -23.448,-3.678 -33.41,-9.196l0,0.92c0,35.862 25.441,65.594 59.311,72.49c-6.13,1.686 -12.72,2.606 -19.464,2.606c-4.751,0 -9.348,-0.46 -13.946,-1.38c9.349,29.426 36.628,50.728 68.965,51.341c-25.287,19.771 -57.164,31.571 -91.8,31.571c-5.977,0 -11.801,-0.306 -17.625,-1.073c32.337,21.15 71.264,33.41 112.95,33.41Z" />
+        </svg>
+    </a>
+    <a target="_blank" rel="noopener noreferrer" aria-label="share Moyens de debug un workflow Argo. on linkedin"
+        href="https://www.linkedin.com/shareArticle?mini=true&amp;url=https%3a%2f%2fwww.dawrlog.com%2ffr%2farticles%2f4%2f&amp;title=Moyens%20de%20debug%20un%20workflow%20Argo.&amp;summary=Moyens%20de%20debug%20un%20workflow%20Argo.&amp;source=https%3a%2f%2fwww.dawrlog.com%2ffr%2farticles%2f4%2f">
+        <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+            <path
+                d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-288.985,423.278l0,-225.717l-75.04,0l0,225.717l75.04,0Zm270.539,0l0,-129.439c0,-69.333 -37.018,-101.586 -86.381,-101.586c-39.804,0 -57.634,21.891 -67.617,37.266l0,-31.958l-75.021,0c0.995,21.181 0,225.717 0,225.717l75.02,0l0,-126.056c0,-6.748 0.486,-13.492 2.474,-18.315c5.414,-13.475 17.767,-27.434 38.494,-27.434c27.135,0 38.007,20.707 38.007,51.037l0,120.768l75.024,0Zm-307.552,-334.556c-25.674,0 -42.448,16.879 -42.448,39.002c0,21.658 16.264,39.002 41.455,39.002l0.484,0c26.165,0 42.452,-17.344 42.452,-39.002c-0.485,-22.092 -16.241,-38.954 -41.943,-39.002Z" />
+        </svg>
+    </a>
+    <a target="_blank" rel="noopener noreferrer" aria-label="share Moyens de debug un workflow Argo. on reddit"
+        href="https://reddit.com/submit?url=https%3a%2f%2fwww.dawrlog.com%2ffr%2farticles%2f4%2f&title=Moyens%20de%20debug%20un%20workflow%20Argo.">
+        <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+            <path
+                d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-3.446,265.638c0,-22.964 -18.616,-41.58 -41.58,-41.58c-11.211,0 -21.361,4.457 -28.841,11.666c-28.424,-20.508 -67.586,-33.757 -111.204,-35.278l18.941,-89.121l61.884,13.157c0.756,15.734 13.642,28.29 29.56,28.29c16.407,0 29.706,-13.299 29.706,-29.701c0,-16.403 -13.299,-29.702 -29.706,-29.702c-11.666,0 -21.657,6.792 -26.515,16.578l-69.105,-14.69c-1.922,-0.418 -3.939,-0.042 -5.585,1.036c-1.658,1.073 -2.811,2.761 -3.224,4.686l-21.152,99.438c-44.258,1.228 -84.046,14.494 -112.837,35.232c-7.468,-7.164 -17.589,-11.591 -28.757,-11.591c-22.965,0 -41.585,18.616 -41.585,41.58c0,16.896 10.095,31.41 24.568,37.918c-0.639,4.135 -0.99,8.328 -0.99,12.576c0,63.977 74.469,115.836 166.33,115.836c91.861,0 166.334,-51.859 166.334,-115.836c0,-4.218 -0.347,-8.387 -0.977,-12.493c14.564,-6.47 24.735,-21.034 24.735,-38.001Zm-119.474,108.193c-20.27,20.241 -59.115,21.816 -70.534,21.816c-11.428,0 -50.277,-1.575 -70.522,-21.82c-3.007,-3.008 -3.007,-7.882 0,-10.889c3.003,-2.999 7.882,-3.003 10.885,0c12.777,12.781 40.11,17.317 59.637,17.317c19.522,0 46.86,-4.536 59.657,-17.321c3.016,-2.999 7.886,-2.995 10.885,0.008c3.008,3.011 3.003,7.882 -0.008,10.889Zm-5.23,-48.781c-16.373,0 -29.701,-13.324 -29.701,-29.698c0,-16.381 13.328,-29.714 29.701,-29.714c16.378,0 29.706,13.333 29.706,29.714c0,16.374 -13.328,29.698 -29.706,29.698Zm-160.386,-29.702c0,-16.381 13.328,-29.71 29.714,-29.71c16.369,0 29.689,13.329 29.689,29.71c0,16.373 -13.32,29.693 -29.689,29.693c-16.386,0 -29.714,-13.32 -29.714,-29.693Z" />
+        </svg>
+    </a>
+    <a target="_blank" rel="noopener noreferrer" aria-label="share Moyens de debug un workflow Argo. on facebook"
+        href="https://facebook.com/sharer/sharer.php?u=https%3a%2f%2fwww.dawrlog.com%2ffr%2farticles%2f4%2f">
+        <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+            <path
+                d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-106.468,0l0,-192.915l66.6,0l12.672,-82.621l-79.272,0l0,-53.617c0,-22.603 11.073,-44.636 46.58,-44.636l36.042,0l0,-70.34c0,0 -32.71,-5.582 -63.982,-5.582c-65.288,0 -107.96,39.569 -107.96,111.204l0,62.971l-72.573,0l0,82.621l72.573,0l0,192.915l-191.104,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Z" />
+        </svg>
+    </a>
+    <a target="_blank" rel="noopener noreferrer" aria-label="share Moyens de debug un workflow Argo. on whatsapp"
+        href="https://api.whatsapp.com/send?text=Moyens%20de%20debug%20un%20workflow%20Argo.%20-%20https%3a%2f%2fwww.dawrlog.com%2ffr%2farticles%2f4%2f">
+        <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+            <path
+                d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-58.673,127.703c-33.842,-33.881 -78.847,-52.548 -126.798,-52.568c-98.799,0 -179.21,80.405 -179.249,179.234c-0.013,31.593 8.241,62.428 23.927,89.612l-25.429,92.884l95.021,-24.925c26.181,14.28 55.659,21.807 85.658,21.816l0.074,0c98.789,0 179.206,-80.413 179.247,-179.243c0.018,-47.895 -18.61,-92.93 -52.451,-126.81Zm-126.797,275.782l-0.06,0c-26.734,-0.01 -52.954,-7.193 -75.828,-20.767l-5.441,-3.229l-56.386,14.792l15.05,-54.977l-3.542,-5.637c-14.913,-23.72 -22.791,-51.136 -22.779,-79.287c0.033,-82.142 66.867,-148.971 149.046,-148.971c39.793,0.014 77.199,15.531 105.329,43.692c28.128,28.16 43.609,65.592 43.594,105.4c-0.034,82.149 -66.866,148.983 -148.983,148.984Zm81.721,-111.581c-4.479,-2.242 -26.499,-13.075 -30.604,-14.571c-4.105,-1.495 -7.091,-2.241 -10.077,2.241c-2.986,4.483 -11.569,14.572 -14.182,17.562c-2.612,2.988 -5.225,3.364 -9.703,1.12c-4.479,-2.241 -18.91,-6.97 -36.017,-22.23c-13.314,-11.876 -22.304,-26.542 -24.916,-31.026c-2.612,-4.484 -0.279,-6.908 1.963,-9.14c2.016,-2.007 4.48,-5.232 6.719,-7.847c2.24,-2.615 2.986,-4.484 4.479,-7.472c1.493,-2.99 0.747,-5.604 -0.374,-7.846c-1.119,-2.241 -10.077,-24.288 -13.809,-33.256c-3.635,-8.733 -7.327,-7.55 -10.077,-7.688c-2.609,-0.13 -5.598,-0.158 -8.583,-0.158c-2.986,0 -7.839,1.121 -11.944,5.604c-4.105,4.484 -15.675,15.32 -15.675,37.364c0,22.046 16.048,43.342 18.287,46.332c2.24,2.99 31.582,48.227 76.511,67.627c10.685,4.615 19.028,7.371 25.533,9.434c10.728,3.41 20.492,2.929 28.209,1.775c8.605,-1.285 26.499,-10.833 30.231,-21.295c3.732,-10.464 3.732,-19.431 2.612,-21.298c-1.119,-1.869 -4.105,-2.99 -8.583,-5.232Z" />
+        </svg>
+    </a>
+    <a target="_blank" rel="noopener noreferrer" aria-label="share Moyens de debug un workflow Argo. on telegram"
+        href="https://telegram.me/share/url?text=Moyens%20de%20debug%20un%20workflow%20Argo.&amp;url=https%3a%2f%2fwww.dawrlog.com%2ffr%2farticles%2f4%2f">
+        <svg version="1.1" xml:space="preserve" viewBox="2 2 28 28" height="30px" width="30px" fill="currentColor">
+            <path
+                d="M26.49,29.86H5.5a3.37,3.37,0,0,1-2.47-1,3.35,3.35,0,0,1-1-2.47V5.48A3.36,3.36,0,0,1,3,3,3.37,3.37,0,0,1,5.5,2h21A3.38,3.38,0,0,1,29,3a3.36,3.36,0,0,1,1,2.46V26.37a3.35,3.35,0,0,1-1,2.47A3.38,3.38,0,0,1,26.49,29.86Zm-5.38-6.71a.79.79,0,0,0,.85-.66L24.73,9.24a.55.55,0,0,0-.18-.46.62.62,0,0,0-.41-.17q-.08,0-16.53,6.11a.59.59,0,0,0-.41.59.57.57,0,0,0,.43.52l4,1.24,1.61,4.83a.62.62,0,0,0,.63.43.56.56,0,0,0,.4-.17L16.54,20l4.09,3A.9.9,0,0,0,21.11,23.15ZM13.8,20.71l-1.21-4q8.72-5.55,8.78-5.55c.15,0,.23,0,.23.16a.18.18,0,0,1,0,.06s-2.51,2.3-7.52,6.8Z" />
+        </svg>
+    </a>
+</div>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+    <span>&copy; 2023 <a href="https://www.dawrlog.com/fr/">Logistique Dataware</a>; <br /> created with 🧡 on 🐧 machines running ☸️ pods.</span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a><script src='https://storage.ko-fi.com/cdn/scripts/overlay-widget.js'></script>
+<script>
+  kofiWidgetOverlay.draw('dawrlog', {
+    'type': 'floating-chat',
+    'floating-chat.donateButton.text': 'Tip jar',
+    'floating-chat.donateButton.background-color': '#794bc4',
+    'floating-chat.donateButton.text-color': '#fff'
+  });
+</script>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = 'Copier';
+
+        function copyingDone() {
+            copybutton.innerHTML = 'Copié !';
+            setTimeout(() => {
+                copybutton.innerHTML = 'Copier';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script>
+</body>
+
+</html>

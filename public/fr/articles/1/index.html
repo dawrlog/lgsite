@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="fr" dir="fr">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Les défis pour l&#39;architecture d&#39;un Data Warehouse. | Logistique Dataware</title>
+<meta name="keywords" content="Data Warehouse, Best Practices">
+<meta name="description" content="Salut tout le monde, j&rsquo;espère que tout va bien.
+L&rsquo;un des principaux défis de la gestion des données provient de la massive quantité de données que votre organisation génère très probablement en permanence. Avoir la capacité de réagir rapidement et avec précision devient un élément différentiel parmi les concurrents.
+De plus en plus d&rsquo;entreprises prennent conscience de la nécessité de gérer les données avec sagesse.
+Elles cherchent des moyens de tirer le meilleur parti de leurs informations.">
+<meta name="author" content="Daniel Paes">
+<link rel="canonical" href="https://blog.panoply.io/data-warehouse-design-the-good-the-bad-the-ugly">
+<meta name="google-site-verification" content="4599922566">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.css" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://www.dawrlog.com/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://www.dawrlog.com/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://www.dawrlog.com/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://www.dawrlog.com/apple-touch-icon.png">
+<link rel="mask-icon" href="https://www.dawrlog.com/apple-touch-icon.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="fr" href="https://www.dawrlog.com/fr/articles/1/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --hljs-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><meta property="og:title" content="Les défis pour l&#39;architecture d&#39;un Data Warehouse." />
+<meta property="og:description" content="Salut tout le monde, j&rsquo;espère que tout va bien.
+L&rsquo;un des principaux défis de la gestion des données provient de la massive quantité de données que votre organisation génère très probablement en permanence. Avoir la capacité de réagir rapidement et avec précision devient un élément différentiel parmi les concurrents.
+De plus en plus d&rsquo;entreprises prennent conscience de la nécessité de gérer les données avec sagesse.
+Elles cherchent des moyens de tirer le meilleur parti de leurs informations." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://www.dawrlog.com/fr/articles/1/" />
+<meta property="og:image" content="https://images.unsplash.com/photo-1661956602153-23384936a1d3?ixlib=rb-4.0.3&ixid=MnwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80" /><meta property="article:section" content="articles" />
+<meta property="article:published_time" content="2021-09-19T00:00:00+00:00" />
+<meta property="article:modified_time" content="2021-09-19T00:00:00+00:00" /><meta property="og:site_name" content="Logistique Dataware" />
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="https://images.unsplash.com/photo-1661956602153-23384936a1d3?ixlib=rb-4.0.3&ixid=MnwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80" />
+<meta name="twitter:title" content="Les défis pour l&#39;architecture d&#39;un Data Warehouse."/>
+<meta name="twitter:description" content="Salut tout le monde, j&rsquo;espère que tout va bien.
+L&rsquo;un des principaux défis de la gestion des données provient de la massive quantité de données que votre organisation génère très probablement en permanence. Avoir la capacité de réagir rapidement et avec précision devient un élément différentiel parmi les concurrents.
+De plus en plus d&rsquo;entreprises prennent conscience de la nécessité de gérer les données avec sagesse.
+Elles cherchent des moyens de tirer le meilleur parti de leurs informations."/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Articles",
+      "item": "https://www.dawrlog.com/fr/articles/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Les défis pour l'architecture d'un Data Warehouse.",
+      "item": "https://www.dawrlog.com/fr/articles/1/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Les défis pour l'architecture d'un Data Warehouse.",
+  "name": "Les défis pour l\u0027architecture d\u0027un Data Warehouse.",
+  "description": "Salut tout le monde, j\u0026rsquo;espère que tout va bien.\nL\u0026rsquo;un des principaux défis de la gestion des données provient de la massive quantité de données que votre organisation génère très probablement en permanence. Avoir la capacité de réagir rapidement et avec précision devient un élément différentiel parmi les concurrents.\nDe plus en plus d\u0026rsquo;entreprises prennent conscience de la nécessité de gérer les données avec sagesse.\nElles cherchent des moyens de tirer le meilleur parti de leurs informations.",
+  "keywords": [
+    "Data Warehouse", "Best Practices"
+  ],
+  "articleBody": "Salut tout le monde, j’espère que tout va bien.\nL’un des principaux défis de la gestion des données provient de la massive quantité de données que votre organisation génère très probablement en permanence. Avoir la capacité de réagir rapidement et avec précision devient un élément différentiel parmi les concurrents.\nDe plus en plus d’entreprises prennent conscience de la nécessité de gérer les données avec sagesse.\nElles cherchent des moyens de tirer le meilleur parti de leurs informations. Et c’est probablement là qu’elles entendent parler pour la première fois des entrepôts de données.\nJe souhaite présenter les entrepôts de données et leurs composants dans cet article.\nPour commencer, vous aurez un aperçu de ce qu’est un entrepôt de données. Ensuite, nous passerons en revue certaines considérations que je trouve obligatoires lors de la construction d’un entrepôt de données.\nPour conclure, je ferai un rapide récapitulatif, puis je vous ferai part de quelques autres préoccupations et éclaircissements. Les bases de l’entreposage de données\nLes bases de données des entrepôts de données (DW en abrégé) constituent un système d’aide à la décision. Une fois que l’on a compris comment elles peuvent faciliter l’analyse des données historiques, on comprend aisément pourquoi on les appelle des entrepôts.\nComme son nom l’indique, ce système d’aide à la décision facilite le processus décisionnel en utilisant les données disponibles au sein de l’entreprise.\nDW est le résultat de la résolution de questions autour de sujets spécifiques.\nSon approche est différente de celle des applications opérationnelles typiques, telles que les systèmes de facturation ou de ressources humaines. Ces derniers se concentrent sur les besoins opérationnels tels que la rémunération et l’allocation des ressources, par exemple.\nEt en raison des caractéristiques particulières des systèmes DW, comme le fait d’être sensibles au temps et de ne pas disposer d’informations détaillées comme les numéros de téléphone, ils ne constituent pas une bonne option pour les rapports opérationnels. Rester en sécurité pendant la mise en œuvre de l’entrepôt de données\nJe ne saurais trop insister sur l’importance de disposer d’une politique de sécurité solide pour chaque phase du déploiement de votre entrepôt de données.\nEn termes simples, plus vous autorisez vos utilisateurs à se rapprocher des systèmes sources afin qu’ils puissent explorer vos données, plus ils pourraient potentiellement accéder à des données sans les autorisations correctes. Et personne ne souhaite une fuite de données.\nEn plus de vos politiques existantes, votre entrepôt de données doit répondre à des demandes différentes.\nLes bases de données DW peuvent résoudre des tâches critiques d’aide à la décision ; cependant, dans certains cas, le seul endroit où ces informations existent est au sein des données sensibles. Dans le meilleur style “pour vos yeux seulement”, il est parfois bon de restreindre ceux qui n’ont pas vraiment besoin d’accès. Le plaisir de l’entrepôt de données commence\nMaintenant que nous avons couvert nos bases en termes de ce qu’est un entrepôt de données, il est temps pour nous de définir qui seront ses utilisateurs et quels sujets il couvrira.\nC’est toujours un bon point de départ d’informer les parties prenantes du département dès les premières étapes du développement de votre entrepôt de données. Après tout, ils sauront qui est responsable ou intéressé par les indicateurs clés de performance, ou KPI en abrégé.\nN’oubliez pas qu’ils peuvent vous aider à résoudre des problèmes tels que “Où puis-je trouver des données qui pourraient m’aider ? “ ou “Qu’allons-nous utiliser pour les analyser ? “.\nQuelle technique de construction de DW devez-vous utiliser ? Il est également important de choisir la meilleure technique à suivre pour construire votre DW.\nLa plus connue est l’approche Kimball. (Je décrirai ses phases un peu plus loin dans cet article.) Ralph Kimball est considéré comme le père du data warehousing. La méthode Inmon est l’approche la plus ancienne, mais c’est un choix solide. Je tiens également à mentionner la modélisation de la voûte de données et CDP/DMP si vous êtes impliqué dans AdTech. J’aime toujours préciser que même si certaines caractéristiques d’une plateforme de données clients (CDP) la font ressembler à un entrepôt de données, ce n’est pas le cas.\nUne CDP peut toutefois servir de lac de données pour votre lac de données. Pour en savoir plus, consultez le guide CDP.\nDonner des couches à votre entrepôt de données\nJusqu’à présent, nous avons clarifié qui est votre équipe et quels sont vos besoins. Maintenant, voyons les couches (ou phases) sur la façon dont vos données circulent de vos applications vers votre entrepôt de données.\nVotre couche OLTP\nÀ ce stade, vous devez commencer par définir ce que vous allez utiliser comme source de données pour créer vos tableaux de bord.\nL’objectif est de construire votre couche de traitement des transactions en ligne, également appelée zone de transit, zone d’atterrissage ou par son acronyme OLTP. C’est là que vous définissez le plan de rétention de ces données.\nGardez à l’esprit que cette étape ne doit pas comporter de transformation de données, car les données restent disponibles si un rechargement est nécessaire lors des phases suivantes.\nCette zone vous permet de réaliser des processus simultanés pendant que les applications sources sont en cours d’exécution. C’est une source de données pour la couche suivante, la zone ODS.\nVotre couche ODS\nOK, disons que vous avez configuré vos sources de données et pompé des données dans votre zone de transit. Super ! Mais vous aurez besoin de donner un certain sens à vos systèmes disparates.\nPensez-y : Comment pouvez-vous certifier que les tables contiennent le même type d’informations ? Devrez-vous disposer d’un format conforme pour vos données ?\nC’est ici que la couche magasin de données opérationnelles (ou ODS) est utile.\nL’ODS met en ordre toutes vos sources de données dans le bon format. Il supprime également les données dupliquées.\nEn d’autres termes, il vous aide à développer la base de données opérationnelle la meilleure et la plus unifiée possible.\nModèles de cubes et granularité des données\nUne fois que vos sources sont occupées à créer des données utiles pour vos analystes, vous êtes prêt à créer vos modèles de cubes. C’est là que vous utiliserez des techniques telles que les requêtes iceberg et les requêtes fenêtre.\nÀ ce stade, vous avez largement dépassé la nature opérationnelle de vos données.\nCes techniques transforment vos données, vous permettant, à vous et aux membres de votre équipe, d’atteindre différents niveaux d’analyse. Ce que nous appelons la granularité des données vous aide à obtenir des informations plus spécifiques, plus ciblées et plus utiles à partir du même ensemble de données.\nImaginons que vous souhaitiez rechercher l’adresse d’un détaillant. Cette information est d’une haute granularité. En d’autres termes, elle a une valeur spécifique à rechercher (l’adresse du magasin).\nMais que se passe-t-il si vous voulez savoir combien de magasins se trouvent dans un comté spécifique ?\nDans ce cas, vous aurez des données de faible granularité, et vous devrez compter les adresses pour obtenir ce résultat.\nPour en savoir plus sur la granularité des données, consultez ce lien. Mise en place de l’infrastructure, dans le cloud ou sur site\nL’idée de la business intelligence vient d’une époque plus simple concernant les structures de données et l’intérêt d’extraire des informations des données.\nLa plupart des sources de données provenaient de formats structurés de bases de données relationnelles ou de formats semi-structurés de services Web (comme le format XML des bons vieux services SOA ou JSON).\nPar le passé, les gens devaient s’en remettre à des expressions très régulières pour extraire les données d’un seul champ ; il était donc logique d’investir dans de gros canons pour stocker vos données, car elles étaient censées augmenter de manière exponentielle avec le temps.\nCe que l’on appelle le cloud public a présenté une option attrayante, éliminant la nécessité de ces investissements coûteux.\nLes fournisseurs de cloud, notamment AWS et Azure, acquièrent davantage d’évangélistes sur leurs solutions de stockage de données.\nL’approche sans serveur est passionnante et permet de gagner du temps. Cependant, la configuration et la gestion de ces nouveaux services pourraient être lourdes pour votre environnement existant.\nC’est pourquoi je vous conseille d’y aller doucement avec la migration et la reconstruction de vos pipelines existants vers de nouveaux services. Choisissez plutôt des services moins critiques pour commencer, puis passez au cloud. (Certains appellent cela l’approche hybride.) Ce que nous avons couvert jusqu’à présent sur l’entreposage de données\nTrouver la bonne conception pour votre entrepôt de données est un défi en soi.\nMême pour l’architecte de données le plus expérimenté, le fait de se concentrer sur des exigences peu claires et de découvrir des exigences plus complexes au cours du développement fait d’un tableau de bord simple un rêve lointain.\nPar conséquent, examinons les préoccupations que vous devez avoir à l’esprit. Autres approches que Kimball\nDans cet article, je me suis concentré sur l’approche Kimball car c’est la plus utilisée. Mais que faire si vous êtes intéressé par des techniques différentes ?\nVous pouvez étudier un autre cadre ancien et fiable que nous avons mentionné précédemment - l’approche Inmon.\nUne autre approche qui mérite d’être découverte est le coffre-fort de données. Il s’agit d’une excellente option pour les schémas à évolution rapide. C’est également ma méthode préférée pour la modélisation des données en continu.\nTrouver les bons outils pour votre entrepôt de données\nIl est parfois difficile de trouver les bons outils pour gérer toutes vos sources de données et leurs entrées de pipeline. En partie parce que les techniques d’entrepôt de données sont agnostiques sur le plan technologique par nature. Mais avec une bonne base sur la nature de vos données, vous serez en meilleure position pour comprendre vos données.\nA+ !\n",
+  "wordCount" : "1605",
+  "inLanguage": "fr",
+  "image":"https://images.unsplash.com/photo-1661956602153-23384936a1d3?ixlib=rb-4.0.3\u0026ixid=MnwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8\u0026auto=format\u0026fit=crop\u0026w=1170\u0026q=80","datePublished": "2021-09-19T00:00:00Z",
+  "dateModified": "2021-09-19T00:00:00Z",
+  "author":{
+    "@type": "Person",
+    "name": "Daniel Paes"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://www.dawrlog.com/fr/articles/1/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Logistique Dataware",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://www.dawrlog.com/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://www.dawrlog.com/fr/" accesskey="h" title="Logistique Dataware (Alt + H)">Logistique Dataware</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+                <ul class="lang-switch"><li>|</li>
+                    <li>
+                        <a href="https://www.dawrlog.com/" title="English"
+                            aria-label=":us:">🇺🇸</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://www.dawrlog.com/fr/apropos" title="À Propos">
+                    <span>À Propos</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://www.dawrlog.com/fr/articles/" title="Articles">
+                    <span>Articles</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://calendly.com/dawrlog" title="Contactez-nous">
+                    <span>Contactez-nous</span>&nbsp;
+                    <svg fill="none" shape-rendering="geometricPrecision" stroke="currentColor" stroke-linecap="round"
+                        stroke-linejoin="round" stroke-width="2.5" viewBox="0 0 24 24" height="12" width="12">
+                        <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"></path>
+                        <path d="M15 3h6v6"></path>
+                        <path d="M10 14L21 3"></path>
+                    </svg>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    <div class="breadcrumbs"><a href="https://www.dawrlog.com/fr/">Accueil</a>&nbsp;»&nbsp;<a href="https://www.dawrlog.com/fr/articles/">Articles</a></div>
+    <h1 class="post-title">
+      Les défis pour l&#39;architecture d&#39;un Data Warehouse.
+    </h1>
+    <div class="post-meta"><span title='2021-09-19 00:00:00 +0000 UTC'>septembre 19, 2021</span>&nbsp;·&nbsp;8 min&nbsp;·&nbsp;Daniel Paes
+
+</div>
+  </header> 
+<figure class="entry-cover"><img loading="lazy" src="https://images.unsplash.com/photo-1661956602153-23384936a1d3?ixlib=rb-4.0.3&amp;ixid=MnwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;auto=format&amp;fit=crop&amp;w=1170&amp;q=80" alt="">
+        
+</figure><div class="toc">
+    <details >
+        <summary accesskey="c" title="(Alt + C)">
+            <span class="details">Table des matières</span>
+        </summary>
+
+        <div class="inner"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#h2les-bases-de-lentreposage-de-donnéesh2br-"><h2>Les bases de l&rsquo;entreposage de données</h2><br /></a></li>
+    <li><a href="#h2rester-en-sécurité-pendant-la-mise-en-œuvre-de-lentrepôt-de-donnéesh2br-"><h2>Rester en sécurité pendant la mise en œuvre de l&rsquo;entrepôt de données</h2><br /></a></li>
+    <li><a href="#h2le-plaisir-de-lentrepôt-de-données-commenceh2br-"><h2>Le plaisir de l&rsquo;entrepôt de données commence</h2><br /></a></li>
+    <li><a href="#h2quelle-technique-de-construction-de-dw-devez-vous-utiliser--h2br-"><h2>Quelle technique de construction de DW devez-vous utiliser ? </h2><br /></a></li>
+    <li><a href="#h2donner-des-couches-à-votre-entrepôt-de-donnéesh2br-"><h2>Donner des couches à votre entrepôt de données</h2><br /></a>
+      <ul>
+        <li><a href="#h3votre-couche-oltph3br-"><h3>Votre couche OLTP</h3><br /></a></li>
+        <li><a href="#h3votre-couche-odsh3br-"><h3>Votre couche ODS</h3><br /></a></li>
+        <li><a href="#h3modèles-de-cubes-et-granularité-des-donnéesh3br-"><h3>Modèles de cubes et granularité des données</h3><br /></a></li>
+      </ul>
+    </li>
+    <li><a href="#h2mise-en-place-de-linfrastructure-dans-le-cloud-ou-sur-siteh2br-"><h2>Mise en place de l&rsquo;infrastructure, dans le cloud ou sur site</h2><br /></a></li>
+    <li><a href="#h2ce-que-nous-avons-couvert-jusquà-présent-sur-lentreposage-de-donnéesh2br-"><h2>Ce que nous avons couvert jusqu&rsquo;à présent sur l&rsquo;entreposage de données</h2><br /></a>
+      <ul>
+        <li><a href="#h3autres-approches-que-kimballh3br-"><h3>Autres approches que Kimball</h3><br /></a></li>
+        <li><a href="#h3trouver-les-bons-outils-pour-votre-entrepôt-de-donnéesh3br-"><h3>Trouver les bons outils pour votre entrepôt de données</h3><br /></a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+        </div>
+    </details>
+</div>
+
+  <div class="post-content"><p>Salut tout le monde, j&rsquo;espère que tout va bien.</p>
+<p>L&rsquo;un des principaux défis de la gestion des données provient de la <strong>massive quantité de données</strong> que votre organisation génère très probablement en permanence. Avoir la capacité de réagir rapidement et avec précision devient un élément différentiel parmi les concurrents.</p>
+<p>De plus en plus d&rsquo;entreprises prennent conscience de la nécessité de gérer les données avec sagesse.</p>
+<p>Elles cherchent des moyens de tirer le meilleur parti de leurs informations. Et c&rsquo;est probablement là qu&rsquo;elles entendent parler pour la première fois des <a href="https://en.wikipedia.org/wiki/Data_warehouse">entrepôts de données</a>.</p>
+<p>Je souhaite présenter les entrepôts de données et leurs composants dans cet article.</p>
+<p>Pour commencer, vous aurez un aperçu de ce qu&rsquo;est un entrepôt de données. Ensuite, nous passerons en revue certaines considérations que je trouve obligatoires lors de la construction d&rsquo;un entrepôt de données.</p>
+<p>Pour conclure, je ferai un rapide récapitulatif, puis je vous ferai part de quelques autres préoccupations et éclaircissements.
+<br><br /></p>
+<h2 id="h2les-bases-de-lentreposage-de-donnéesh2br-"><h2>Les bases de l&rsquo;entreposage de données</h2><br /><a hidden class="anchor" aria-hidden="true" href="#h2les-bases-de-lentreposage-de-donnéesh2br-">#</a></h2>
+<p>Les bases de données des entrepôts de données (DW en abrégé) constituent un <a href="https://www.investopedia.com/terms/d/decision-support-system.asp">système d&rsquo;aide à la décision</a>. Une fois que l&rsquo;on a compris comment elles peuvent faciliter l&rsquo;analyse des données historiques, on comprend aisément pourquoi on les appelle des entrepôts.</p>
+<p>Comme son nom l&rsquo;indique, ce système d&rsquo;aide à la décision facilite le processus décisionnel en utilisant les données disponibles au sein de l&rsquo;entreprise.</p>
+<p><em><strong>DW est le résultat de la résolution de questions autour de sujets spécifiques.</strong></em></p>
+<p>Son approche est différente de celle des applications opérationnelles typiques, telles que les systèmes de facturation ou de ressources humaines. Ces derniers se concentrent sur les besoins opérationnels tels que la rémunération et l&rsquo;allocation des ressources, par exemple.</p>
+<p>Et en raison des caractéristiques particulières des systèmes DW, comme le fait d&rsquo;être sensibles au temps et de ne pas disposer d&rsquo;informations détaillées comme les numéros de téléphone, ils ne constituent pas une bonne option pour les rapports opérationnels.
+<br/><br /></p>
+<h2 id="h2rester-en-sécurité-pendant-la-mise-en-œuvre-de-lentrepôt-de-donnéesh2br-"><h2>Rester en sécurité pendant la mise en œuvre de l&rsquo;entrepôt de données</h2><br /><a hidden class="anchor" aria-hidden="true" href="#h2rester-en-sécurité-pendant-la-mise-en-œuvre-de-lentrepôt-de-donnéesh2br-">#</a></h2>
+<p>Je ne saurais trop insister sur l&rsquo;importance de disposer d&rsquo;une <strong>politique de sécurité solide pour chaque phase</strong> du déploiement de votre entrepôt de données.</p>
+<p>En termes simples, plus vous autorisez vos utilisateurs à se rapprocher des systèmes sources afin qu&rsquo;ils puissent explorer vos données, plus ils pourraient potentiellement accéder à des données sans les autorisations correctes. Et personne ne souhaite une <strong>fuite de données</strong>.</p>
+<p>En plus de vos politiques existantes, votre entrepôt de données doit répondre à des demandes différentes.</p>
+<p>Les bases de données DW peuvent résoudre des tâches critiques d&rsquo;aide à la décision ; cependant, dans certains cas, le seul endroit où ces informations existent est au sein des données sensibles. Dans le meilleur style &ldquo;pour vos yeux seulement&rdquo;, il est parfois bon de restreindre ceux qui <strong>n&rsquo;ont pas vraiment besoin d&rsquo;accès</strong>.
+<br /></p>
+<h2 id="h2le-plaisir-de-lentrepôt-de-données-commenceh2br-"><h2>Le plaisir de l&rsquo;entrepôt de données commence</h2><br /><a hidden class="anchor" aria-hidden="true" href="#h2le-plaisir-de-lentrepôt-de-données-commenceh2br-">#</a></h2>
+<p>Maintenant que nous avons couvert nos bases en termes de ce qu&rsquo;est un entrepôt de données, il est temps pour nous de définir qui seront ses utilisateurs et quels sujets il couvrira.</p>
+<p>C&rsquo;est toujours un bon point de départ d&rsquo;informer les parties prenantes du département dès les premières étapes du développement de votre entrepôt de données. Après tout, ils sauront qui est responsable ou intéressé par les <a href="https://kpi.org/KPI-Basics">indicateurs clés de performance</a>, ou KPI en abrégé.</p>
+<p>N&rsquo;oubliez pas qu&rsquo;ils peuvent vous aider à résoudre des problèmes tels que <strong>&ldquo;Où puis-je trouver des données qui pourraient m&rsquo;aider ? &ldquo;</strong> ou <strong>&ldquo;Qu&rsquo;allons-nous utiliser pour les analyser ? &ldquo;</strong>.</p>
+<h2 id="h2quelle-technique-de-construction-de-dw-devez-vous-utiliser--h2br-"><h2>Quelle technique de construction de DW devez-vous utiliser ? </h2><br /><a hidden class="anchor" aria-hidden="true" href="#h2quelle-technique-de-construction-de-dw-devez-vous-utiliser--h2br-">#</a></h2>
+<p>Il est également important de choisir la meilleure technique à suivre pour construire votre DW.</p>
+<ul>
+<li>La plus connue est l&rsquo;<a href="https://www.sqlservercentral.com/blogs/the-kimball-approach">approche Kimball</a>. (Je décrirai ses phases un peu plus loin dans cet article.) Ralph Kimball est considéré comme le père du data warehousing.</li>
+<li>La <a href="https://medium.com/cloudzone/inmon-vs-kimball-the-great-data-warehousing-debate-78c57f0b5e0e#:~:text=La%20Inmon%20approach%20est%20r%C3%A9f%C3%A9renc%C3%A9e,finance%2C%20comptabilit%C3%A9%2C%20HR%20etc.">méthode Inmon</a> est l&rsquo;approche la plus ancienne, mais c&rsquo;est un choix solide.</li>
+<li>Je tiens également à mentionner <a href="https://en.wikipedia.org/wiki/Data_vault_modeling">la modélisation de la voûte de données</a> et <a href="https://www.cmswire.com/customer-experience/cdp-vs-dmp-which-is-right-for-your-business/">CDP/DMP</a> si vous êtes impliqué dans <a href="https://www.forbes.com/sites/forbestechcouncil/2021/05/24/tectonic-shifts-in-adtech-spotlight-the-importance-of-first-party-consumer-data/?sh=1404a2091860">AdTech</a>.</li>
+</ul>
+<p>J&rsquo;aime toujours préciser que même si certaines caractéristiques d&rsquo;une plateforme de données clients (CDP) la font ressembler à un entrepôt de données, ce n&rsquo;est pas le cas.</p>
+<p>Une CDP peut toutefois servir de <a href="https://en.wikipedia.org/wiki/Data_lake">lac de données</a> pour votre <a href="https://databricks.com/blog/2020/01/30/what-is-a-data-lakehouse.html">lac de données</a>. Pour en savoir plus, consultez le <a href="https://exponea.com/blog/customer-data-platform/">guide CDP</a>.</p>
+<h2 id="h2donner-des-couches-à-votre-entrepôt-de-donnéesh2br-"><h2>Donner des couches à votre entrepôt de données</h2><br /><a hidden class="anchor" aria-hidden="true" href="#h2donner-des-couches-à-votre-entrepôt-de-donnéesh2br-">#</a></h2>
+<p>Jusqu&rsquo;à présent, nous avons clarifié qui est votre équipe et quels sont vos besoins. Maintenant, voyons les couches (ou phases) sur la façon dont vos données circulent de vos applications vers votre entrepôt de données.</p>
+<h3 id="h3votre-couche-oltph3br-"><h3>Votre couche OLTP</h3><br /><a hidden class="anchor" aria-hidden="true" href="#h3votre-couche-oltph3br-">#</a></h3>
+<p>À ce stade, vous devez commencer par définir ce que vous allez utiliser comme source de données pour créer vos tableaux de bord.</p>
+<p>L&rsquo;objectif est de construire votre <a href="https://en.wikipedia.org/wiki/Online_transaction_processing">couche de traitement des transactions en ligne</a>, également appelée zone de transit, zone d&rsquo;atterrissage ou par son acronyme OLTP. C&rsquo;est là que vous définissez le plan de rétention de ces données.</p>
+<p>Gardez à l&rsquo;esprit que cette étape ne doit pas comporter de transformation de données, car les données restent disponibles si un rechargement est nécessaire lors des phases suivantes.</p>
+<p>Cette zone vous permet de réaliser des processus simultanés pendant que les applications sources sont en cours d&rsquo;exécution. C&rsquo;est une source de données pour la couche suivante, la zone ODS.</p>
+<h3 id="h3votre-couche-odsh3br-"><h3>Votre couche ODS</h3><br /><a hidden class="anchor" aria-hidden="true" href="#h3votre-couche-odsh3br-">#</a></h3>
+<p>OK, disons que vous avez configuré vos sources de données et pompé des données dans votre zone de transit. Super ! Mais vous aurez besoin de donner un certain sens à vos systèmes disparates.</p>
+<p>Pensez-y : Comment pouvez-vous certifier que les tables contiennent le même type d&rsquo;informations ? Devrez-vous disposer d&rsquo;un format conforme pour vos données ?</p>
+<p>C&rsquo;est ici que la couche <a href="https://en.wikipedia.org/wiki/Operational_data_store">magasin de données opérationnelles</a> (ou ODS) est utile.</p>
+<p>L&rsquo;ODS met en ordre toutes vos sources de données dans le bon format. Il supprime également les données dupliquées.</p>
+<p>En d&rsquo;autres termes, il vous aide à développer la base de données opérationnelle la meilleure et la plus unifiée possible.</p>
+<h3 id="h3modèles-de-cubes-et-granularité-des-donnéesh3br-"><h3>Modèles de cubes et granularité des données</h3><br /><a hidden class="anchor" aria-hidden="true" href="#h3modèles-de-cubes-et-granularité-des-donnéesh3br-">#</a></h3>
+<p>Une fois que vos sources sont occupées à créer des données utiles pour vos analystes, vous êtes prêt à créer vos <a href="https://binaryterms.com/data-cube.html">modèles de cubes</a>. C&rsquo;est là que vous utiliserez des techniques telles que les <a href="https://www.quora.com/What-is-an-iceberg-query">requêtes iceberg</a> et les <a href="https://observablehq.com/@uwdata/working-with-window-queries">requêtes fenêtre</a>.</p>
+<p>À ce stade, vous avez largement dépassé la nature opérationnelle de vos données.</p>
+<p>Ces techniques transforment vos données, vous permettant, à vous et aux membres de votre équipe, d&rsquo;atteindre différents niveaux d&rsquo;analyse. Ce que nous appelons la <a href="https://www.techopedia.com/definition/31722/granular-data">granularité des données</a> vous aide à obtenir des informations plus spécifiques, plus ciblées et plus utiles à partir du même ensemble de données.</p>
+<p>Imaginons que vous souhaitiez rechercher l&rsquo;adresse d&rsquo;un détaillant. Cette information est d&rsquo;une <strong>haute granularité</strong>. En d&rsquo;autres termes, elle a une valeur spécifique à rechercher (l&rsquo;adresse du magasin).</p>
+<p>Mais que se passe-t-il si vous voulez savoir combien de magasins se trouvent dans un comté spécifique ?</p>
+<p>Dans ce cas, vous aurez des données de <strong>faible granularité</strong>, et vous devrez compter les adresses pour obtenir ce résultat.</p>
+<p>Pour en savoir plus sur la granularité des données, consultez ce <a href="http://en.dwhwiki.info/glossary/g/granularity">lien</a>.
+<br /></p>
+<h2 id="h2mise-en-place-de-linfrastructure-dans-le-cloud-ou-sur-siteh2br-"><h2>Mise en place de l&rsquo;infrastructure, dans le cloud ou sur site</h2><br /><a hidden class="anchor" aria-hidden="true" href="#h2mise-en-place-de-linfrastructure-dans-le-cloud-ou-sur-siteh2br-">#</a></h2>
+<p>L&rsquo;idée de la business intelligence vient d&rsquo;une époque plus simple concernant les structures de données et l&rsquo;intérêt d&rsquo;extraire des informations des données.</p>
+<p>La plupart des sources de données provenaient de formats <strong>structurés</strong> de bases de données relationnelles ou de formats <strong>semi-structurés</strong> de services Web (comme le format XML des bons vieux services SOA ou JSON).</p>
+<p>Par le passé, les gens devaient s&rsquo;en remettre à des expressions très régulières pour extraire les données d&rsquo;un seul champ ; il était donc logique d&rsquo;investir dans de gros canons pour stocker vos données, car elles étaient censées augmenter de manière exponentielle avec le temps.</p>
+<p>Ce que l&rsquo;on appelle le <strong>cloud public</strong> a présenté une option attrayante, éliminant la nécessité de ces investissements coûteux.</p>
+<p>Les fournisseurs de cloud, notamment AWS et Azure, acquièrent davantage d&rsquo;évangélistes sur leurs solutions de stockage de données.</p>
+<p>L&rsquo;approche sans serveur est passionnante et permet de gagner du temps. Cependant, la configuration et la gestion de ces nouveaux services pourraient être lourdes pour votre environnement existant.</p>
+<p>C&rsquo;est pourquoi je vous conseille d&rsquo;y aller doucement avec la migration et la reconstruction de vos pipelines existants vers de nouveaux services. Choisissez plutôt des services moins critiques pour commencer, puis passez au cloud. (Certains appellent cela l&rsquo;<a href="https://www.datanami.com/2020/08/07/the-best-of-both-worlds-why-a-hybrid-cloud-approach-makes-sense-for-data-backup-and-recovery/">approche hybride</a>.)
+<br /></p>
+<h2 id="h2ce-que-nous-avons-couvert-jusquà-présent-sur-lentreposage-de-donnéesh2br-"><h2>Ce que nous avons couvert jusqu&rsquo;à présent sur l&rsquo;entreposage de données</h2><br /><a hidden class="anchor" aria-hidden="true" href="#h2ce-que-nous-avons-couvert-jusquà-présent-sur-lentreposage-de-donnéesh2br-">#</a></h2>
+<p>Trouver la bonne conception pour votre entrepôt de données est un défi en soi.</p>
+<p>Même pour l&rsquo;architecte de données le plus expérimenté, le fait de se concentrer sur des exigences peu claires et de découvrir des exigences plus complexes au cours du développement fait d&rsquo;un tableau de bord simple un rêve lointain.</p>
+<p>Par conséquent, examinons les préoccupations que vous devez avoir à l&rsquo;esprit.
+<br /></p>
+<h3 id="h3autres-approches-que-kimballh3br-"><h3>Autres approches que Kimball</h3><br /><a hidden class="anchor" aria-hidden="true" href="#h3autres-approches-que-kimballh3br-">#</a></h3>
+<p>Dans cet article, je me suis concentré sur l&rsquo;approche Kimball car c&rsquo;est la plus utilisée. Mais que faire si vous êtes intéressé par des techniques différentes ?</p>
+<p>Vous pouvez étudier un autre cadre ancien et fiable que nous avons mentionné précédemment - l&rsquo;<a href="https://www.zentut.com/data-warehouse/bill-inmon-data-warehouse/">approche Inmon</a>.</p>
+<p>Une autre approche qui mérite d&rsquo;être découverte est le coffre-fort de données. Il s&rsquo;agit d&rsquo;une excellente option pour les <strong>schémas à évolution rapide</strong>. C&rsquo;est également ma méthode préférée pour la modélisation des données en continu.</p>
+<h3 id="h3trouver-les-bons-outils-pour-votre-entrepôt-de-donnéesh3br-"><h3>Trouver les bons outils pour votre entrepôt de données</h3><br /><a hidden class="anchor" aria-hidden="true" href="#h3trouver-les-bons-outils-pour-votre-entrepôt-de-donnéesh3br-">#</a></h3>
+<p>Il est parfois difficile de trouver les bons outils pour gérer toutes vos sources de données et leurs entrées de pipeline. En partie parce que les techniques d&rsquo;entrepôt de données sont agnostiques sur le plan technologique par nature. Mais avec une bonne base sur la nature de vos données, vous serez en meilleure position pour comprendre vos données.</p>
+<p>A+ !</p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+<nav class="paginav">
+  <a class="prev" href="https://www.dawrlog.com/fr/articles/14/">
+    <span class="title">« Page précédente</span>
+    <br>
+    <span>Qu&#39;est-ce que ce le cycle de vie des identitées et provisionement d&#39;access?</span>
+  </a>
+  <a class="next" href="https://www.dawrlog.com/fr/articles/7/">
+    <span class="title">Page suivante »</span>
+    <br>
+    <span>Comment fouiller vos données utilisant Power BI.</span>
+  </a>
+</nav>
+
+
+<div class="share-buttons">
+    <a target="_blank" rel="noopener noreferrer" aria-label="share Les défis pour l&#39;architecture d&#39;un Data Warehouse. on twitter"
+        href="https://twitter.com/intent/tweet/?text=Les%20d%c3%a9fis%20pour%20l%27architecture%20d%27un%20Data%20Warehouse.&amp;url=https%3a%2f%2fwww.dawrlog.com%2ffr%2farticles%2f1%2f&amp;hashtags=DataWarehouse%2cBestPractices">
+        <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+            <path
+                d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-253.927,424.544c135.939,0 210.268,-112.643 210.268,-210.268c0,-3.218 0,-6.437 -0.153,-9.502c14.406,-10.421 26.973,-23.448 36.935,-38.314c-13.18,5.824 -27.433,9.809 -42.452,11.648c15.326,-9.196 26.973,-23.602 32.49,-40.92c-14.252,8.429 -30.038,14.56 -46.896,17.931c-13.487,-14.406 -32.644,-23.295 -53.946,-23.295c-40.767,0 -73.87,33.104 -73.87,73.87c0,5.824 0.613,11.494 1.992,16.858c-61.456,-3.065 -115.862,-32.49 -152.337,-77.241c-6.284,10.881 -9.962,23.601 -9.962,37.088c0,25.594 13.027,48.276 32.95,61.456c-12.107,-0.307 -23.448,-3.678 -33.41,-9.196l0,0.92c0,35.862 25.441,65.594 59.311,72.49c-6.13,1.686 -12.72,2.606 -19.464,2.606c-4.751,0 -9.348,-0.46 -13.946,-1.38c9.349,29.426 36.628,50.728 68.965,51.341c-25.287,19.771 -57.164,31.571 -91.8,31.571c-5.977,0 -11.801,-0.306 -17.625,-1.073c32.337,21.15 71.264,33.41 112.95,33.41Z" />
+        </svg>
+    </a>
+    <a target="_blank" rel="noopener noreferrer" aria-label="share Les défis pour l&#39;architecture d&#39;un Data Warehouse. on linkedin"
+        href="https://www.linkedin.com/shareArticle?mini=true&amp;url=https%3a%2f%2fwww.dawrlog.com%2ffr%2farticles%2f1%2f&amp;title=Les%20d%c3%a9fis%20pour%20l%27architecture%20d%27un%20Data%20Warehouse.&amp;summary=Les%20d%c3%a9fis%20pour%20l%27architecture%20d%27un%20Data%20Warehouse.&amp;source=https%3a%2f%2fwww.dawrlog.com%2ffr%2farticles%2f1%2f">
+        <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+            <path
+                d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-288.985,423.278l0,-225.717l-75.04,0l0,225.717l75.04,0Zm270.539,0l0,-129.439c0,-69.333 -37.018,-101.586 -86.381,-101.586c-39.804,0 -57.634,21.891 -67.617,37.266l0,-31.958l-75.021,0c0.995,21.181 0,225.717 0,225.717l75.02,0l0,-126.056c0,-6.748 0.486,-13.492 2.474,-18.315c5.414,-13.475 17.767,-27.434 38.494,-27.434c27.135,0 38.007,20.707 38.007,51.037l0,120.768l75.024,0Zm-307.552,-334.556c-25.674,0 -42.448,16.879 -42.448,39.002c0,21.658 16.264,39.002 41.455,39.002l0.484,0c26.165,0 42.452,-17.344 42.452,-39.002c-0.485,-22.092 -16.241,-38.954 -41.943,-39.002Z" />
+        </svg>
+    </a>
+    <a target="_blank" rel="noopener noreferrer" aria-label="share Les défis pour l&#39;architecture d&#39;un Data Warehouse. on reddit"
+        href="https://reddit.com/submit?url=https%3a%2f%2fwww.dawrlog.com%2ffr%2farticles%2f1%2f&title=Les%20d%c3%a9fis%20pour%20l%27architecture%20d%27un%20Data%20Warehouse.">
+        <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+            <path
+                d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-3.446,265.638c0,-22.964 -18.616,-41.58 -41.58,-41.58c-11.211,0 -21.361,4.457 -28.841,11.666c-28.424,-20.508 -67.586,-33.757 -111.204,-35.278l18.941,-89.121l61.884,13.157c0.756,15.734 13.642,28.29 29.56,28.29c16.407,0 29.706,-13.299 29.706,-29.701c0,-16.403 -13.299,-29.702 -29.706,-29.702c-11.666,0 -21.657,6.792 -26.515,16.578l-69.105,-14.69c-1.922,-0.418 -3.939,-0.042 -5.585,1.036c-1.658,1.073 -2.811,2.761 -3.224,4.686l-21.152,99.438c-44.258,1.228 -84.046,14.494 -112.837,35.232c-7.468,-7.164 -17.589,-11.591 -28.757,-11.591c-22.965,0 -41.585,18.616 -41.585,41.58c0,16.896 10.095,31.41 24.568,37.918c-0.639,4.135 -0.99,8.328 -0.99,12.576c0,63.977 74.469,115.836 166.33,115.836c91.861,0 166.334,-51.859 166.334,-115.836c0,-4.218 -0.347,-8.387 -0.977,-12.493c14.564,-6.47 24.735,-21.034 24.735,-38.001Zm-119.474,108.193c-20.27,20.241 -59.115,21.816 -70.534,21.816c-11.428,0 -50.277,-1.575 -70.522,-21.82c-3.007,-3.008 -3.007,-7.882 0,-10.889c3.003,-2.999 7.882,-3.003 10.885,0c12.777,12.781 40.11,17.317 59.637,17.317c19.522,0 46.86,-4.536 59.657,-17.321c3.016,-2.999 7.886,-2.995 10.885,0.008c3.008,3.011 3.003,7.882 -0.008,10.889Zm-5.23,-48.781c-16.373,0 -29.701,-13.324 -29.701,-29.698c0,-16.381 13.328,-29.714 29.701,-29.714c16.378,0 29.706,13.333 29.706,29.714c0,16.374 -13.328,29.698 -29.706,29.698Zm-160.386,-29.702c0,-16.381 13.328,-29.71 29.714,-29.71c16.369,0 29.689,13.329 29.689,29.71c0,16.373 -13.32,29.693 -29.689,29.693c-16.386,0 -29.714,-13.32 -29.714,-29.693Z" />
+        </svg>
+    </a>
+    <a target="_blank" rel="noopener noreferrer" aria-label="share Les défis pour l&#39;architecture d&#39;un Data Warehouse. on facebook"
+        href="https://facebook.com/sharer/sharer.php?u=https%3a%2f%2fwww.dawrlog.com%2ffr%2farticles%2f1%2f">
+        <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+            <path
+                d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-106.468,0l0,-192.915l66.6,0l12.672,-82.621l-79.272,0l0,-53.617c0,-22.603 11.073,-44.636 46.58,-44.636l36.042,0l0,-70.34c0,0 -32.71,-5.582 -63.982,-5.582c-65.288,0 -107.96,39.569 -107.96,111.204l0,62.971l-72.573,0l0,82.621l72.573,0l0,192.915l-191.104,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Z" />
+        </svg>
+    </a>
+    <a target="_blank" rel="noopener noreferrer" aria-label="share Les défis pour l&#39;architecture d&#39;un Data Warehouse. on whatsapp"
+        href="https://api.whatsapp.com/send?text=Les%20d%c3%a9fis%20pour%20l%27architecture%20d%27un%20Data%20Warehouse.%20-%20https%3a%2f%2fwww.dawrlog.com%2ffr%2farticles%2f1%2f">
+        <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+            <path
+                d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-58.673,127.703c-33.842,-33.881 -78.847,-52.548 -126.798,-52.568c-98.799,0 -179.21,80.405 -179.249,179.234c-0.013,31.593 8.241,62.428 23.927,89.612l-25.429,92.884l95.021,-24.925c26.181,14.28 55.659,21.807 85.658,21.816l0.074,0c98.789,0 179.206,-80.413 179.247,-179.243c0.018,-47.895 -18.61,-92.93 -52.451,-126.81Zm-126.797,275.782l-0.06,0c-26.734,-0.01 -52.954,-7.193 -75.828,-20.767l-5.441,-3.229l-56.386,14.792l15.05,-54.977l-3.542,-5.637c-14.913,-23.72 -22.791,-51.136 -22.779,-79.287c0.033,-82.142 66.867,-148.971 149.046,-148.971c39.793,0.014 77.199,15.531 105.329,43.692c28.128,28.16 43.609,65.592 43.594,105.4c-0.034,82.149 -66.866,148.983 -148.983,148.984Zm81.721,-111.581c-4.479,-2.242 -26.499,-13.075 -30.604,-14.571c-4.105,-1.495 -7.091,-2.241 -10.077,2.241c-2.986,4.483 -11.569,14.572 -14.182,17.562c-2.612,2.988 -5.225,3.364 -9.703,1.12c-4.479,-2.241 -18.91,-6.97 -36.017,-22.23c-13.314,-11.876 -22.304,-26.542 -24.916,-31.026c-2.612,-4.484 -0.279,-6.908 1.963,-9.14c2.016,-2.007 4.48,-5.232 6.719,-7.847c2.24,-2.615 2.986,-4.484 4.479,-7.472c1.493,-2.99 0.747,-5.604 -0.374,-7.846c-1.119,-2.241 -10.077,-24.288 -13.809,-33.256c-3.635,-8.733 -7.327,-7.55 -10.077,-7.688c-2.609,-0.13 -5.598,-0.158 -8.583,-0.158c-2.986,0 -7.839,1.121 -11.944,5.604c-4.105,4.484 -15.675,15.32 -15.675,37.364c0,22.046 16.048,43.342 18.287,46.332c2.24,2.99 31.582,48.227 76.511,67.627c10.685,4.615 19.028,7.371 25.533,9.434c10.728,3.41 20.492,2.929 28.209,1.775c8.605,-1.285 26.499,-10.833 30.231,-21.295c3.732,-10.464 3.732,-19.431 2.612,-21.298c-1.119,-1.869 -4.105,-2.99 -8.583,-5.232Z" />
+        </svg>
+    </a>
+    <a target="_blank" rel="noopener noreferrer" aria-label="share Les défis pour l&#39;architecture d&#39;un Data Warehouse. on telegram"
+        href="https://telegram.me/share/url?text=Les%20d%c3%a9fis%20pour%20l%27architecture%20d%27un%20Data%20Warehouse.&amp;url=https%3a%2f%2fwww.dawrlog.com%2ffr%2farticles%2f1%2f">
+        <svg version="1.1" xml:space="preserve" viewBox="2 2 28 28" height="30px" width="30px" fill="currentColor">
+            <path
+                d="M26.49,29.86H5.5a3.37,3.37,0,0,1-2.47-1,3.35,3.35,0,0,1-1-2.47V5.48A3.36,3.36,0,0,1,3,3,3.37,3.37,0,0,1,5.5,2h21A3.38,3.38,0,0,1,29,3a3.36,3.36,0,0,1,1,2.46V26.37a3.35,3.35,0,0,1-1,2.47A3.38,3.38,0,0,1,26.49,29.86Zm-5.38-6.71a.79.79,0,0,0,.85-.66L24.73,9.24a.55.55,0,0,0-.18-.46.62.62,0,0,0-.41-.17q-.08,0-16.53,6.11a.59.59,0,0,0-.41.59.57.57,0,0,0,.43.52l4,1.24,1.61,4.83a.62.62,0,0,0,.63.43.56.56,0,0,0,.4-.17L16.54,20l4.09,3A.9.9,0,0,0,21.11,23.15ZM13.8,20.71l-1.21-4q8.72-5.55,8.78-5.55c.15,0,.23,0,.23.16a.18.18,0,0,1,0,.06s-2.51,2.3-7.52,6.8Z" />
+        </svg>
+    </a>
+</div>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+    <span>&copy; 2023 <a href="https://www.dawrlog.com/fr/">Logistique Dataware</a>; <br /> created with 🧡 on 🐧 machines running ☸️ pods.</span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a><script src='https://storage.ko-fi.com/cdn/scripts/overlay-widget.js'></script>
+<script>
+  kofiWidgetOverlay.draw('dawrlog', {
+    'type': 'floating-chat',
+    'floating-chat.donateButton.text': 'Tip jar',
+    'floating-chat.donateButton.background-color': '#794bc4',
+    'floating-chat.donateButton.text-color': '#fff'
+  });
+</script>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = 'Copier';
+
+        function copyingDone() {
+            copybutton.innerHTML = 'Copié !';
+            setTimeout(() => {
+                copybutton.innerHTML = 'Copier';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script>
+</body>
+
+</html>

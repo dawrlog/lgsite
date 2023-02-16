@@ -1,0 +1,249 @@
+baseURL: "https://dawrlog.com/" # if your site is in 'https', then make sure your base url isn't written using 'http' otherwise your sitemap would contain http (as opposeed to https) URLs. This would affect Google indexing of your URLs.
+title: Dataware Logistics
+paginate: 3
+theme: portfolio
+author: "Dataware Logistics"
+# languageCode: "en"
+# DefaultContentLanguage: "en"
+
+enableInlineShortcodes: true
+enableRobotsTXT: true
+buildDrafts: false
+buildFuture: false
+buildExpired: false
+enableEmoji: true
+pygmentsUseClasses: true
+googleAnalytics: 256402657
+
+minify:
+    disableXML: true
+    minifyOutput: true
+
+languages:
+    en:
+        contentDir: content/en
+        languageName: ":us:"
+        languageAltTitle: English
+        weight: 1
+        taxonomies:
+          category: categories
+          tag: tags
+          series: series
+        profileMode:
+            enabled: true
+            title: Dataware Logistics
+            imageUrl: "https://user-images.githubusercontent.com/78096758/217375370-5267a3b9-106d-4943-8f0c-e3a0a21281ea.svg"
+            imageTitle: Dawrlog Mascot  
+            imageWidth: 90
+            imageHeight: 90
+            subtitle: "|| 🛡️ Cloud Security || ☁️ Compute Optimization || \n\n || 🖥️ Data Migration || 📱 IoT Data Engineering ||
+                      <br /><br />
+                      <font align=center> We help you to onboard consiously technologies to make the most from your data,\n\n
+                      while empowering your company with new tools instead of turning them into a hostage of your systems. \n\n
+                      <br />
+                      Book a time for a tailored consultancy that fits your needs. And also, remember to check our latest post.
+                      <br />"                      
+            buttons:
+                - name: Contact
+                  url: https://calendly.com/dawrlog          
+        menu:
+            main:
+                - name: About
+                  url: about
+                  weight: 5
+                - name: Posts
+                  url: posts/
+                  weight: 10
+                - name: Contact
+                  url: https://calendly.com/dawrlog
+                  weight: 15
+
+
+    fr:
+        contentDir: content/fr
+        languageName: ":fr:"
+        languagedirection: fr
+        languageAltTitle: French
+        weight: 2
+        title: Logistique Dataware 
+        taxonomies:
+          category: FRcategories
+          tag: FRtags
+          series: FRseries
+        profileMode:
+            enabled: true
+            title: Logistique Dataware
+            imageUrl: "https://user-images.githubusercontent.com/78096758/217375370-5267a3b9-106d-4943-8f0c-e3a0a21281ea.svg"
+            imageTitle: Dawrlog Mascot  
+            imageWidth: 90
+            imageHeight: 90
+            subtitle: "|| 🛡️ Sécurité Cloud || ☁️ Optimisation de l'informatique || \n\n || 🖥️ Migration des données || 📱 Ingénierie des données de l'IdO ||
+                      <br /><br />
+                      <font align=center>Nous vous aidons à embarquer des technologies de pointe pour tirer le meilleur parti de vos données, tout en dotant votre entreprise de nouveaux outils \n\n
+                      au lieu de la transformer en otage de vos systèmes. </font> \n\n
+                      <br />
+                      Prenez rendez-vous pour une consultation sur mesure, adaptée à vos besoins. Et aussi, n'oubliez pas de consulter notre dernier article.
+                      <br />"                      
+            buttons:
+                - name: Contactez-nous
+                  url: https://calendly.com/dawrlog   
+        menu:
+            main:
+                - name: À Propos
+                  url: apropos
+                  weight: 5
+                - name: Articles
+                  url: articles/
+                  weight: 10
+                - name: Contactez-nous
+                  url: https://calendly.com/dawrlog
+                  weight: 15
+outputs:
+    home:
+        - HTML
+        # - RSS
+        - JSON
+
+params:
+    sidebarRecentLimit: 5
+    env: production # to enable google analytics, opengraph, twitter-cards and schema.
+    description: "Dataware Logistics"
+    author: Dataware Logistics
+    # author: ["Me", "You"] # multiple authors
+
+    defaultTheme: portfolio
+    # disableThemeToggle: true
+    ShowShareButtons: true
+    ShareButtons: ["linkedin", "facebook", "reddit", "twitter", "whatsapp", "telegram"] 
+    ShowReadingTime: true
+    # disableSpecial1stPost: true
+    displayFullLangName: true
+    ShowPostNavLinks: true
+    ShowBreadCrumbs: true
+    ShowCodeCopyButtons: true
+    ShowRssButtonInSectionTermList: true
+    ShowToc: true
+    comments: false
+    # images: ["/images/logo.png"]
+    profileMode:
+        enabled: false
+        title: Dataware Logistics
+        image: "https://user-images.githubusercontent.com/78096758/217375370-5267a3b9-106d-4943-8f0c-e3a0a21281ea.svg"
+        imageTitle: Dawrlog Mascot
+        imageWidth: 90
+        imageHeight: 90
+        buttons:
+            - name: Archives
+              url: archives
+            - name: Tags
+              url: tags
+
+    # homeInfoParams:
+    #     Title: "Dataware 
+    #             Logistics"
+    #     Content: >
+    #         Welcome to demo of hugo's theme PaperMod.
+
+    #         - **PaperMod** is a simple but fast and responsive theme with useful feature-set that enhances UX.
+
+    #         - Do give a 🌟 on Github !
+
+    #         - PaperMod is based on theme [Paper](https://github.com/nanxiaobei/hugo-paper).
+    imaging:
+      anchor: Smart
+      bgColor: '#ffffff'
+      hint: photo
+      quality: 75
+      resampleFilter: Box
+      
+    socialIcons:
+        - name: github
+          url: "https://github.com/dawrlog"
+        - name: linkedin
+          url: "https://www.linkedin.com/company/dawrlog/"
+        - name: youtube
+          url: "https://www.youtube.com/@dawrlog/"
+        - name: KoFi
+          url: "https://ko-fi.com/dawrlog"
+        - name: StackOverflow
+          url: "https://stackoverflow.com/users/21141861/dawrlog"
+        - name: Reddit
+          url: "https://www.reddit.com/u/dawrlog"   
+        - name: discord
+          url: "https://discord.gg/ydfbVwzs5t"                           
+        # - name: Rss
+        #   url: "index.xml"
+
+    # editPost:
+    #     URL: "https://github.com/adityatelange/hugo-PaperMod/tree/exampleSite/content"
+    #     Text: "Suggest Changes" # edit text
+    #     appendFilePath: true # to append file path to Edit link
+
+    # label:
+    #     text: ""
+    #     icon: "favicon.ico" 
+    #     # icon: "https://raw.githubusercontent.com/twitter/twemoji/master/assets/svg/1f317.svg" 
+    #     iconHeight: 35
+
+    analytics:
+        google:
+            SiteVerificationTag: "352529970"
+
+    assets:
+        disableHLJS: true
+        disableFingerprinting: true
+        favicon: "favicon.ico"
+        favicon16x16: "favicon-16x16.png"
+        favicon32x32: "favicon-32x32.png"
+        apple_touch_icon: "apple-touch-icon.png"
+        safari_pinned_tab: "apple-touch-icon.svg"
+
+    # cover:
+    #     hidden: true # hide everywhere but not in structured data
+    #     hiddenInList: true # hide on list pages and home
+    #     hiddenInSingle: true # hide on single page
+
+    fuseOpts:
+        isCaseSensitive: false
+        shouldSort: true
+        location: 0
+        distance: 1000
+        threshold: 0.4
+        minMatchCharLength: 0
+        keys: ["title", "permalink", "summary", "content"]
+
+markup:
+    goldmark:
+        renderer:
+            unsafe: true
+    highlight:
+        noClasses: false
+        # anchorLineNos: true
+        # codeFences: true
+        # guessSyntax: true
+        # lineNos: true
+        # style: monokai
+
+privacy:
+    vimeo:
+        disabled: false
+        simple: true
+
+    twitter:
+        disabled: false
+        enableDNT: true
+        simple: true
+
+    instagram:
+        disabled: false
+        simple: true
+
+    youtube:
+        disabled: false
+        privacyEnhanced: true
+
+services:
+    instagram:
+        disableInlineCSS: true
+    twitter:
+        disableInlineCSS: true

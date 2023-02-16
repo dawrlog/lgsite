@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Categories on Dataware Logistics</title>
+    <link>https://www.dawrlog.com/categories/</link>
+    <description>Recent content in Categories on Dataware Logistics</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Sat, 24 Dec 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://www.dawrlog.com/categories/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Data Modeling</title>
+      <link>https://www.dawrlog.com/categories/data-modeling/</link>
+      <pubDate>Sat, 24 Dec 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/categories/data-modeling/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>API</title>
+      <link>https://www.dawrlog.com/categories/api/</link>
+      <pubDate>Sun, 18 Dec 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/categories/api/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Best Practices</title>
+      <link>https://www.dawrlog.com/categories/best-practices/</link>
+      <pubDate>Sun, 18 Dec 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/categories/best-practices/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Data warehouse</title>
+      <link>https://www.dawrlog.com/categories/data-warehouse/</link>
+      <pubDate>Sun, 14 Aug 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/categories/data-warehouse/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Development</title>
+      <link>https://www.dawrlog.com/categories/development/</link>
+      <pubDate>Sun, 14 Aug 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/categories/development/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Kubernetes</title>
+      <link>https://www.dawrlog.com/categories/kubernetes/</link>
+      <pubDate>Sun, 14 Aug 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/categories/kubernetes/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>API Development</title>
+      <link>https://www.dawrlog.com/categories/api-development/</link>
+      <pubDate>Fri, 18 Mar 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/categories/api-development/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Cloud</title>
+      <link>https://www.dawrlog.com/categories/cloud/</link>
+      <pubDate>Wed, 12 Jan 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/categories/cloud/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>DataOps</title>
+      <link>https://www.dawrlog.com/categories/dataops/</link>
+      <pubDate>Wed, 24 Nov 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/categories/dataops/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Lean Agile</title>
+      <link>https://www.dawrlog.com/categories/lean-agile/</link>
+      <pubDate>Wed, 24 Nov 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/categories/lean-agile/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Auth</title>
+      <link>https://www.dawrlog.com/categories/auth/</link>
+      <pubDate>Sat, 02 Oct 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/categories/auth/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Security</title>
+      <link>https://www.dawrlog.com/categories/security/</link>
+      <pubDate>Sat, 02 Oct 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/categories/security/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>PowerBI</title>
+      <link>https://www.dawrlog.com/categories/powerbi/</link>
+      <pubDate>Tue, 31 Aug 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/categories/powerbi/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>

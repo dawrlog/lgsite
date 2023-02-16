@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Redshift Query Queues: The Complete Guide | Dataware Logistics</title>
+<meta name="keywords" content="Data Warehouse, Best Practices, AWS, Redshift">
+<meta name="description" content="Hey everyone, hope everything is well.
+Even the most potent database is still prone to the terrifying error any database system can face: query bottlenecks.
+Sometimes the systems that manage our queries can&rsquo;t process in the same way as we do. So our questions return accurate results as a result of extra processing power.
+In this article, I&rsquo;ll present how Redshift query queues work. We&rsquo;ll also cover how concurrency works at a high level on Redshift.">
+<meta name="author" content="Daniel Paes">
+<link rel="canonical" href="https://blog.panoply.io/the-redshift-query-queues-challenges-and-some-tips">
+<meta name="google-site-verification" content="4599922566">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.css" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://www.dawrlog.com/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://www.dawrlog.com/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://www.dawrlog.com/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://www.dawrlog.com/apple-touch-icon.png">
+<link rel="mask-icon" href="https://www.dawrlog.com/apple-touch-icon.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="https://www.dawrlog.com/posts/9/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --hljs-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><meta property="og:title" content="Redshift Query Queues: The Complete Guide" />
+<meta property="og:description" content="Hey everyone, hope everything is well.
+Even the most potent database is still prone to the terrifying error any database system can face: query bottlenecks.
+Sometimes the systems that manage our queries can&rsquo;t process in the same way as we do. So our questions return accurate results as a result of extra processing power.
+In this article, I&rsquo;ll present how Redshift query queues work. We&rsquo;ll also cover how concurrency works at a high level on Redshift." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://www.dawrlog.com/posts/9/" />
+<meta property="og:image" content="https://user-images.githubusercontent.com/78096758/217089342-26bc2683-98d9-4b10-b2b1-273d2a34ba9b.png" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2021-11-19T00:00:00+00:00" />
+<meta property="article:modified_time" content="2021-11-19T00:00:00+00:00" />
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="https://user-images.githubusercontent.com/78096758/217089342-26bc2683-98d9-4b10-b2b1-273d2a34ba9b.png" />
+<meta name="twitter:title" content="Redshift Query Queues: The Complete Guide"/>
+<meta name="twitter:description" content="Hey everyone, hope everything is well.
+Even the most potent database is still prone to the terrifying error any database system can face: query bottlenecks.
+Sometimes the systems that manage our queries can&rsquo;t process in the same way as we do. So our questions return accurate results as a result of extra processing power.
+In this article, I&rsquo;ll present how Redshift query queues work. We&rsquo;ll also cover how concurrency works at a high level on Redshift."/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://www.dawrlog.com/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Redshift Query Queues: The Complete Guide",
+      "item": "https://www.dawrlog.com/posts/9/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Redshift Query Queues: The Complete Guide",
+  "name": "Redshift Query Queues: The Complete Guide",
+  "description": "Hey everyone, hope everything is well.\nEven the most potent database is still prone to the terrifying error any database system can face: query bottlenecks.\nSometimes the systems that manage our queries can\u0026rsquo;t process in the same way as we do. So our questions return accurate results as a result of extra processing power.\nIn this article, I\u0026rsquo;ll present how Redshift query queues work. We\u0026rsquo;ll also cover how concurrency works at a high level on Redshift.",
+  "keywords": [
+    "Data Warehouse", "Best Practices", "AWS", "Redshift"
+  ],
+  "articleBody": "Hey everyone, hope everything is well.\nEven the most potent database is still prone to the terrifying error any database system can face: query bottlenecks.\nSometimes the systems that manage our queries can’t process in the same way as we do. So our questions return accurate results as a result of extra processing power.\nIn this article, I’ll present how Redshift query queues work. We’ll also cover how concurrency works at a high level on Redshift.\nThis intel will become handy as we go further down the rabbit hole and oversee the deployment of a good—though sometimes threatening—friend, workload management (or WLM) on Redshift.\nWe’ll finish with a quick conclusion of what we saw and some techniques for query optimizations.\nQuery optimizations are very handy as it helps on cleaning bad code. Then increasing your transformations’ speed, making it possible to explore more data with less. In short, good old data frugality.\nWhat is Redshift, and how does query processing work?\nRedshift is Amazon’s flavor of a massively parallel processing (or MPP) database system.\nThis kind of database is the top choice for storing data warehouses thanks to its capabilities of processing massive amounts of data in parallel. As for the other two major cloud providers, there’s BigQuery on Google Cloud Platform and Synapse Analytics on Microsoft Azure.\nNow let’s look more in-depth at the process of querying.\nQuery processing Once the query is started (either by the console or by pragmatic access—and both API and CLI commands follow the same way), it generates a query plan, which is the query translation made by the parser while extracting the data from the nodes.\nWith this execution blueprint, we can start to inspect the compute bottlenecks on your code.\nHere’s an example of an EXPLAIN Redshift command:\nexplain select lastname, catname, venuename, venuecity, venuestate, eventname, month, sum(pricepaid) as buyercost, max(totalprice) as maxtotalprice from category join event on category.catid = event.catid join venue on venue.venueid = event.venueid join sales on sales.eventid = event.eventid join listing on sales.listid = listing.listid join date on sales.dateid = date.dateid join users on users.userid = sales.buyerid group by lastname, catname, venuename, venuecity, venuestate, eventname, month having sum(pricepaid)\u003e9999 order by catname, buyercost desc; From the EXPLAIN results above, I want to identify the tables: category, venue, sales, listing, date, and users. Each one of them uses the INNER JOIN clause.\nRedshift’s power relies on heavy processing, so the bigger those tables are, the better for you, computationally speaking.\nBut how can you know that? Going deeper, how can you identify the smaller tables for you to take the necessary metrics and measures so important for your KPIs?\nHere’s where the query plan comes in handy; below, you can see all the steps Redshift executes based on the SQL you wrote. So here’s where Redshift tells you if what you wrote is what Redshift understood.\nHere is the result of the above EXPLAIN command:\nQuery plan results.\nNow that we know how to create the query plan, we can go deeper into query optimization—which is nothing more than refactoring your queries to lower the processing costs described by the query plan steps.\nWhat is workload management, or WLM?\nOne of the faster ways of managing your query workflows is called workload management. With this feature on, you won’t sacrifice being able to answer quick questions due to long-running processes, as it enables flexibility while managing your workloads.\nLet’s imagine the following scenario:\nYour lead data scientist is deploying some machine learning models to detect possible fraudulent activities. Those activities need to be cross-referenced with the geographical location of the last transactions. Then those chaotic independent microservices start to run on your Redshift clusters at the exact time that your KPIs trigger new processes on the same Redshift cluster. Fun times, right?\nWLM comes to the rescue, as it creates what is called query queues at runtime. WLM groups these queues by a query group label defined by the user before the query execution.\nThese queues have concurrency levels, meaning the number of workloads started at the same time. Let’s get used to Workload Manager, or WLM\nWLM comes with two types of implementations; automatic where Redshift takes the charge of handling your query memory and concurrency allocation, and manual where you provide those values instead.\nBelow I want to share the helpful system tables and views that should be used as starting points when needing to enhance, or simply audit, your WLM workloads.\nSTL_WLM_ERROR STL_WLM_QUERY STV_WLM_CLASSIFICATION_CONFIG STV_WLM_QUERY_QUEUE_STATE STV_WLM_QUERY_STATE STV_WLM_QUERY_TASK_STATE STV_WLM_SERVICE_CLASS_CONFIG STV_WLM_SERVICE_CLASS_STATE The do’s and don’ts of concurrency scaling\nOnce you have your WLM turned on, you enable one handy feature used on massive processing: concurrent scaling! You will perceive the gains from the writing process into the target for consistency on higher throughput with multiple sessions requests.\nStill, when the feature is active, concurrency scaling is applied for both read and write operations. It also supports SQL Data Manipulation Language statements, the good ol’ INSERT, DELETE and UPDATE. It also supports the CREATE statement and Redshift COPY; which gets you cover for most of your daily data loads.\nThe more critical limitations from concurrency scaling are its limitation of ANALYZE for the COPY commands and not being able to use COPY from Redshift Spectrum or when you’re querying data from your HDFS storage in your EMR clusters. Being that the COPY command is the suggested option to import massive data into native Redshift tables, not running it in parallel can limit the utilization of the COPY command for your use case.\nIt’s also relevant to remember that you need to confirm if the region where your Redshift cluster resides has the concurrency scaling feature; for a quick reference, take a look here.\nChange the Concurrency Scaling Mode option to auto on your WLM queue, and by doing so, you’ll enable the routing of your queries into the concurrency scaling clusters. Getting statistics for your WLM\nWith your WLM enabled and your queues with the “Concurrency Scaling Mode” turned to auto, you can track what’s going on in your cluster.\nTo do so, you can go to your query editor of choice or the Redshift console and execute the following query: Query for monitoring concurrent queues\nSELECT w.service_class AS queue , q.concurrency_scaling_status , COUNT( * ) AS queries , SUM( q.aborted ) AS aborted , SUM( ROUND( total_queue_time::NUMERIC / 1000000,2 ) ) AS queue_secs , SUM( ROUND( total_exec_time::NUMERIC / 1000000,2 ) ) AS exec_secs FROM stl_query q JOIN stl_wlm_query w USING (userid,query) WHERE q.userid \u003e 1 AND q.starttime \u003e # Time on format: 'YYYY-MM-DD 24HH:MI:SS' AND q.endtime \u003c # Time on format: 'YYYY-MM-DD 24HH:MI:SS' GROUP BY 1,2 ORDER BY 1,2; The query results will provide you with a full spectrum of what’s happening on your cluster, granting all the necessary information from the Redshift cluster management perspective. All this information is helpful when investigating which sessions are active or not on your sets (you can check how the result would look like below).\nQuery results\nIn addition to the metrics collected by AWS CloudWatch and AWS CloudTrail, you’ll have a fully compliant environment. All of it is using native AWS services, saving you some extra headaches.\nThis configuration will work as a consistency layer in addition to your well-managed and mature data pipelines.\nConclusion\nIn this article, we oversaw how concurrency on Redshift works. We also looked at how to analyze and improve queries load plans: making them faster while consuming less processing power (you can interpret this as making your cloud bill smaller).\nJust remember the mentioned control tables and views, and you’ll be all set. Mastering them will also help while verifying any conflicts with the tables on the query.\nIt’s also a good idea to run the ANALYZE and VACUUM commands periodically.\nFor further help transforming your data, you can reach out to us with any questions you have and even discover new info you weren’t aware of with a better insight from better understanding your data.\nSee you guys next time!\n",
+  "wordCount" : "1335",
+  "inLanguage": "en",
+  "image":"https://user-images.githubusercontent.com/78096758/217089342-26bc2683-98d9-4b10-b2b1-273d2a34ba9b.png","datePublished": "2021-11-19T00:00:00Z",
+  "dateModified": "2021-11-19T00:00:00Z",
+  "author":{
+    "@type": "Person",
+    "name": "Daniel Paes"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://www.dawrlog.com/posts/9/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Dataware Logistics",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://www.dawrlog.com/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://www.dawrlog.com/" accesskey="h" title="Dataware Logistics (Alt + H)">Dataware Logistics</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+                <ul class="lang-switch"><li>|</li>
+                    <li>
+                        <a href="https://www.dawrlog.com/fr/" title="French"
+                            aria-label=":fr:">🇫🇷</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://www.dawrlog.com/about" title="About">
+                    <span>About</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://www.dawrlog.com/posts/" title="Posts">
+                    <span>Posts</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://calendly.com/dawrlog" title="Contact">
+                    <span>Contact</span>&nbsp;
+                    <svg fill="none" shape-rendering="geometricPrecision" stroke="currentColor" stroke-linecap="round"
+                        stroke-linejoin="round" stroke-width="2.5" viewBox="0 0 24 24" height="12" width="12">
+                        <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"></path>
+                        <path d="M15 3h6v6"></path>
+                        <path d="M10 14L21 3"></path>
+                    </svg>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    <div class="breadcrumbs"><a href="https://www.dawrlog.com/">Home</a>&nbsp;»&nbsp;<a href="https://www.dawrlog.com/posts/">Posts</a></div>
+    <h1 class="post-title">
+      Redshift Query Queues: The Complete Guide
+    </h1>
+    <div class="post-meta"><span title='2021-11-19 00:00:00 +0000 UTC'>November 19, 2021</span>&nbsp;·&nbsp;7 min&nbsp;·&nbsp;Daniel Paes
+
+</div>
+  </header> 
+<figure class="entry-cover"><img loading="lazy" src="https://user-images.githubusercontent.com/78096758/217089342-26bc2683-98d9-4b10-b2b1-273d2a34ba9b.png" alt="">
+        
+</figure><div class="toc">
+    <details >
+        <summary accesskey="c" title="(Alt + C)">
+            <span class="details">Table of Contents</span>
+        </summary>
+
+        <div class="inner"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#h2what-is-redshift-and-how-does-query-processing-workh2br-"><h2>What is Redshift, and how does query processing work?</h2><br /></a></li>
+    <li><a href="#h2what-is-workload-management-or-wlmh2br-"><h2>What is workload management, or WLM?</h2><br /></a></li>
+    <li><a href="#h2lets-get-used-to-workload-manager-or-wlmh2br-"><h2>Let&rsquo;s get used to Workload Manager, or WLM</h2><br /></a></li>
+    <li><a href="#h2the-dos-and-donts-of-concurrency-scalingh2br-"><h2>The do&rsquo;s and don&rsquo;ts of concurrency scaling</h2><br /></a></li>
+    <li><a href="#h2getting-statistics-for-your-wlmh2br-"><h2>Getting statistics for your WLM</h2><br /></a></li>
+    <li><a href="#h2conclusionh2br-"><h2>Conclusion</h2><br /></a></li>
+  </ul>
+</nav>
+        </div>
+    </details>
+</div>
+
+  <div class="post-content"><p>Hey everyone, hope everything is well.</p>
+<p>Even the most potent database is still prone to the terrifying error any database system can face: <strong><em>query bottlenecks</em></strong>.</p>
+<p>Sometimes the systems that manage our queries can&rsquo;t process in the same way as we do. So our questions return accurate results as a result of extra processing power.</p>
+<p>In this article, I&rsquo;ll present how Redshift query queues work. We&rsquo;ll also cover how concurrency works at a high level on Redshift.</p>
+<p>This intel will become handy as we go further down the rabbit hole and oversee the deployment of a good—though sometimes threatening—friend, <strong>workload management (or WLM)</strong> on Redshift.</p>
+<p>We&rsquo;ll finish with a quick conclusion of what we saw and some techniques for query optimizations.</p>
+<p>Query optimizations are very handy as it helps on cleaning bad code. Then increasing your transformations&rsquo; speed, making it possible to explore more data with less. In short, good old <a href="https://hellofuture.orange.com/en/towards-a-less-data-and-energy-intensive-ai/">data frugality</a>.</p>
+<h2 id="h2what-is-redshift-and-how-does-query-processing-workh2br-"><h2>What is Redshift, and how does query processing work?</h2><br /><a hidden class="anchor" aria-hidden="true" href="#h2what-is-redshift-and-how-does-query-processing-workh2br-">#</a></h2>
+<p>Redshift is Amazon&rsquo;s flavor of a massively parallel processing (or MPP) database system.</p>
+<p>This kind of database is the top choice for storing data warehouses thanks to its capabilities of processing massive amounts of data in parallel. As for the other two major cloud providers, there&rsquo;s <a href="https://cloud.google.com/bigquery">BigQuery</a> on Google Cloud Platform and <a href="https://azure.microsoft.com/en-ca/services/synapse-analytics/">Synapse Analytics</a> on Microsoft Azure.</p>
+<p>Now let&rsquo;s look more in-depth at the process of querying.</p>
+<p>Query processing
+Once the query is started (either by the <strong>console</strong> or by pragmatic access—and both <strong>API</strong> and <strong>CLI commands</strong> follow the same way), it generates a <strong>query plan</strong>, which is the query translation made by the parser while extracting the data from the nodes.</p>
+<p>With this execution blueprint, we can start to inspect the compute bottlenecks on your code.</p>
+<p>Here&rsquo;s an example of an <strong>EXPLAIN</strong> Redshift command:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">explain</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">select</span><span class="w"> </span><span class="n">lastname</span><span class="p">,</span><span class="w"> </span><span class="n">catname</span><span class="p">,</span><span class="w"> </span><span class="n">venuename</span><span class="p">,</span><span class="w"> </span><span class="n">venuecity</span><span class="p">,</span><span class="w"> </span><span class="n">venuestate</span><span class="p">,</span><span class="w"> </span><span class="n">eventname</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">month</span><span class="p">,</span><span class="w"> </span><span class="k">sum</span><span class="p">(</span><span class="n">pricepaid</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">buyercost</span><span class="p">,</span><span class="w"> </span><span class="k">max</span><span class="p">(</span><span class="n">totalprice</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">maxtotalprice</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">from</span><span class="w"> </span><span class="n">category</span><span class="w"> </span><span class="k">join</span><span class="w"> </span><span class="n">event</span><span class="w"> </span><span class="k">on</span><span class="w"> </span><span class="n">category</span><span class="p">.</span><span class="n">catid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">event</span><span class="p">.</span><span class="n">catid</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">join</span><span class="w"> </span><span class="n">venue</span><span class="w"> </span><span class="k">on</span><span class="w"> </span><span class="n">venue</span><span class="p">.</span><span class="n">venueid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">event</span><span class="p">.</span><span class="n">venueid</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">join</span><span class="w"> </span><span class="n">sales</span><span class="w"> </span><span class="k">on</span><span class="w"> </span><span class="n">sales</span><span class="p">.</span><span class="n">eventid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">event</span><span class="p">.</span><span class="n">eventid</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">join</span><span class="w"> </span><span class="n">listing</span><span class="w"> </span><span class="k">on</span><span class="w"> </span><span class="n">sales</span><span class="p">.</span><span class="n">listid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">listing</span><span class="p">.</span><span class="n">listid</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">join</span><span class="w"> </span><span class="nb">date</span><span class="w"> </span><span class="k">on</span><span class="w"> </span><span class="n">sales</span><span class="p">.</span><span class="n">dateid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">date</span><span class="p">.</span><span class="n">dateid</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">join</span><span class="w"> </span><span class="n">users</span><span class="w"> </span><span class="k">on</span><span class="w"> </span><span class="n">users</span><span class="p">.</span><span class="n">userid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sales</span><span class="p">.</span><span class="n">buyerid</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">group</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="n">lastname</span><span class="p">,</span><span class="w"> </span><span class="n">catname</span><span class="p">,</span><span class="w"> </span><span class="n">venuename</span><span class="p">,</span><span class="w"> </span><span class="n">venuecity</span><span class="p">,</span><span class="w"> </span><span class="n">venuestate</span><span class="p">,</span><span class="w"> </span><span class="n">eventname</span><span class="p">,</span><span class="w"> </span><span class="k">month</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">having</span><span class="w"> </span><span class="k">sum</span><span class="p">(</span><span class="n">pricepaid</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">9999</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">order</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="n">catname</span><span class="p">,</span><span class="w"> </span><span class="n">buyercost</span><span class="w"> </span><span class="k">desc</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></div><p>From the <strong>EXPLAIN</strong> results above, I want to identify the tables: <strong><em>category, venue, sales, listing, date, and users</em></strong>. Each one of them uses the <strong>INNER JOIN</strong> clause.</p>
+<p>Redshift&rsquo;s power relies on heavy processing, so the bigger those tables are, the better for you, computationally speaking.</p>
+<p>But how can you know that? Going deeper, how can you identify the smaller tables for you to take the necessary metrics and measures so important for your KPIs?</p>
+<p>Here&rsquo;s where the <strong>query plan</strong> comes in handy; below, you can see all the steps Redshift executes based on the SQL you wrote. So here&rsquo;s where Redshift tells you if what you wrote is what Redshift understood.</p>
+<p>Here is the result of the above <strong>EXPLAIN</strong> command:</p>
+<p><img loading="lazy" src="https://user-images.githubusercontent.com/78096758/217089951-c6cedc17-23d3-4a99-b1f3-bae48235d2ba.png" alt="queryplan"  />
+
+<em>Query plan results.</em></p>
+<p>Now that we know how to create the query plan, we can go deeper into query optimization—which is nothing more than refactoring your queries to lower the processing costs described by the query plan steps.</p>
+<p><br /><br /></p>
+<h2 id="h2what-is-workload-management-or-wlmh2br-"><h2>What is workload management, or WLM?</h2><br /><a hidden class="anchor" aria-hidden="true" href="#h2what-is-workload-management-or-wlmh2br-">#</a></h2>
+<p>One of the faster ways of managing your query workflows is called workload management. With this feature on, you won&rsquo;t sacrifice being able to answer quick questions due to long-running processes, as it enables flexibility while managing your workloads.</p>
+<p><em>Let&rsquo;s imagine the following scenario:</em></p>
+<ul>
+<li>Your lead data scientist is deploying some machine learning models to detect possible fraudulent activities.</li>
+<li>Those activities need to be cross-referenced with the geographical location of the last transactions.</li>
+<li>Then those chaotic independent microservices start to run on your Redshift clusters at the exact time that your KPIs trigger new processes on the same Redshift cluster.</li>
+</ul>
+<p>Fun times, right?</p>
+<p>WLM comes to the rescue, as it creates what is called <strong>query queues</strong> at runtime. WLM groups these queues by a query group label defined by the user before the query execution.</p>
+<p>These queues have concurrency levels, meaning the number of workloads started at the same time.
+<br /><br /></p>
+<h2 id="h2lets-get-used-to-workload-manager-or-wlmh2br-"><h2>Let&rsquo;s get used to Workload Manager, or WLM</h2><br /><a hidden class="anchor" aria-hidden="true" href="#h2lets-get-used-to-workload-manager-or-wlmh2br-">#</a></h2>
+<p>WLM comes with two types of implementations; <a href="https://docs.aws.amazon.com/redshift/latest/dg/automatic-wlm.html">automatic</a> where Redshift takes the charge of handling your query memory and concurrency allocation, and <a href="https://docs.aws.amazon.com/redshift/latest/dg/cm-c-defining-query-queues.html">manual</a> where you provide those values instead.</p>
+<p>Below I want to share the helpful <strong><em>system tables and views</em></strong> that should be used as starting points when needing to enhance, or simply audit, your WLM workloads.</p>
+<ul>
+<li><a href="https://docs.aws.amazon.com/redshift/latest/dg/r_STL_WLM_ERROR.html">STL_WLM_ERROR</a></li>
+<li><a href="https://docs.aws.amazon.com/redshift/latest/dg/r_STL_WLM_QUERY.html">STL_WLM_QUERY</a></li>
+<li><a href="https://docs.aws.amazon.com/redshift/latest/dg/r_STV_WLM_CLASSIFICATION_CONFIG.html">STV_WLM_CLASSIFICATION_CONFIG</a></li>
+<li><a href="https://docs.aws.amazon.com/redshift/latest/dg/r_STV_WLM_QUERY_QUEUE_STATE.html">STV_WLM_QUERY_QUEUE_STATE</a></li>
+<li><a href="https://docs.aws.amazon.com/redshift/latest/dg/r_STV_WLM_QUERY_STATE.html">STV_WLM_QUERY_STATE</a></li>
+<li><a href="https://docs.aws.amazon.com/redshift/latest/dg/r_STV_WLM_QUERY_TASK_STATE.html">STV_WLM_QUERY_TASK_STATE</a></li>
+<li><a href="https://docs.aws.amazon.com/redshift/latest/dg/r_STV_WLM_SERVICE_CLASS_CONFIG.html">STV_WLM_SERVICE_CLASS_CONFIG</a></li>
+<li><a href="https://docs.aws.amazon.com/redshift/latest/dg/r_STV_WLM_SERVICE_CLASS_STATE.html">STV_WLM_SERVICE_CLASS_STATE</a></li>
+</ul>
+<p><br /><br /></p>
+<h2 id="h2the-dos-and-donts-of-concurrency-scalingh2br-"><h2>The do&rsquo;s and don&rsquo;ts of concurrency scaling</h2><br /><a hidden class="anchor" aria-hidden="true" href="#h2the-dos-and-donts-of-concurrency-scalingh2br-">#</a></h2>
+<p>Once you have your WLM turned on, you enable one handy feature used on massive processing: <strong>concurrent scaling</strong>! You will perceive the gains from the writing process into the target for consistency on higher throughput with multiple sessions requests.</p>
+<p>Still, when the feature is active, concurrency scaling is applied for both <strong><em>read</em></strong> and <strong><em>write</em></strong> operations. It also supports SQL Data Manipulation Language statements, the good ol&rsquo; <strong>INSERT</strong>, <strong>DELETE</strong> and <strong>UPDATE</strong>. It also supports the <strong>CREATE</strong> statement and <a href="https://docs.aws.amazon.com/redshift/latest/dg/r_COPY.html">Redshift COPY</a>; which gets you cover for most of your <strong>daily data loads</strong>.</p>
+<p>The more critical limitations from concurrency scaling are its limitation of ANALYZE for the COPY commands and not being able to use COPY from Redshift Spectrum or when you&rsquo;re querying data from your HDFS storage in your EMR clusters. Being that the COPY command is the suggested option to import massive data into native Redshift tables, not running it in parallel can limit the utilization of the COPY command for your use case.</p>
+<p>It&rsquo;s also relevant to remember that you need to confirm if the region where your Redshift cluster resides has the concurrency scaling feature; for a quick reference, take a look here.</p>
+<p>Change the <strong>Concurrency Scaling Mode</strong> option to <strong>auto</strong> on your WLM queue, and by doing so, you&rsquo;ll enable the routing of your queries into the concurrency scaling clusters.
+<br /><br /></p>
+<h2 id="h2getting-statistics-for-your-wlmh2br-"><h2>Getting statistics for your WLM</h2><br /><a hidden class="anchor" aria-hidden="true" href="#h2getting-statistics-for-your-wlmh2br-">#</a></h2>
+<p>With your WLM enabled and your queues with the &ldquo;Concurrency Scaling Mode&rdquo; turned to auto, you can track what&rsquo;s going on in your cluster.</p>
+<p>To do so, you can go to your query editor of choice or the Redshift console and execute the following query:
+<br /><br /></p>
+<p><em><strong>Query for monitoring concurrent queues</strong></em></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">SELECT w.service_class AS queue
+</span></span><span class="line"><span class="cl">, q.concurrency_scaling_status
+</span></span><span class="line"><span class="cl">, COUNT<span class="o">(</span> * <span class="o">)</span> AS queries
+</span></span><span class="line"><span class="cl">, SUM<span class="o">(</span> q.aborted <span class="o">)</span> AS aborted
+</span></span><span class="line"><span class="cl">, SUM<span class="o">(</span> ROUND<span class="o">(</span> total_queue_time::NUMERIC / 1000000,2 <span class="o">)</span> <span class="o">)</span> AS queue_secs
+</span></span><span class="line"><span class="cl">, SUM<span class="o">(</span> ROUND<span class="o">(</span> total_exec_time::NUMERIC / 1000000,2 <span class="o">)</span> <span class="o">)</span> AS exec_secs
+</span></span><span class="line"><span class="cl">FROM stl_query q
+</span></span><span class="line"><span class="cl">JOIN stl_wlm_query w
+</span></span><span class="line"><span class="cl">USING <span class="o">(</span>userid,query<span class="o">)</span>
+</span></span><span class="line"><span class="cl">WHERE q.userid &gt; <span class="m">1</span>
+</span></span><span class="line"><span class="cl">AND q.starttime &gt; <span class="c1"># Time on format: &#39;YYYY-MM-DD 24HH:MI:SS&#39;</span>
+</span></span><span class="line"><span class="cl">AND q.endtime &lt; <span class="c1"># Time on format: &#39;YYYY-MM-DD 24HH:MI:SS&#39;</span>
+</span></span><span class="line"><span class="cl">GROUP BY 1,2
+</span></span><span class="line"><span class="cl">ORDER BY 1,2<span class="p">;</span>
+</span></span></code></pre></div><p>The query results will provide you with a full spectrum of what&rsquo;s happening on your cluster, granting all the necessary information from the Redshift cluster management perspective. All this information is helpful when investigating which sessions are active or not on your sets (you can check how the result would look like below).</p>
+<p><img loading="lazy" src="https://user-images.githubusercontent.com/78096758/217090175-daebfb60-fb6e-4a39-83f8-838eae68fb11.png" alt="concurrent"  />
+
+<em>Query results</em></p>
+<p>In addition to the metrics collected by <a href="https://aws.amazon.com/cloudwatch/">AWS CloudWatch</a> and <a href="https://aws.amazon.com/cloudtrail/">AWS CloudTrail</a>, you&rsquo;ll have a fully compliant environment. All of it is using native AWS services, saving you some extra headaches.</p>
+<p>This configuration will work as a <strong>consistency layer</strong> in addition to your well-managed and mature data pipelines.</p>
+<h2 id="h2conclusionh2br-"><h2>Conclusion</h2><br /><a hidden class="anchor" aria-hidden="true" href="#h2conclusionh2br-">#</a></h2>
+<p>In this article, we oversaw how concurrency on Redshift works. We also looked at how to analyze and improve queries load plans: making them faster while consuming less processing power (you can interpret this as <em><strong>making your cloud bill smaller</strong></em>).</p>
+<p>Just remember the mentioned control tables and views, and you&rsquo;ll be all set. Mastering them will also help while verifying any conflicts with the tables on the query.</p>
+<p>It&rsquo;s also a good idea to run the <a href="https://docs.aws.amazon.com/redshift/latest/dg/r_ANALYZE.html">ANALYZE</a> and <a href="https://docs.aws.amazon.com/redshift/latest/dg/r_VACUUM_command.html">VACUUM</a> commands periodically.</p>
+<p>For further help transforming your data, you can <a href="https://calendly.com/dawrlog">reach out to us</a> with any questions you have and even discover new info you weren&rsquo;t aware of with a better insight from better understanding your data.</p>
+<p>See you guys next time!</p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://www.dawrlog.com/tags/data-warehouse/">Data Warehouse</a></li>
+      <li><a href="https://www.dawrlog.com/tags/best-practices/">Best Practices</a></li>
+      <li><a href="https://www.dawrlog.com/tags/aws/">AWS</a></li>
+      <li><a href="https://www.dawrlog.com/tags/redshift/">Redshift</a></li>
+    </ul>
+<nav class="paginav">
+  <a class="next" href="https://www.dawrlog.com/posts/8/">
+    <span class="title">Next »</span>
+    <br>
+    <span>Incremental Loading: The Smarter Way to Update Data</span>
+  </a>
+</nav>
+
+
+<div class="share-buttons">
+    <a target="_blank" rel="noopener noreferrer" aria-label="share Redshift Query Queues: The Complete Guide on twitter"
+        href="https://twitter.com/intent/tweet/?text=Redshift%20Query%20Queues%3a%20The%20Complete%20Guide&amp;url=https%3a%2f%2fwww.dawrlog.com%2fposts%2f9%2f&amp;hashtags=DataWarehouse%2cBestPractices%2cAWS%2cRedshift">
+        <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+            <path
+                d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-253.927,424.544c135.939,0 210.268,-112.643 210.268,-210.268c0,-3.218 0,-6.437 -0.153,-9.502c14.406,-10.421 26.973,-23.448 36.935,-38.314c-13.18,5.824 -27.433,9.809 -42.452,11.648c15.326,-9.196 26.973,-23.602 32.49,-40.92c-14.252,8.429 -30.038,14.56 -46.896,17.931c-13.487,-14.406 -32.644,-23.295 -53.946,-23.295c-40.767,0 -73.87,33.104 -73.87,73.87c0,5.824 0.613,11.494 1.992,16.858c-61.456,-3.065 -115.862,-32.49 -152.337,-77.241c-6.284,10.881 -9.962,23.601 -9.962,37.088c0,25.594 13.027,48.276 32.95,61.456c-12.107,-0.307 -23.448,-3.678 -33.41,-9.196l0,0.92c0,35.862 25.441,65.594 59.311,72.49c-6.13,1.686 -12.72,2.606 -19.464,2.606c-4.751,0 -9.348,-0.46 -13.946,-1.38c9.349,29.426 36.628,50.728 68.965,51.341c-25.287,19.771 -57.164,31.571 -91.8,31.571c-5.977,0 -11.801,-0.306 -17.625,-1.073c32.337,21.15 71.264,33.41 112.95,33.41Z" />
+        </svg>
+    </a>
+    <a target="_blank" rel="noopener noreferrer" aria-label="share Redshift Query Queues: The Complete Guide on linkedin"
+        href="https://www.linkedin.com/shareArticle?mini=true&amp;url=https%3a%2f%2fwww.dawrlog.com%2fposts%2f9%2f&amp;title=Redshift%20Query%20Queues%3a%20The%20Complete%20Guide&amp;summary=Redshift%20Query%20Queues%3a%20The%20Complete%20Guide&amp;source=https%3a%2f%2fwww.dawrlog.com%2fposts%2f9%2f">
+        <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+            <path
+                d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-288.985,423.278l0,-225.717l-75.04,0l0,225.717l75.04,0Zm270.539,0l0,-129.439c0,-69.333 -37.018,-101.586 -86.381,-101.586c-39.804,0 -57.634,21.891 -67.617,37.266l0,-31.958l-75.021,0c0.995,21.181 0,225.717 0,225.717l75.02,0l0,-126.056c0,-6.748 0.486,-13.492 2.474,-18.315c5.414,-13.475 17.767,-27.434 38.494,-27.434c27.135,0 38.007,20.707 38.007,51.037l0,120.768l75.024,0Zm-307.552,-334.556c-25.674,0 -42.448,16.879 -42.448,39.002c0,21.658 16.264,39.002 41.455,39.002l0.484,0c26.165,0 42.452,-17.344 42.452,-39.002c-0.485,-22.092 -16.241,-38.954 -41.943,-39.002Z" />
+        </svg>
+    </a>
+    <a target="_blank" rel="noopener noreferrer" aria-label="share Redshift Query Queues: The Complete Guide on reddit"
+        href="https://reddit.com/submit?url=https%3a%2f%2fwww.dawrlog.com%2fposts%2f9%2f&title=Redshift%20Query%20Queues%3a%20The%20Complete%20Guide">
+        <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+            <path
+                d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-3.446,265.638c0,-22.964 -18.616,-41.58 -41.58,-41.58c-11.211,0 -21.361,4.457 -28.841,11.666c-28.424,-20.508 -67.586,-33.757 -111.204,-35.278l18.941,-89.121l61.884,13.157c0.756,15.734 13.642,28.29 29.56,28.29c16.407,0 29.706,-13.299 29.706,-29.701c0,-16.403 -13.299,-29.702 -29.706,-29.702c-11.666,0 -21.657,6.792 -26.515,16.578l-69.105,-14.69c-1.922,-0.418 -3.939,-0.042 -5.585,1.036c-1.658,1.073 -2.811,2.761 -3.224,4.686l-21.152,99.438c-44.258,1.228 -84.046,14.494 -112.837,35.232c-7.468,-7.164 -17.589,-11.591 -28.757,-11.591c-22.965,0 -41.585,18.616 -41.585,41.58c0,16.896 10.095,31.41 24.568,37.918c-0.639,4.135 -0.99,8.328 -0.99,12.576c0,63.977 74.469,115.836 166.33,115.836c91.861,0 166.334,-51.859 166.334,-115.836c0,-4.218 -0.347,-8.387 -0.977,-12.493c14.564,-6.47 24.735,-21.034 24.735,-38.001Zm-119.474,108.193c-20.27,20.241 -59.115,21.816 -70.534,21.816c-11.428,0 -50.277,-1.575 -70.522,-21.82c-3.007,-3.008 -3.007,-7.882 0,-10.889c3.003,-2.999 7.882,-3.003 10.885,0c12.777,12.781 40.11,17.317 59.637,17.317c19.522,0 46.86,-4.536 59.657,-17.321c3.016,-2.999 7.886,-2.995 10.885,0.008c3.008,3.011 3.003,7.882 -0.008,10.889Zm-5.23,-48.781c-16.373,0 -29.701,-13.324 -29.701,-29.698c0,-16.381 13.328,-29.714 29.701,-29.714c16.378,0 29.706,13.333 29.706,29.714c0,16.374 -13.328,29.698 -29.706,29.698Zm-160.386,-29.702c0,-16.381 13.328,-29.71 29.714,-29.71c16.369,0 29.689,13.329 29.689,29.71c0,16.373 -13.32,29.693 -29.689,29.693c-16.386,0 -29.714,-13.32 -29.714,-29.693Z" />
+        </svg>
+    </a>
+    <a target="_blank" rel="noopener noreferrer" aria-label="share Redshift Query Queues: The Complete Guide on facebook"
+        href="https://facebook.com/sharer/sharer.php?u=https%3a%2f%2fwww.dawrlog.com%2fposts%2f9%2f">
+        <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+            <path
+                d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-106.468,0l0,-192.915l66.6,0l12.672,-82.621l-79.272,0l0,-53.617c0,-22.603 11.073,-44.636 46.58,-44.636l36.042,0l0,-70.34c0,0 -32.71,-5.582 -63.982,-5.582c-65.288,0 -107.96,39.569 -107.96,111.204l0,62.971l-72.573,0l0,82.621l72.573,0l0,192.915l-191.104,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Z" />
+        </svg>
+    </a>
+    <a target="_blank" rel="noopener noreferrer" aria-label="share Redshift Query Queues: The Complete Guide on whatsapp"
+        href="https://api.whatsapp.com/send?text=Redshift%20Query%20Queues%3a%20The%20Complete%20Guide%20-%20https%3a%2f%2fwww.dawrlog.com%2fposts%2f9%2f">
+        <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+            <path
+                d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-58.673,127.703c-33.842,-33.881 -78.847,-52.548 -126.798,-52.568c-98.799,0 -179.21,80.405 -179.249,179.234c-0.013,31.593 8.241,62.428 23.927,89.612l-25.429,92.884l95.021,-24.925c26.181,14.28 55.659,21.807 85.658,21.816l0.074,0c98.789,0 179.206,-80.413 179.247,-179.243c0.018,-47.895 -18.61,-92.93 -52.451,-126.81Zm-126.797,275.782l-0.06,0c-26.734,-0.01 -52.954,-7.193 -75.828,-20.767l-5.441,-3.229l-56.386,14.792l15.05,-54.977l-3.542,-5.637c-14.913,-23.72 -22.791,-51.136 -22.779,-79.287c0.033,-82.142 66.867,-148.971 149.046,-148.971c39.793,0.014 77.199,15.531 105.329,43.692c28.128,28.16 43.609,65.592 43.594,105.4c-0.034,82.149 -66.866,148.983 -148.983,148.984Zm81.721,-111.581c-4.479,-2.242 -26.499,-13.075 -30.604,-14.571c-4.105,-1.495 -7.091,-2.241 -10.077,2.241c-2.986,4.483 -11.569,14.572 -14.182,17.562c-2.612,2.988 -5.225,3.364 -9.703,1.12c-4.479,-2.241 -18.91,-6.97 -36.017,-22.23c-13.314,-11.876 -22.304,-26.542 -24.916,-31.026c-2.612,-4.484 -0.279,-6.908 1.963,-9.14c2.016,-2.007 4.48,-5.232 6.719,-7.847c2.24,-2.615 2.986,-4.484 4.479,-7.472c1.493,-2.99 0.747,-5.604 -0.374,-7.846c-1.119,-2.241 -10.077,-24.288 -13.809,-33.256c-3.635,-8.733 -7.327,-7.55 -10.077,-7.688c-2.609,-0.13 -5.598,-0.158 -8.583,-0.158c-2.986,0 -7.839,1.121 -11.944,5.604c-4.105,4.484 -15.675,15.32 -15.675,37.364c0,22.046 16.048,43.342 18.287,46.332c2.24,2.99 31.582,48.227 76.511,67.627c10.685,4.615 19.028,7.371 25.533,9.434c10.728,3.41 20.492,2.929 28.209,1.775c8.605,-1.285 26.499,-10.833 30.231,-21.295c3.732,-10.464 3.732,-19.431 2.612,-21.298c-1.119,-1.869 -4.105,-2.99 -8.583,-5.232Z" />
+        </svg>
+    </a>
+    <a target="_blank" rel="noopener noreferrer" aria-label="share Redshift Query Queues: The Complete Guide on telegram"
+        href="https://telegram.me/share/url?text=Redshift%20Query%20Queues%3a%20The%20Complete%20Guide&amp;url=https%3a%2f%2fwww.dawrlog.com%2fposts%2f9%2f">
+        <svg version="1.1" xml:space="preserve" viewBox="2 2 28 28" height="30px" width="30px" fill="currentColor">
+            <path
+                d="M26.49,29.86H5.5a3.37,3.37,0,0,1-2.47-1,3.35,3.35,0,0,1-1-2.47V5.48A3.36,3.36,0,0,1,3,3,3.37,3.37,0,0,1,5.5,2h21A3.38,3.38,0,0,1,29,3a3.36,3.36,0,0,1,1,2.46V26.37a3.35,3.35,0,0,1-1,2.47A3.38,3.38,0,0,1,26.49,29.86Zm-5.38-6.71a.79.79,0,0,0,.85-.66L24.73,9.24a.55.55,0,0,0-.18-.46.62.62,0,0,0-.41-.17q-.08,0-16.53,6.11a.59.59,0,0,0-.41.59.57.57,0,0,0,.43.52l4,1.24,1.61,4.83a.62.62,0,0,0,.63.43.56.56,0,0,0,.4-.17L16.54,20l4.09,3A.9.9,0,0,0,21.11,23.15ZM13.8,20.71l-1.21-4q8.72-5.55,8.78-5.55c.15,0,.23,0,.23.16a.18.18,0,0,1,0,.06s-2.51,2.3-7.52,6.8Z" />
+        </svg>
+    </a>
+</div>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+    <span>&copy; 2023 <a href="https://www.dawrlog.com/">Dataware Logistics</a>; <br /> created with 🧡 on 🐧 machines running ☸️ pods.</span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a><script src='https://storage.ko-fi.com/cdn/scripts/overlay-widget.js'></script>
+<script>
+  kofiWidgetOverlay.draw('dawrlog', {
+    'type': 'floating-chat',
+    'floating-chat.donateButton.text': 'Tip jar',
+    'floating-chat.donateButton.background-color': '#794bc4',
+    'floating-chat.donateButton.text-color': '#fff'
+  });
+</script>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = 'copy';
+
+        function copyingDone() {
+            copybutton.innerHTML = 'copied!';
+            setTimeout(() => {
+                copybutton.innerHTML = 'copy';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script>
+</body>
+
+</html>

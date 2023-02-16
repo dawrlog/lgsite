@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Data Warehouse Design: The good, the bad, the ugly | Dataware Logistics</title>
+<meta name="keywords" content="Data Warehouse, Best Practices">
+<meta name="description" content="Hey everyone, hope everything is well.
+One of the significant challenges in handling data comes from the massive amount of data your organization is most likely generating constantly. Having the ability to react quickly and accurately turns into a differential item among competitors.
+More and more companies are becoming aware of the need to handle data wisely.
+They&rsquo;re looking for ways of getting the most out of their information. And this is probably where they first hear about data warehouses.">
+<meta name="author" content="Daniel Paes">
+<link rel="canonical" href="https://blog.panoply.io/data-warehouse-design-the-good-the-bad-the-ugly">
+<meta name="google-site-verification" content="4599922566">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.css" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://www.dawrlog.com/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://www.dawrlog.com/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://www.dawrlog.com/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://www.dawrlog.com/apple-touch-icon.png">
+<link rel="mask-icon" href="https://www.dawrlog.com/apple-touch-icon.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="https://www.dawrlog.com/posts/1/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --hljs-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><meta property="og:title" content="Data Warehouse Design: The good, the bad, the ugly" />
+<meta property="og:description" content="Hey everyone, hope everything is well.
+One of the significant challenges in handling data comes from the massive amount of data your organization is most likely generating constantly. Having the ability to react quickly and accurately turns into a differential item among competitors.
+More and more companies are becoming aware of the need to handle data wisely.
+They&rsquo;re looking for ways of getting the most out of their information. And this is probably where they first hear about data warehouses." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://www.dawrlog.com/posts/1/" />
+<meta property="og:image" content="https://images.unsplash.com/photo-1661956602153-23384936a1d3?ixlib=rb-4.0.3&ixid=MnwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2021-09-19T00:00:00+00:00" />
+<meta property="article:modified_time" content="2021-09-19T00:00:00+00:00" />
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="https://images.unsplash.com/photo-1661956602153-23384936a1d3?ixlib=rb-4.0.3&ixid=MnwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80" />
+<meta name="twitter:title" content="Data Warehouse Design: The good, the bad, the ugly"/>
+<meta name="twitter:description" content="Hey everyone, hope everything is well.
+One of the significant challenges in handling data comes from the massive amount of data your organization is most likely generating constantly. Having the ability to react quickly and accurately turns into a differential item among competitors.
+More and more companies are becoming aware of the need to handle data wisely.
+They&rsquo;re looking for ways of getting the most out of their information. And this is probably where they first hear about data warehouses."/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://www.dawrlog.com/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Data Warehouse Design: The good, the bad, the ugly",
+      "item": "https://www.dawrlog.com/posts/1/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Data Warehouse Design: The good, the bad, the ugly",
+  "name": "Data Warehouse Design: The good, the bad, the ugly",
+  "description": "Hey everyone, hope everything is well.\nOne of the significant challenges in handling data comes from the massive amount of data your organization is most likely generating constantly. Having the ability to react quickly and accurately turns into a differential item among competitors.\nMore and more companies are becoming aware of the need to handle data wisely.\nThey\u0026rsquo;re looking for ways of getting the most out of their information. And this is probably where they first hear about data warehouses.",
+  "keywords": [
+    "Data Warehouse", "Best Practices"
+  ],
+  "articleBody": "Hey everyone, hope everything is well.\nOne of the significant challenges in handling data comes from the massive amount of data your organization is most likely generating constantly. Having the ability to react quickly and accurately turns into a differential item among competitors.\nMore and more companies are becoming aware of the need to handle data wisely.\nThey’re looking for ways of getting the most out of their information. And this is probably where they first hear about data warehouses.\nI want to present data warehouses and their components in this article.\nTo start, you’ll get an overview of what a data warehouse is. Then we’ll go over some considerations that I find mandatory when building a data warehouse.\nTo conclude, I’ll do a quick recap and then share some other concerns and clarifications.\nThe basics of data warehousing\nData warehouse databases (DWs for short) are a decision support system. Once you understand how they can make the analysis of historical data much easier, it’s easy to see why people call them warehouses.\nAs the name suggests, this decision support system helps in the decision-making process by using available data from within the company.\nDW is a result of solving questions around specific subjects.\nIt has a different approach from the typical operational applications, such as billing or human resource systems. The latter focuses on operational needs such as pay and resource allocation, for example.\nAnd due to DW systems’ peculiar characteristics, such as being time-sensitive and not having detailed information such as phone numbers, they aren’t a good option for operational reports.\nStaying safe during data warehouse implementation\nI can’t stress enough the importance of having a solid security policy for each phase of your data warehouse rollout.\nSimply put, the more closely you allow your users to the source systems so they can explore your data, the more they could potentially access without the correct permissions. And no one wants a data leak.\nOn top of your existing policies, your data warehouse must follow different requests.\nDW databases can solve critical decision support tasks; however, in some cases, the only place this information exists is within sensitive data. In the best “for your eyes only” style, sometimes it’s good to restrain those who don’t truly need access.\nThe data warehouse fun begins\nNow we’ve got our bases covered in terms of what a data warehouse is, it’s time for us to define who will be its users and what subjects it’ll cover.\nIt’s always a good starting point to inform department stakeholders in the early stages of your data warehouse development. After all, they’ll know who’s responsible for or interested in the resulting key performance indicators, or KPIs for short.\nRemember that they can help you solve problems like “Where can I find data that could help me?” or “What will we use to analyze that?”\nWhich DW building technique should you use?\nIt’s also important to choose the best technique to follow as you build your DW.\nThe most famous one is the Kimball approach. (I’ll describe its phases a bit later in this article.) Ralph Kimball is considered the father of data warehousing. The Inmon method is the oldest approach, but it’s a solid choice. I also want to mention data vault modeling and CDP/DMP if you’re involved in AdTech. I always like to clarify that although some characteristics of a customer data platform (CDP) make it seem like a data warehouse, it isn’t.\nA CDP can work as a data lake for your data lakehouse, though. To find out more, check out this CDP guide.\nGiving your data warehouse layers\nSo far, we’ve clarified who your team is and what your needs are. Now, let’s see the layers (or phases) on how your data flows from your applications into your data warehouse.\nYour OLTP layer\nAt this stage, you should start by defining what you’d use as a data source to create your dashboards.\nThe goal is to build your online transaction processing layer, also known as the staging area, landing zone area or by its acronym OLTP. It’s where you define the retention plan for this data.\nKeep in mind that this stage shouldn’t have any data transformation, as the data remains available if some reload is needed on the next phases.\nThis area lets you complete concurrent processes while the source applications are running. It’s a data source for the next layer, the ODS area.\nYour ODS layer\nOK, let’s say you’ve got your data sources configured and pumping data into your staging area. Great! But you’ll need to make some sense of your disparate systems.\nThink about it: How can you certify that the tables have the same kind of information? Will you need to have a conformed format for your data?\nHere’s where the operational data store (or ODS) layer is helpful.\nThe ODS puts all your data sources in order in the correct format. It also removes duplicated data.\nIn other words, it helps you develop the best and most unified operational database possible. Cube models and data granularity\nOnce your sources are busy creating useful data for your analysts, you’re ready to create your cube models. Here’s where you’ll use techniques such as iceberg queries and windows queries.\nAt this point, you’ve advanced far beyond the operational nature of your data.\nThese techniques transform your data, allowing you and your team members different levels of analysis. What we call data granularity helps you gain more specific, more targeted \u0026 more useful insights from the same dataset.\nLet’s imagine that you want to look for an address of a retailer. That information is of high granularity. In other words, it has a specific value to look for (the store address).\nBut what if you want to see how many stores are in a specific county?\nIn that case, you’ll have data of low granularity, and you’ll need to count your addresses to produce this outcome.\nYou can find out more about data granularity on this link. Setting up the infrastructure, in the cloud or on-premises\nThe idea of business intelligence comes from a simpler era regarding data structures and interest in extracting information from the data.\nMost data sources originated in structured formats from relational databases or semi-structured formats from web services (such as the XML format of the good old SOA services or JSON).\nIn the past, people needed to rely on heavily regular expressions to extract data from a single field; therefore, it made sense to invest in big guns to store your data, as it was supposed to increase over time exponentially.\nWhat’s called the public cloud presented an attractive option, eliminating the need for these expensive investments.\nCloud providers, including AWS and Azure, are acquiring more evangelists on their data storage solutions.\nThe serverless approach is exciting and saves time. However, the configuration and management of these new services might be cumbersome to your existing environment.\nFor this reason, I advise you to go easy on migrating and rebuilding your existing pipelines into new ones. Instead, choose less critical ones to start with and then evolve into the cloud. (Some call this the hybrid approach.) What we’ve covered so far about data warehousing\nComing up with the correct design for your data warehouse is challenging all by itself.\nEven for the most experienced data architect, focusing on unclear requirements and discovering more complex ones during development makes having a simple dashboard a distant dream.\nTherefore, let’s consider the concerns you should have in mind. Other approaches besides Kimball\nIn this article, I focused on the Kimball approach because it’s the most used one. But what if you’re interested in different techniques?\nYou can investigate another old and reliable framework that we mentioned earlier — the Inmon approach.\nAnother approach worth finding out about is the data vault. It’s an excellent option for fast-changing schemas. Also, it’s my preferred method when modeling for streaming data.\nFinding the right tools for your data warehouse\nSometimes it’s hard to find the right tools to handle all your data sources and their pipeline ingestions. In part because data warehouse techniques are technology agnostic by their nature. But with a good foundation about the nature of your data you would be on a better position to understand your data.\nSee you guys next time!\n",
+  "wordCount" : "1393",
+  "inLanguage": "en",
+  "image":"https://images.unsplash.com/photo-1661956602153-23384936a1d3?ixlib=rb-4.0.3\u0026ixid=MnwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8\u0026auto=format\u0026fit=crop\u0026w=1170\u0026q=80","datePublished": "2021-09-19T00:00:00Z",
+  "dateModified": "2021-09-19T00:00:00Z",
+  "author":{
+    "@type": "Person",
+    "name": "Daniel Paes"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://www.dawrlog.com/posts/1/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Dataware Logistics",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://www.dawrlog.com/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://www.dawrlog.com/" accesskey="h" title="Dataware Logistics (Alt + H)">Dataware Logistics</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+                <ul class="lang-switch"><li>|</li>
+                    <li>
+                        <a href="https://www.dawrlog.com/fr/" title="French"
+                            aria-label=":fr:">🇫🇷</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://www.dawrlog.com/about" title="About">
+                    <span>About</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://www.dawrlog.com/posts/" title="Posts">
+                    <span>Posts</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://calendly.com/dawrlog" title="Contact">
+                    <span>Contact</span>&nbsp;
+                    <svg fill="none" shape-rendering="geometricPrecision" stroke="currentColor" stroke-linecap="round"
+                        stroke-linejoin="round" stroke-width="2.5" viewBox="0 0 24 24" height="12" width="12">
+                        <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"></path>
+                        <path d="M15 3h6v6"></path>
+                        <path d="M10 14L21 3"></path>
+                    </svg>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    <div class="breadcrumbs"><a href="https://www.dawrlog.com/">Home</a>&nbsp;»&nbsp;<a href="https://www.dawrlog.com/posts/">Posts</a></div>
+    <h1 class="post-title">
+      Data Warehouse Design: The good, the bad, the ugly
+    </h1>
+    <div class="post-meta"><span title='2021-09-19 00:00:00 +0000 UTC'>September 19, 2021</span>&nbsp;·&nbsp;7 min&nbsp;·&nbsp;Daniel Paes
+
+</div>
+  </header> 
+<figure class="entry-cover"><img loading="lazy" src="https://images.unsplash.com/photo-1661956602153-23384936a1d3?ixlib=rb-4.0.3&amp;ixid=MnwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;auto=format&amp;fit=crop&amp;w=1170&amp;q=80" alt="">
+        
+</figure><div class="toc">
+    <details >
+        <summary accesskey="c" title="(Alt + C)">
+            <span class="details">Table of Contents</span>
+        </summary>
+
+        <div class="inner"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#h2the-basics-of-data-warehousingh2br-"><h2>The basics of data warehousing</h2><br /></a></li>
+    <li><a href="#h2staying-safe-during-data-warehouse-implementationh2br-"><h2>Staying safe during data warehouse implementation</h2><br /></a></li>
+    <li><a href="#h2the-data-warehouse-fun-beginsh2br-"><h2>The data warehouse fun begins</h2><br /></a></li>
+    <li><a href="#h2which-dw-building-technique-should-you-useh2br-"><h2>Which DW building technique should you use?</h2><br /></a></li>
+    <li><a href="#h2giving-your-data-warehouse-layersh2br-"><h2>Giving your data warehouse layers</h2><br /></a>
+      <ul>
+        <li><a href="#h3your-oltp-layerh3br-"><h3>Your OLTP layer</h3><br /></a></li>
+        <li><a href="#h3your-ods-layerh3br-"><h3>Your ODS layer</h3><br /></a></li>
+        <li><a href="#h3cube-models-and-data-granularityh3br-"><h3>Cube models and data granularity</h3><br /></a></li>
+      </ul>
+    </li>
+    <li><a href="#h2setting-up-the-infrastructure-in-the-cloud-or-on-premisesh2br-"><h2>Setting up the infrastructure, in the cloud or on-premises</h2><br /></a></li>
+    <li><a href="#h2what-weve-covered-so-far-about-data-warehousingh2br-"><h2>What we&rsquo;ve covered so far about data warehousing</h2><br /></a>
+      <ul>
+        <li><a href="#h3other-approaches-besides-kimballh3br-"><h3>Other approaches besides Kimball</h3><br /></a></li>
+        <li><a href="#h3finding-the-right-tools-for-your-data-warehouseh3br-"><h3>Finding the right tools for your data warehouse</h3><br /></a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+        </div>
+    </details>
+</div>
+
+  <div class="post-content"><p>Hey everyone, hope everything is well.</p>
+<p>One of the significant challenges in handling data comes from the <strong>massive amount of data</strong> your organization is most likely generating constantly. Having the ability to react quickly and accurately turns into a differential item among competitors.</p>
+<p>More and more companies are becoming aware of the need to handle data wisely.</p>
+<p>They&rsquo;re looking for ways of getting the most out of their information. And this is probably where they first hear about <a href="https://en.wikipedia.org/wiki/Data_warehouse">data warehouses</a>.</p>
+<p>I want to present data warehouses and their components in this article.</p>
+<p>To start, you&rsquo;ll get an overview of what a data warehouse is. Then we&rsquo;ll go over some considerations that I find mandatory when building a data warehouse.</p>
+<p>To conclude, I&rsquo;ll do a quick recap and then share some other concerns and clarifications.</p>
+<h2 id="h2the-basics-of-data-warehousingh2br-"><h2>The basics of data warehousing</h2><br /><a hidden class="anchor" aria-hidden="true" href="#h2the-basics-of-data-warehousingh2br-">#</a></h2>
+<p>Data warehouse databases (DWs for short) are a <a href="https://www.investopedia.com/terms/d/decision-support-system.asp">decision support system</a>. Once you understand how they can make the analysis of historical data much easier, it&rsquo;s easy to see why people call them warehouses.</p>
+<p>As the name suggests, this decision support system helps in the decision-making process by using available data from within the company.</p>
+<p><em><strong>DW is a result of solving questions around specific subjects.</strong></em></p>
+<p>It has a different approach from the typical operational applications, such as billing or human resource systems. The latter focuses on operational needs such as pay and resource allocation, for example.</p>
+<p>And due to DW systems&rsquo; peculiar characteristics, such as being time-sensitive and not having detailed information such as phone numbers, they aren&rsquo;t a good option for operational reports.</p>
+<h2 id="h2staying-safe-during-data-warehouse-implementationh2br-"><h2>Staying safe during data warehouse implementation</h2><br /><a hidden class="anchor" aria-hidden="true" href="#h2staying-safe-during-data-warehouse-implementationh2br-">#</a></h2>
+<p>I can&rsquo;t stress enough the importance of having a <strong>solid security policy for each phase</strong> of your data warehouse rollout.</p>
+<p>Simply put, the more closely you allow your users to the source systems so they can explore your data, the more they could potentially access without the correct permissions. And no one wants a <strong>data leak</strong>.</p>
+<p>On top of your existing policies, your data warehouse must follow different requests.</p>
+<p>DW databases can solve critical decision support tasks; however, in some cases, the only place this information exists is within sensitive data. In the best &ldquo;for your eyes only&rdquo; style, sometimes it&rsquo;s good to restrain those who <strong>don&rsquo;t truly need access</strong>.</p>
+<h2 id="h2the-data-warehouse-fun-beginsh2br-"><h2>The data warehouse fun begins</h2><br /><a hidden class="anchor" aria-hidden="true" href="#h2the-data-warehouse-fun-beginsh2br-">#</a></h2>
+<p>Now we&rsquo;ve got our bases covered in terms of what a data warehouse is, it&rsquo;s time for us to define who will be its users and what subjects it&rsquo;ll cover.</p>
+<p>It&rsquo;s always a good starting point to inform department stakeholders in the early stages of your data warehouse development. After all, they&rsquo;ll know who&rsquo;s responsible for or interested in the resulting <a href="https://kpi.org/KPI-Basics">key performance indicators</a>, or KPIs for short.</p>
+<p>Remember that they can help you solve problems like <strong>&ldquo;Where can I find data that could help me?&rdquo;</strong> or <strong>&ldquo;What will we use to analyze that?&rdquo;</strong></p>
+<h2 id="h2which-dw-building-technique-should-you-useh2br-"><h2>Which DW building technique should you use?</h2><br /><a hidden class="anchor" aria-hidden="true" href="#h2which-dw-building-technique-should-you-useh2br-">#</a></h2>
+<p>It&rsquo;s also important to choose the best technique to follow as you build your DW.</p>
+<ul>
+<li>The most famous one is the <a href="https://www.sqlservercentral.com/blogs/the-kimball-approach">Kimball approach</a>. (I&rsquo;ll describe its phases a bit later in this article.) Ralph Kimball is considered the father of data warehousing.</li>
+<li>The <a href="https://medium.com/cloudzone/inmon-vs-kimball-the-great-data-warehousing-debate-78c57f0b5e0e#:~:text=The%20Inmon%20approach%20is%20referred,finance%2C%20accounting%2C%20HR%20etc.">Inmon method</a> is the oldest approach, but it&rsquo;s a solid choice.</li>
+<li>I also want to mention <a href="https://en.wikipedia.org/wiki/Data_vault_modeling">data vault modeling</a> and <a href="https://www.cmswire.com/customer-experience/cdp-vs-dmp-which-is-right-for-your-business/">CDP/DMP</a> if you&rsquo;re involved in <a href="https://www.forbes.com/sites/forbestechcouncil/2021/05/24/tectonic-shifts-in-adtech-spotlight-the-importance-of-first-party-consumer-data/?sh=1404a2091860">AdTech</a>.</li>
+</ul>
+<p>I always like to clarify that although some characteristics of a customer data platform (CDP) make it seem like a data warehouse, it isn&rsquo;t.</p>
+<p>A CDP can work as a <a href="https://en.wikipedia.org/wiki/Data_lake">data lake</a> for your <a href="https://databricks.com/blog/2020/01/30/what-is-a-data-lakehouse.html">data lakehouse</a>, though. To find out more, check out this <a href="https://exponea.com/blog/customer-data-platform/">CDP guide</a>.</p>
+<h2 id="h2giving-your-data-warehouse-layersh2br-"><h2>Giving your data warehouse layers</h2><br /><a hidden class="anchor" aria-hidden="true" href="#h2giving-your-data-warehouse-layersh2br-">#</a></h2>
+<p>So far, we&rsquo;ve clarified who your team is and what your needs are. Now, let&rsquo;s see the layers (or phases) on how your data flows from your applications into your data warehouse.</p>
+<h3 id="h3your-oltp-layerh3br-"><h3>Your OLTP layer</h3><br /><a hidden class="anchor" aria-hidden="true" href="#h3your-oltp-layerh3br-">#</a></h3>
+<p>At this stage, you should start by defining what you&rsquo;d use as a data source to create your dashboards.</p>
+<p>The goal is to build your <a href="https://en.wikipedia.org/wiki/Online_transaction_processing">online transaction processing layer</a>, also known as the staging area, landing zone area or by its acronym OLTP. It&rsquo;s where you define the retention plan for this data.</p>
+<p>Keep in mind that this stage shouldn&rsquo;t have any data transformation, as the data remains available if some reload is needed on the next phases.</p>
+<p>This area lets you complete concurrent processes while the source applications are running. It&rsquo;s a data source for the next layer, the ODS area.</p>
+<h3 id="h3your-ods-layerh3br-"><h3>Your ODS layer</h3><br /><a hidden class="anchor" aria-hidden="true" href="#h3your-ods-layerh3br-">#</a></h3>
+<p>OK, let&rsquo;s say you&rsquo;ve got your data sources configured and pumping data into your staging area. Great! But you&rsquo;ll need to make some sense of your disparate systems.</p>
+<p>Think about it: How can you certify that the tables have the same kind of information? Will you need to have a conformed format for your data?</p>
+<p>Here&rsquo;s where the <a href="https://en.wikipedia.org/wiki/Operational_data_store">operational data store</a> (or ODS) layer is helpful.</p>
+<p>The ODS puts all your data sources in order in the correct format. It also removes duplicated data.</p>
+<p>In other words, it helps you develop the best and most unified operational database possible.
+<br /></p>
+<h3 id="h3cube-models-and-data-granularityh3br-"><h3>Cube models and data granularity</h3><br /><a hidden class="anchor" aria-hidden="true" href="#h3cube-models-and-data-granularityh3br-">#</a></h3>
+<p>Once your sources are busy creating useful data for your analysts, you&rsquo;re ready to create your <a href="https://binaryterms.com/data-cube.html">cube models</a>. Here&rsquo;s where you&rsquo;ll use techniques such as <a href="https://www.quora.com/What-is-an-iceberg-query">iceberg queries</a> and <a href="https://observablehq.com/@uwdata/working-with-window-queries">windows queries</a>.</p>
+<p>At this point, you&rsquo;ve advanced far beyond the operational nature of your data.</p>
+<p>These techniques transform your data, allowing you and your team members different levels of analysis. What we call <a href="https://www.techopedia.com/definition/31722/granular-data">data granularity</a> helps you gain more specific, more targeted &amp; more useful insights from the same dataset.</p>
+<p>Let&rsquo;s imagine that you want to look for an address of a retailer. That information is of <strong>high granularity</strong>. In other words, it has a specific value to look for (the store address).</p>
+<p>But what if you want to see how many stores are in a specific county?</p>
+<p>In that case, you&rsquo;ll have data of <strong>low granularity</strong>, and you&rsquo;ll need to count your addresses to produce this outcome.</p>
+<p>You can find out more about data granularity on this <a href="http://en.dwhwiki.info/glossary/g/granularity">link</a>.
+<br /></p>
+<h2 id="h2setting-up-the-infrastructure-in-the-cloud-or-on-premisesh2br-"><h2>Setting up the infrastructure, in the cloud or on-premises</h2><br /><a hidden class="anchor" aria-hidden="true" href="#h2setting-up-the-infrastructure-in-the-cloud-or-on-premisesh2br-">#</a></h2>
+<p>The idea of business intelligence comes from a simpler era regarding data structures and interest in extracting information from the data.</p>
+<p>Most data sources originated in <strong>structured formats</strong> from relational databases or <strong>semi-structured</strong> formats from web services (such as the XML format of the good old SOA services or JSON).</p>
+<p>In the past, people needed to rely on heavily regular expressions to extract data from a single field; therefore, it made sense to invest in big guns to store your data, as it was supposed to increase over time exponentially.</p>
+<p>What&rsquo;s called the <strong>public cloud</strong> presented an attractive option, eliminating the need for these expensive investments.</p>
+<p>Cloud providers, including AWS and Azure, are acquiring more evangelists on their data storage solutions.</p>
+<p>The serverless approach is exciting and saves time. However, the configuration and management of these new services might be cumbersome to your existing environment.</p>
+<p>For this reason, I advise you to go easy on migrating and rebuilding your existing pipelines into new ones. Instead, choose less critical ones to start with and then evolve into the cloud. (Some call this the <a href="https://www.datanami.com/2020/08/07/the-best-of-both-worlds-why-a-hybrid-cloud-approach-makes-sense-for-data-backup-and-recovery/">hybrid approach</a>.)
+<br /></p>
+<h2 id="h2what-weve-covered-so-far-about-data-warehousingh2br-"><h2>What we&rsquo;ve covered so far about data warehousing</h2><br /><a hidden class="anchor" aria-hidden="true" href="#h2what-weve-covered-so-far-about-data-warehousingh2br-">#</a></h2>
+<p>Coming up with the correct design for your data warehouse is challenging all by itself.</p>
+<p>Even for the most experienced data architect, focusing on unclear requirements and discovering more complex ones during development makes having a simple dashboard a distant dream.</p>
+<p>Therefore, let&rsquo;s consider the concerns you should have in mind.
+<br /></p>
+<h3 id="h3other-approaches-besides-kimballh3br-"><h3>Other approaches besides Kimball</h3><br /><a hidden class="anchor" aria-hidden="true" href="#h3other-approaches-besides-kimballh3br-">#</a></h3>
+<p>In this article, I focused on the Kimball approach because it&rsquo;s the most used one. But what if you&rsquo;re interested in different techniques?</p>
+<p>You can investigate another old and reliable framework that we mentioned earlier  — the <a href="https://www.zentut.com/data-warehouse/bill-inmon-data-warehouse/">Inmon approach</a>.</p>
+<p>Another approach worth finding out about is the data vault. It&rsquo;s an excellent option for <strong>fast-changing schemas</strong>. Also, it&rsquo;s my preferred method when modeling for streaming data.</p>
+<h3 id="h3finding-the-right-tools-for-your-data-warehouseh3br-"><h3>Finding the right tools for your data warehouse</h3><br /><a hidden class="anchor" aria-hidden="true" href="#h3finding-the-right-tools-for-your-data-warehouseh3br-">#</a></h3>
+<p>Sometimes it&rsquo;s hard to find the right tools to handle all your data sources and their pipeline ingestions. In part because data warehouse techniques are technology agnostic by their nature. But with a good foundation about the nature of your data you would be on a better position to understand your data.</p>
+<p>See you guys next time!</p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://www.dawrlog.com/tags/data-warehouse/">Data Warehouse</a></li>
+      <li><a href="https://www.dawrlog.com/tags/best-practices/">Best Practices</a></li>
+    </ul>
+<nav class="paginav">
+  <a class="prev" href="https://www.dawrlog.com/posts/14/">
+    <span class="title">« Prev</span>
+    <br>
+    <span>What Is the Identity and Access Provisioning Lifecycle?</span>
+  </a>
+  <a class="next" href="https://www.dawrlog.com/posts/7/">
+    <span class="title">Next »</span>
+    <br>
+    <span>How To Analyze PostgreSQL Data in Power BI.</span>
+  </a>
+</nav>
+
+
+<div class="share-buttons">
+    <a target="_blank" rel="noopener noreferrer" aria-label="share Data Warehouse Design: The good, the bad, the ugly on twitter"
+        href="https://twitter.com/intent/tweet/?text=Data%20Warehouse%20Design%3a%20The%20good%2c%20the%20bad%2c%20the%20ugly&amp;url=https%3a%2f%2fwww.dawrlog.com%2fposts%2f1%2f&amp;hashtags=DataWarehouse%2cBestPractices">
+        <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+            <path
+                d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-253.927,424.544c135.939,0 210.268,-112.643 210.268,-210.268c0,-3.218 0,-6.437 -0.153,-9.502c14.406,-10.421 26.973,-23.448 36.935,-38.314c-13.18,5.824 -27.433,9.809 -42.452,11.648c15.326,-9.196 26.973,-23.602 32.49,-40.92c-14.252,8.429 -30.038,14.56 -46.896,17.931c-13.487,-14.406 -32.644,-23.295 -53.946,-23.295c-40.767,0 -73.87,33.104 -73.87,73.87c0,5.824 0.613,11.494 1.992,16.858c-61.456,-3.065 -115.862,-32.49 -152.337,-77.241c-6.284,10.881 -9.962,23.601 -9.962,37.088c0,25.594 13.027,48.276 32.95,61.456c-12.107,-0.307 -23.448,-3.678 -33.41,-9.196l0,0.92c0,35.862 25.441,65.594 59.311,72.49c-6.13,1.686 -12.72,2.606 -19.464,2.606c-4.751,0 -9.348,-0.46 -13.946,-1.38c9.349,29.426 36.628,50.728 68.965,51.341c-25.287,19.771 -57.164,31.571 -91.8,31.571c-5.977,0 -11.801,-0.306 -17.625,-1.073c32.337,21.15 71.264,33.41 112.95,33.41Z" />
+        </svg>
+    </a>
+    <a target="_blank" rel="noopener noreferrer" aria-label="share Data Warehouse Design: The good, the bad, the ugly on linkedin"
+        href="https://www.linkedin.com/shareArticle?mini=true&amp;url=https%3a%2f%2fwww.dawrlog.com%2fposts%2f1%2f&amp;title=Data%20Warehouse%20Design%3a%20The%20good%2c%20the%20bad%2c%20the%20ugly&amp;summary=Data%20Warehouse%20Design%3a%20The%20good%2c%20the%20bad%2c%20the%20ugly&amp;source=https%3a%2f%2fwww.dawrlog.com%2fposts%2f1%2f">
+        <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+            <path
+                d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-288.985,423.278l0,-225.717l-75.04,0l0,225.717l75.04,0Zm270.539,0l0,-129.439c0,-69.333 -37.018,-101.586 -86.381,-101.586c-39.804,0 -57.634,21.891 -67.617,37.266l0,-31.958l-75.021,0c0.995,21.181 0,225.717 0,225.717l75.02,0l0,-126.056c0,-6.748 0.486,-13.492 2.474,-18.315c5.414,-13.475 17.767,-27.434 38.494,-27.434c27.135,0 38.007,20.707 38.007,51.037l0,120.768l75.024,0Zm-307.552,-334.556c-25.674,0 -42.448,16.879 -42.448,39.002c0,21.658 16.264,39.002 41.455,39.002l0.484,0c26.165,0 42.452,-17.344 42.452,-39.002c-0.485,-22.092 -16.241,-38.954 -41.943,-39.002Z" />
+        </svg>
+    </a>
+    <a target="_blank" rel="noopener noreferrer" aria-label="share Data Warehouse Design: The good, the bad, the ugly on reddit"
+        href="https://reddit.com/submit?url=https%3a%2f%2fwww.dawrlog.com%2fposts%2f1%2f&title=Data%20Warehouse%20Design%3a%20The%20good%2c%20the%20bad%2c%20the%20ugly">
+        <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+            <path
+                d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-3.446,265.638c0,-22.964 -18.616,-41.58 -41.58,-41.58c-11.211,0 -21.361,4.457 -28.841,11.666c-28.424,-20.508 -67.586,-33.757 -111.204,-35.278l18.941,-89.121l61.884,13.157c0.756,15.734 13.642,28.29 29.56,28.29c16.407,0 29.706,-13.299 29.706,-29.701c0,-16.403 -13.299,-29.702 -29.706,-29.702c-11.666,0 -21.657,6.792 -26.515,16.578l-69.105,-14.69c-1.922,-0.418 -3.939,-0.042 -5.585,1.036c-1.658,1.073 -2.811,2.761 -3.224,4.686l-21.152,99.438c-44.258,1.228 -84.046,14.494 -112.837,35.232c-7.468,-7.164 -17.589,-11.591 -28.757,-11.591c-22.965,0 -41.585,18.616 -41.585,41.58c0,16.896 10.095,31.41 24.568,37.918c-0.639,4.135 -0.99,8.328 -0.99,12.576c0,63.977 74.469,115.836 166.33,115.836c91.861,0 166.334,-51.859 166.334,-115.836c0,-4.218 -0.347,-8.387 -0.977,-12.493c14.564,-6.47 24.735,-21.034 24.735,-38.001Zm-119.474,108.193c-20.27,20.241 -59.115,21.816 -70.534,21.816c-11.428,0 -50.277,-1.575 -70.522,-21.82c-3.007,-3.008 -3.007,-7.882 0,-10.889c3.003,-2.999 7.882,-3.003 10.885,0c12.777,12.781 40.11,17.317 59.637,17.317c19.522,0 46.86,-4.536 59.657,-17.321c3.016,-2.999 7.886,-2.995 10.885,0.008c3.008,3.011 3.003,7.882 -0.008,10.889Zm-5.23,-48.781c-16.373,0 -29.701,-13.324 -29.701,-29.698c0,-16.381 13.328,-29.714 29.701,-29.714c16.378,0 29.706,13.333 29.706,29.714c0,16.374 -13.328,29.698 -29.706,29.698Zm-160.386,-29.702c0,-16.381 13.328,-29.71 29.714,-29.71c16.369,0 29.689,13.329 29.689,29.71c0,16.373 -13.32,29.693 -29.689,29.693c-16.386,0 -29.714,-13.32 -29.714,-29.693Z" />
+        </svg>
+    </a>
+    <a target="_blank" rel="noopener noreferrer" aria-label="share Data Warehouse Design: The good, the bad, the ugly on facebook"
+        href="https://facebook.com/sharer/sharer.php?u=https%3a%2f%2fwww.dawrlog.com%2fposts%2f1%2f">
+        <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+            <path
+                d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-106.468,0l0,-192.915l66.6,0l12.672,-82.621l-79.272,0l0,-53.617c0,-22.603 11.073,-44.636 46.58,-44.636l36.042,0l0,-70.34c0,0 -32.71,-5.582 -63.982,-5.582c-65.288,0 -107.96,39.569 -107.96,111.204l0,62.971l-72.573,0l0,82.621l72.573,0l0,192.915l-191.104,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Z" />
+        </svg>
+    </a>
+    <a target="_blank" rel="noopener noreferrer" aria-label="share Data Warehouse Design: The good, the bad, the ugly on whatsapp"
+        href="https://api.whatsapp.com/send?text=Data%20Warehouse%20Design%3a%20The%20good%2c%20the%20bad%2c%20the%20ugly%20-%20https%3a%2f%2fwww.dawrlog.com%2fposts%2f1%2f">
+        <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+            <path
+                d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-58.673,127.703c-33.842,-33.881 -78.847,-52.548 -126.798,-52.568c-98.799,0 -179.21,80.405 -179.249,179.234c-0.013,31.593 8.241,62.428 23.927,89.612l-25.429,92.884l95.021,-24.925c26.181,14.28 55.659,21.807 85.658,21.816l0.074,0c98.789,0 179.206,-80.413 179.247,-179.243c0.018,-47.895 -18.61,-92.93 -52.451,-126.81Zm-126.797,275.782l-0.06,0c-26.734,-0.01 -52.954,-7.193 -75.828,-20.767l-5.441,-3.229l-56.386,14.792l15.05,-54.977l-3.542,-5.637c-14.913,-23.72 -22.791,-51.136 -22.779,-79.287c0.033,-82.142 66.867,-148.971 149.046,-148.971c39.793,0.014 77.199,15.531 105.329,43.692c28.128,28.16 43.609,65.592 43.594,105.4c-0.034,82.149 -66.866,148.983 -148.983,148.984Zm81.721,-111.581c-4.479,-2.242 -26.499,-13.075 -30.604,-14.571c-4.105,-1.495 -7.091,-2.241 -10.077,2.241c-2.986,4.483 -11.569,14.572 -14.182,17.562c-2.612,2.988 -5.225,3.364 -9.703,1.12c-4.479,-2.241 -18.91,-6.97 -36.017,-22.23c-13.314,-11.876 -22.304,-26.542 -24.916,-31.026c-2.612,-4.484 -0.279,-6.908 1.963,-9.14c2.016,-2.007 4.48,-5.232 6.719,-7.847c2.24,-2.615 2.986,-4.484 4.479,-7.472c1.493,-2.99 0.747,-5.604 -0.374,-7.846c-1.119,-2.241 -10.077,-24.288 -13.809,-33.256c-3.635,-8.733 -7.327,-7.55 -10.077,-7.688c-2.609,-0.13 -5.598,-0.158 -8.583,-0.158c-2.986,0 -7.839,1.121 -11.944,5.604c-4.105,4.484 -15.675,15.32 -15.675,37.364c0,22.046 16.048,43.342 18.287,46.332c2.24,2.99 31.582,48.227 76.511,67.627c10.685,4.615 19.028,7.371 25.533,9.434c10.728,3.41 20.492,2.929 28.209,1.775c8.605,-1.285 26.499,-10.833 30.231,-21.295c3.732,-10.464 3.732,-19.431 2.612,-21.298c-1.119,-1.869 -4.105,-2.99 -8.583,-5.232Z" />
+        </svg>
+    </a>
+    <a target="_blank" rel="noopener noreferrer" aria-label="share Data Warehouse Design: The good, the bad, the ugly on telegram"
+        href="https://telegram.me/share/url?text=Data%20Warehouse%20Design%3a%20The%20good%2c%20the%20bad%2c%20the%20ugly&amp;url=https%3a%2f%2fwww.dawrlog.com%2fposts%2f1%2f">
+        <svg version="1.1" xml:space="preserve" viewBox="2 2 28 28" height="30px" width="30px" fill="currentColor">
+            <path
+                d="M26.49,29.86H5.5a3.37,3.37,0,0,1-2.47-1,3.35,3.35,0,0,1-1-2.47V5.48A3.36,3.36,0,0,1,3,3,3.37,3.37,0,0,1,5.5,2h21A3.38,3.38,0,0,1,29,3a3.36,3.36,0,0,1,1,2.46V26.37a3.35,3.35,0,0,1-1,2.47A3.38,3.38,0,0,1,26.49,29.86Zm-5.38-6.71a.79.79,0,0,0,.85-.66L24.73,9.24a.55.55,0,0,0-.18-.46.62.62,0,0,0-.41-.17q-.08,0-16.53,6.11a.59.59,0,0,0-.41.59.57.57,0,0,0,.43.52l4,1.24,1.61,4.83a.62.62,0,0,0,.63.43.56.56,0,0,0,.4-.17L16.54,20l4.09,3A.9.9,0,0,0,21.11,23.15ZM13.8,20.71l-1.21-4q8.72-5.55,8.78-5.55c.15,0,.23,0,.23.16a.18.18,0,0,1,0,.06s-2.51,2.3-7.52,6.8Z" />
+        </svg>
+    </a>
+</div>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+    <span>&copy; 2023 <a href="https://www.dawrlog.com/">Dataware Logistics</a>; <br /> created with 🧡 on 🐧 machines running ☸️ pods.</span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a><script src='https://storage.ko-fi.com/cdn/scripts/overlay-widget.js'></script>
+<script>
+  kofiWidgetOverlay.draw('dawrlog', {
+    'type': 'floating-chat',
+    'floating-chat.donateButton.text': 'Tip jar',
+    'floating-chat.donateButton.background-color': '#794bc4',
+    'floating-chat.donateButton.text-color': '#fff'
+  });
+</script>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = 'copy';
+
+        function copyingDone() {
+            copybutton.innerHTML = 'copied!';
+            setTimeout(() => {
+                copybutton.innerHTML = 'copy';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script>
+</body>
+
+</html>

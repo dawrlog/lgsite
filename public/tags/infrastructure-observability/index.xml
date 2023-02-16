@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Infrastructure Observability on Dataware Logistics</title>
+    <link>https://www.dawrlog.com/tags/infrastructure-observability/</link>
+    <description>Recent content in Infrastructure Observability on Dataware Logistics</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Tue, 12 Jul 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://www.dawrlog.com/tags/infrastructure-observability/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Top 10 Argo Workflows Examples.</title>
+      <link>https://www.dawrlog.com/posts/6/</link>
+      <pubDate>Tue, 12 Jul 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/posts/6/</guid>
+      <description>We all know how Argo Workflows makes it easy to orchestrate parallel jobs on Kubernetes. While it’s most often associated with data processing and ETL projects, it’s useful for a lot more! These 10 workflows will change the way you see this Kubernetes orchestrator.
+Let’s dive in!
+Argo Workflows Setup
+If you don&amp;rsquo;t currently have a workflow running, I suggest you create your first Argo Workflow to understand what we&amp;rsquo;ll discuss in this post.</description>
+    </item>
+    
+  </channel>
+</rss>

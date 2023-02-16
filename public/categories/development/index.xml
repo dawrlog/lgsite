@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Development on Dataware Logistics</title>
+    <link>https://www.dawrlog.com/categories/development/</link>
+    <description>Recent content in Development on Dataware Logistics</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Sun, 14 Aug 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://www.dawrlog.com/categories/development/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Argo Workflow ETL Examples.</title>
+      <link>https://www.dawrlog.com/posts/5/</link>
+      <pubDate>Sun, 14 Aug 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/posts/5/</guid>
+      <description>This post explores using Argo Workflows to orchestrate your data pipelines. To start, let&amp;rsquo;s refresh on what ETL is while designing our work&amp;rsquo;s high-level architecture. I&amp;rsquo;ll demonstrate how to set up your data pipelines to follow the structure more naturally. Then, we&amp;rsquo;ll see how to achieve the same result using directed acyclic graphs (DAGs). Last, I&amp;rsquo;ll summarize what we saw and present reasons to guide your choice of approach based on your project complexity.</description>
+    </item>
+    
+    <item>
+      <title>Top 10 Argo Workflows Examples.</title>
+      <link>https://www.dawrlog.com/posts/6/</link>
+      <pubDate>Tue, 12 Jul 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/posts/6/</guid>
+      <description>We all know how Argo Workflows makes it easy to orchestrate parallel jobs on Kubernetes. While it’s most often associated with data processing and ETL projects, it’s useful for a lot more! These 10 workflows will change the way you see this Kubernetes orchestrator.
+Let’s dive in!
+Argo Workflows Setup
+If you don&amp;rsquo;t currently have a workflow running, I suggest you create your first Argo Workflow to understand what we&amp;rsquo;ll discuss in this post.</description>
+    </item>
+    
+    <item>
+      <title>Ways to Debug an Argo Workflow.</title>
+      <link>https://www.dawrlog.com/posts/4/</link>
+      <pubDate>Sun, 15 May 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/posts/4/</guid>
+      <description>Hello everyone,
+Today I would like to cover how to debug your Argo workflows, this comes handy when you need more details from your environment. Let’s check the two different approaches to debugging your Argo Workflow deployments.
+First, we’ll use the Argo Command Line Interface, or CLI for short. Argo’s CLI commands cover many of the more common errors you see with workflows, such as misconfigurations. Then, we’ll see how to debug workflows using the Argo Workflows UI.</description>
+    </item>
+    
+    <item>
+      <title>How To Analyze PostgreSQL Data in Power BI.</title>
+      <link>https://www.dawrlog.com/posts/7/</link>
+      <pubDate>Tue, 31 Aug 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/posts/7/</guid>
+      <description>Hello all!
+Today I want to discuss one of the dataviz tools that is getting more and more adoption; Power BI. Power BI increases its adoption among the most experienced users each day. Thanks to being a user-friendly tool with various data sources to connect to, it helps analyze distinct data sources within the same console.
+In this post, I&amp;rsquo;ll show you how to import your data stored on PostgreSQL with a desktop version of Power BI.</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="fr" dir="fr">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Chargements des données incrementels: Un moyen nickel de charger vos données. | Logistique Dataware</title>
+<meta name="keywords" content="Data Warehouse, Best Practices">
+<meta name="description" content="Salut à tous, j&rsquo;espère que tout va bien.
+Un entrepôt de données vise à donner du sens à un sujet spécifique dans le temps en analysant les données historiques. Ce système, également appelé système d&rsquo;aide à la décision, peut s&rsquo;attaquer à des tendances aussi diverses que le pourcentage de désabonnement des clients ou les tendances de la consommation de bière dans une zone géographique.
+Le chargement incrémentiel est l&rsquo;une de ces questions cruciales que vous devez prendre en compte lorsque vous définissez vos pipelines de chargement.">
+<meta name="author" content="Daniel Paes">
+<link rel="canonical" href="https://blog.panoply.io/incremental-loading">
+<meta name="google-site-verification" content="4599922566">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.css" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://www.dawrlog.com/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://www.dawrlog.com/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://www.dawrlog.com/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://www.dawrlog.com/apple-touch-icon.png">
+<link rel="mask-icon" href="https://www.dawrlog.com/apple-touch-icon.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="fr" href="https://www.dawrlog.com/fr/articles/8/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --hljs-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><meta property="og:title" content="Chargements des données incrementels: Un moyen nickel de charger vos données." />
+<meta property="og:description" content="Salut à tous, j&rsquo;espère que tout va bien.
+Un entrepôt de données vise à donner du sens à un sujet spécifique dans le temps en analysant les données historiques. Ce système, également appelé système d&rsquo;aide à la décision, peut s&rsquo;attaquer à des tendances aussi diverses que le pourcentage de désabonnement des clients ou les tendances de la consommation de bière dans une zone géographique.
+Le chargement incrémentiel est l&rsquo;une de ces questions cruciales que vous devez prendre en compte lorsque vous définissez vos pipelines de chargement." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://www.dawrlog.com/fr/articles/8/" />
+<meta property="og:image" content="https://user-images.githubusercontent.com/78096758/217088971-06b427ad-92dc-48d3-8c87-ebafc8e2ee1b.png" /><meta property="article:section" content="articles" />
+<meta property="article:published_time" content="2022-12-24T00:00:00+00:00" />
+<meta property="article:modified_time" content="2022-12-24T00:00:00+00:00" /><meta property="og:site_name" content="Logistique Dataware" />
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="https://user-images.githubusercontent.com/78096758/217088971-06b427ad-92dc-48d3-8c87-ebafc8e2ee1b.png" />
+<meta name="twitter:title" content="Chargements des données incrementels: Un moyen nickel de charger vos données."/>
+<meta name="twitter:description" content="Salut à tous, j&rsquo;espère que tout va bien.
+Un entrepôt de données vise à donner du sens à un sujet spécifique dans le temps en analysant les données historiques. Ce système, également appelé système d&rsquo;aide à la décision, peut s&rsquo;attaquer à des tendances aussi diverses que le pourcentage de désabonnement des clients ou les tendances de la consommation de bière dans une zone géographique.
+Le chargement incrémentiel est l&rsquo;une de ces questions cruciales que vous devez prendre en compte lorsque vous définissez vos pipelines de chargement."/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Articles",
+      "item": "https://www.dawrlog.com/fr/articles/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Chargements des données incrementels: Un moyen nickel de charger vos données.",
+      "item": "https://www.dawrlog.com/fr/articles/8/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Chargements des données incrementels: Un moyen nickel de charger vos données.",
+  "name": "Chargements des données incrementels: Un moyen nickel de charger vos données.",
+  "description": "Salut à tous, j\u0026rsquo;espère que tout va bien.\nUn entrepôt de données vise à donner du sens à un sujet spécifique dans le temps en analysant les données historiques. Ce système, également appelé système d\u0026rsquo;aide à la décision, peut s\u0026rsquo;attaquer à des tendances aussi diverses que le pourcentage de désabonnement des clients ou les tendances de la consommation de bière dans une zone géographique.\nLe chargement incrémentiel est l\u0026rsquo;une de ces questions cruciales que vous devez prendre en compte lorsque vous définissez vos pipelines de chargement.",
+  "keywords": [
+    "Data Warehouse", "Best Practices"
+  ],
+  "articleBody": "Salut à tous, j’espère que tout va bien.\nUn entrepôt de données vise à donner du sens à un sujet spécifique dans le temps en analysant les données historiques. Ce système, également appelé système d’aide à la décision, peut s’attaquer à des tendances aussi diverses que le pourcentage de désabonnement des clients ou les tendances de la consommation de bière dans une zone géographique.\nLe chargement incrémentiel est l’une de ces questions cruciales que vous devez prendre en compte lorsque vous définissez vos pipelines de chargement.\nDans ce billet, je vais expliquer ce qu’est le chargement incrémental et pourquoi il est si important. Je poursuivrai en définissant certains composants clés et terminerai par une brève conclusion.\nQu’est-ce que le chargement incrémental, et pourquoi en avons-nous besoin ? Également connu sous les noms de change data capture et delta load, le chargement incrémental est chargé de prendre un instantané des données les plus récentes. Il est essentiel de s’assurer que votre entrepôt de données est cohérent et fiable.\nCela dit, pour comprendre les avantages d’un chargement incrémentiel, vous devez savoir ce qu’est un entrepôt de données.\nJe vais donc commencer par vous expliquer les étapes du pipeline de données que vous devez suivre pour charger les bases de données de votre entrepôt de données. Cela devrait vous permettre de comprendre de façon claire et nette pourquoi c’est essentiel.\nEn termes simples, les entrepôts de données sont des bases de données qui soutiennent le processus décisionnel. Il est plus sûr de dire qu’ils vous aident à donner un sens à vos données historiques, car l’un des objectifs des entrepôts de données est de permettre à leurs utilisateurs d’analyser les données dans le temps.\nVous trouverez ci-dessous un bref rappel des phases les plus utilisées des entrepôts de données selon l’approche Kimball : Phases de l’entrepôt de données en utilisant Kimball\nOnline Transactional Processing (OLTP / Staging area / Landing Zone) : Les données sont extraites de leurs systèmes sources vers un stockage transitoire. Il s’agit de données à l’état brut, aussi proches que possible de leur source. Operational Data Stores (également connu sous le nom de ODS) : Une base de données avec tous les processus de qualité nécessaires et les corrélations entre les différentes sources. Les données sont ici dans un état préparé pour les utilisateurs. Data Warehouse (également connu sous le nom de DW / EDW) : Ici, les données sont stockées dans des tableaux appelés dimensions ou faits. La redondance des données n’est pas un problème car elles montrent leur évolution dans le temps. cubes Online Analytical Processing (également connu sous le nom de OLAP / Presentation Layer) : Ce sont les données finales auxquelles les utilisateurs accèdent pour leurs rapports, avec des métriques spécifiques si nécessaire. Vous ne pouvez pas (ou du moins vous ne devriez pas) avoir des informations détaillées telles que des adresses e-mail dans votre entrepôt de données. Comme la zone de transit n’est pas prête pour les transactions de base de données, vous devez interroger vos données au début de la phase transactionnelle pour ce type de demande. L’ODS fonctionne mieux pour les requêtes opérationnelles telles que “qui a fait quoi où ?”.\nVous êtes toujours avec moi ? Super, ça en vaut la peine !\nMaintenant que nous avons couvert nos bases, nous pouvons passer à ce que vous devez considérer lors de la conception de votre structure de chargement.\nComment votre entrepôt de données est chargé Chaque application contenant des données significatives pour votre entrepôt de données est appelée une source de données.\nChaque pompe de source de données a ses propres contraintes lors du chargement des données dans un entrepôt de données, subdivisées en deux groupes principaux : les chargements streaming et batch.\nNous utilisons l’approche streaming lorsque les données sont disponibles en continu. Imaginez les données de votre tracker de santé provenant de votre smartwatch. Nous utilisons les techniques de batch lorsque votre source de données fournit des données en masse, comme les données des points de vente d’une application de détaillant. La seconde est plus courante lorsque votre système source a un temps de chargement spécifique pour éviter la concurrence des processus internes.\nCe que l’on appelle micro-batch est un mélange des deux car il combine l’approche de chargement continu avec la périodicité que l’on trouve dans l’approche par lots. Les micro-lots sont pratiques lorsque vos données arrivent en flux constant, mais pas plus de dix minutes en petits lots.\nMaintenant que vous avez une compréhension de haut niveau de la façon dont votre entrepôt de données est rempli, nous pouvons passer à l’étape suivante : identifier les clés métier. Qu’est-ce que les clés métiers (“Business keys” de l’Anglais) ?\nChaque source de données possède ce que l’on appelle des clés métier. Ces clés nous aident à identifier ce qui donne à chaque enregistrement son caractère unique d’un point de vue commercial pour cette application spécifique.\nIl est important de disposer d’un référentiel central solide où vous pouvez trouver toutes les informations sur vos sources de données. Un catalogue de données peut être utile à cet égard. Il s’agit d’un référentiel central contenant toutes vos sources de données que vous pouvez explorer.\nIl vous sera utile si vous disposez de clés métier pour identifier les enregistrements uniques. En raison du haut niveau de détails disponibles, le tableau ci-dessous a une cardinalité plus grande ou haute granularité des données. Cardinality example:\nID Name Profession Address 1 Adam Smith Fireman 4389 Boul. Faraway App 6 2 John Smith Croupier 4389 Boul. Faraway App 1 3 Juliette Bull Saleswoman 64 Holest Nawy App 6 4 Lucille Croupier 1234 Runaway Train 5 Samantha Policewoman 4389 Galway Road Nous pouvons utiliser une combinaison de Nom et Profession dans cet exemple. Ce sont les clés commerciales ou les champs qui donnent une unicité à des fins commerciales.\nPar exemple, nous pouvons utiliser l’identifiant ou ID comme clé primaire unique, mais cela ne servira pas à grand-chose s’il fait référence à un enregistrement différent de ceux de l’exemple ci-dessus.\nUne fois que les clés métier sont claires, nous pouvons définir nos attributs et nos métriques : sur la base desquels nous pouvons comprendre les tendances des données dans nos sources de données, comme les métriques et attributs pertinents qui donnent des informations précises. Quel est le rapport entre les clés commerciales et les clés incrémentielles ?\nUne fois que vous savez comment identifier les clés métier de votre source de données, vous devez déterminer quel champ correspondra à la clé incrémentielle de votre chargement. En plus des clés métier, la clé incrémentielle est responsable du chargement de la nouvelle version de vos données.\nSur la base des clés métier et incrémentielles, vous serez correctement en mesure de charger uniquement la dernière version des données. Cette version mettra à jour sa version existante dans la phase de staging/ODS.\nCe faisant, votre entrepôt de données sera mis à jour avec une nouvelle version de votre enregistrement, laissant la version précédente avec un drapeau déprécié sur elle.\nDans ce scénario, je ne parle pas des dimensions qui changent lentement. Les clés métier et d’intégration sont celles qui nous donnent ce que nous appelons la unicité de l’enregistrement, ou ce qui le rend unique, créant ce que l’on appelle le versionnage des données.\nLe versionnage des données nous permet de faire la différence entre l’état actuel de l’enregistrement et ses états précédents. Il permet ce que l’on appelle l’“analyse temporelle” du document. Le versionnement des données sur les systèmes sources est censé exister sur la phase ODS de vos processus de pipelines de données.\nConclusion\nDans cet article, nous avons abordé le chargement incrémental et son importance pour l’intégrité des données.\nNous avons commencé par présenter d’autres noms pour ce type de chargement - le chargement delta et la capture des données de changement - et avons passé en revue ce qui constitue un entrepôt de données basé sur la méthodologie Kimball, puis les types d’approches pour les chargements de données en continu ou en masse.\nNous avons terminé en expliquant les clés métier et incrémentales et en les distinguant des clés système.\nIl est toujours bon de vous conseiller d’utiliser l’option de chargement incrémentiel lorsque vous interrogez vos données. En procédant ainsi, vous supprimez les vues dupliquées de votre instantané de données, ce qui réduit la charge lors de la gestion de vos pipelines d’ingestion de données.\nLe chargement incrémentiel est fortement recommandé (voire obligatoire) lors de la définition et du développement de vos pipelines de données, en particulier dans la phase ODS. Il peut vous aider à charger correctement les données de vos sources de données en chargeant correctement votre table et même en échelonnant vos pics d’ingestion de données. En divisant les données qui donnent ces goulots d’étranglement sur vos processus de chargement dans différents pipelines.\nÀ+!\n",
+  "wordCount" : "1470",
+  "inLanguage": "fr",
+  "image":"https://user-images.githubusercontent.com/78096758/217088971-06b427ad-92dc-48d3-8c87-ebafc8e2ee1b.png","datePublished": "2022-12-24T00:00:00Z",
+  "dateModified": "2022-12-24T00:00:00Z",
+  "author":{
+    "@type": "Person",
+    "name": "Daniel Paes"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://www.dawrlog.com/fr/articles/8/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Logistique Dataware",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://www.dawrlog.com/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://www.dawrlog.com/fr/" accesskey="h" title="Logistique Dataware (Alt + H)">Logistique Dataware</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+                <ul class="lang-switch"><li>|</li>
+                    <li>
+                        <a href="https://www.dawrlog.com/" title="English"
+                            aria-label=":us:">🇺🇸</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://www.dawrlog.com/fr/apropos" title="À Propos">
+                    <span>À Propos</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://www.dawrlog.com/fr/articles/" title="Articles">
+                    <span>Articles</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://calendly.com/dawrlog" title="Contactez-nous">
+                    <span>Contactez-nous</span>&nbsp;
+                    <svg fill="none" shape-rendering="geometricPrecision" stroke="currentColor" stroke-linecap="round"
+                        stroke-linejoin="round" stroke-width="2.5" viewBox="0 0 24 24" height="12" width="12">
+                        <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"></path>
+                        <path d="M15 3h6v6"></path>
+                        <path d="M10 14L21 3"></path>
+                    </svg>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    <div class="breadcrumbs"><a href="https://www.dawrlog.com/fr/">Accueil</a>&nbsp;»&nbsp;<a href="https://www.dawrlog.com/fr/articles/">Articles</a></div>
+    <h1 class="post-title">
+      Chargements des données incrementels: Un moyen nickel de charger vos données.
+    </h1>
+    <div class="post-meta"><span title='2022-12-24 00:00:00 +0000 UTC'>décembre 24, 2022</span>&nbsp;·&nbsp;7 min&nbsp;·&nbsp;Daniel Paes
+
+</div>
+  </header> 
+<figure class="entry-cover"><img loading="lazy" src="https://user-images.githubusercontent.com/78096758/217088971-06b427ad-92dc-48d3-8c87-ebafc8e2ee1b.png" alt="">
+        
+</figure><div class="toc">
+    <details >
+        <summary accesskey="c" title="(Alt + C)">
+            <span class="details">Table des matières</span>
+        </summary>
+
+        <div class="inner"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#h3phases-de-lentrepôt-de-données-en-utilisant-kimballh3br-"><h3>Phases de l&rsquo;entrepôt de données en utilisant Kimball</h3><br /></a></li>
+    <li><a href="#h3quest-ce-que-les-clés-métiers-business-keys-de-langlais-h3br-"><h3>Qu&rsquo;est-ce que les clés métiers (&ldquo;Business keys&rdquo; de l&rsquo;Anglais) ?</h3><br /></a></li>
+    <li><a href="#h3quel-est-le-rapport-entre-les-clés-commerciales-et-les-clés-incrémentielles-h3br-"><h3>Quel est le rapport entre les clés commerciales et les clés incrémentielles ?</h3><br /></a></li>
+    <li><a href="#h3conclusionh3br-"><h3>Conclusion</h3><br /></a></li>
+  </ul>
+</nav>
+        </div>
+    </details>
+</div>
+
+  <div class="post-content"><p>Salut à tous, j&rsquo;espère que tout va bien.</p>
+<p>Un entrepôt de données vise à donner du sens à un sujet spécifique dans le temps en analysant les données historiques. Ce système, également appelé <strong>système d&rsquo;aide à la décision</strong>, peut s&rsquo;attaquer à des tendances aussi diverses que le pourcentage de désabonnement des clients ou les tendances de la consommation de bière dans une zone géographique.</p>
+<p>Le chargement incrémentiel est l&rsquo;une de ces questions cruciales que vous devez prendre en compte lorsque vous définissez vos pipelines de chargement.</p>
+<p>Dans ce billet, je vais expliquer ce qu&rsquo;est le chargement incrémental et pourquoi il est si important. Je poursuivrai en définissant certains composants clés et terminerai par une brève conclusion.</p>
+<p>Qu&rsquo;est-ce que le chargement incrémental, et pourquoi en avons-nous besoin ?
+Également connu sous les noms de <em><strong>change data capture</strong></em> et <em><strong>delta load</strong></em>, le chargement incrémental est chargé de prendre un instantané des données les plus récentes. Il est essentiel de s&rsquo;assurer que votre entrepôt de données est cohérent et fiable.</p>
+<p>Cela dit, pour comprendre les avantages d&rsquo;un chargement incrémentiel, vous devez savoir ce qu&rsquo;est un entrepôt de données.</p>
+<p>Je vais donc commencer par vous expliquer les étapes du pipeline de données que vous devez suivre pour charger les bases de données de votre entrepôt de données. Cela devrait vous permettre de comprendre de façon claire et nette pourquoi c&rsquo;est essentiel.</p>
+<p>En termes simples, les <em><strong>entrepôts de données</strong></em> sont des bases de données qui soutiennent le <em><strong>processus décisionnel</strong></em>. Il est plus sûr de dire qu&rsquo;ils vous aident à donner un sens à vos données historiques, car l&rsquo;un des objectifs des entrepôts de données est de permettre à leurs utilisateurs d&rsquo;analyser les données dans le temps.</p>
+<p>Vous trouverez ci-dessous un bref rappel des phases les plus utilisées des entrepôts de données selon l&rsquo;approche <strong>Kimball</strong> :
+<br /></p>
+<h2 id="h3phases-de-lentrepôt-de-données-en-utilisant-kimballh3br-"><h3>Phases de l&rsquo;entrepôt de données en utilisant Kimball</h3><br /><a hidden class="anchor" aria-hidden="true" href="#h3phases-de-lentrepôt-de-données-en-utilisant-kimballh3br-">#</a></h2>
+<ul>
+<li><a href="https://docs.microsoft.com/en-us/azure/architecture/data-guide/relational-data/online-transaction-processing">Online Transactional Processing</a> (OLTP / Staging area / Landing Zone) : Les données sont extraites de leurs systèmes sources vers un stockage transitoire. Il s&rsquo;agit de données à l&rsquo;état brut, aussi proches que possible de leur source.</li>
+<li><a href="https://philosophy-question.com/library/lecture/read/51614-what-is-operational-data-store-in-data-warehouse">Operational Data Stores</a> (également connu sous le nom de ODS) : Une base de données avec tous les processus de qualité nécessaires et les corrélations entre les différentes sources. Les données sont ici dans un état préparé pour les utilisateurs.</li>
+<li><a href="https://www.techopedia.com/definition/1184/data-warehouse-dw">Data Warehouse</a> (également connu sous le nom de DW / EDW) : Ici, les données sont stockées dans des tableaux appelés dimensions ou faits. La redondance des données n&rsquo;est pas un problème car elles montrent leur évolution dans le temps.</li>
+<li>cubes <a href="https://www.kimballgroup.com/data-warehouse-business-intelligence-resources/kimball-techniques/dimensional-modeling-techniques/star-schema-olap-cube/">Online Analytical Processing</a> (également connu sous le nom de OLAP / Presentation Layer) : Ce sont les données finales auxquelles les utilisateurs accèdent pour leurs rapports, avec des métriques spécifiques si nécessaire.
+Vous ne pouvez pas (ou du moins vous ne devriez pas) avoir des informations détaillées telles que des adresses e-mail dans votre entrepôt de données.</li>
+</ul>
+<p>Comme la zone de transit n&rsquo;est pas prête pour les transactions de base de données, vous devez interroger vos données au début de la phase transactionnelle pour ce type de demande. L&rsquo;ODS fonctionne mieux pour les requêtes opérationnelles telles que &ldquo;qui a fait quoi où ?&rdquo;.</p>
+<p>Vous êtes toujours avec moi ? Super, ça en vaut la peine !</p>
+<p>Maintenant que nous avons couvert nos bases, nous pouvons passer à ce que vous devez considérer lors de la conception de votre structure de chargement.</p>
+<p>Comment votre entrepôt de données est chargé
+Chaque application contenant des données significatives pour votre entrepôt de données est appelée une <em><strong>source de données</strong></em>.</p>
+<p>Chaque pompe de source de données a ses propres contraintes lors du chargement des données dans un entrepôt de données, subdivisées en deux groupes principaux : les chargements <a href="https://databricks.com/blog/2017/01/19/real-time-streaming-etl-structured-streaming-apache-spark-2-1.html">streaming</a> et <a href="https://askinglot.com/what-is-bulk-load-in-data-warehouse">batch</a>.</p>
+<ul>
+<li>Nous utilisons l&rsquo;approche <em><strong>streaming</strong></em> lorsque les données sont disponibles en continu. Imaginez les données de votre tracker de santé provenant de votre smartwatch.</li>
+<li>Nous utilisons les techniques de <em><strong>batch</strong></em> lorsque votre source de données fournit des données en masse, comme les données des points de vente d&rsquo;une application de détaillant.</li>
+</ul>
+<p>La seconde est plus courante lorsque votre système source a un temps de chargement spécifique pour éviter la concurrence des processus internes.</p>
+<p>Ce que l&rsquo;on appelle <em><strong>micro-batch</strong></em> est un mélange des deux car il combine l&rsquo;approche de chargement continu avec la périodicité que l&rsquo;on trouve dans l&rsquo;approche par lots. Les micro-lots sont pratiques lorsque vos données arrivent en flux constant, mais pas plus de dix minutes en petits lots.</p>
+<p>Maintenant que vous avez une compréhension de haut niveau de la façon dont votre entrepôt de données est rempli, nous pouvons passer à l&rsquo;étape suivante : <em>identifier les clés métier</em>.
+<br /><br /></p>
+<h2 id="h3quest-ce-que-les-clés-métiers-business-keys-de-langlais-h3br-"><h3>Qu&rsquo;est-ce que les clés métiers (&ldquo;Business keys&rdquo; de l&rsquo;Anglais) ?</h3><br /><a hidden class="anchor" aria-hidden="true" href="#h3quest-ce-que-les-clés-métiers-business-keys-de-langlais-h3br-">#</a></h2>
+<p>Chaque source de données possède ce que l&rsquo;on appelle des <strong><em>clés métier</em></strong>. Ces clés nous aident à identifier ce qui donne à chaque enregistrement son caractère unique d&rsquo;un point de vue commercial pour cette application spécifique.</p>
+<p>Il est important de disposer d&rsquo;un référentiel central solide où vous pouvez trouver toutes les informations sur vos sources de données. Un catalogue de données peut être utile à cet égard. Il s&rsquo;agit d&rsquo;un référentiel central contenant toutes vos sources de données que vous pouvez explorer.</p>
+<p>Il vous sera utile si vous disposez de clés métier pour identifier les enregistrements uniques. En raison du haut niveau de détails disponibles, le tableau ci-dessous a une cardinalité plus grande ou <strong><em>haute granularité des données</em></strong>.
+<br /></p>
+<p><em><strong>Cardinality example:</strong></em></p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">ID</th>
+<th>Name</th>
+<th>Profession</th>
+<th>Address</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">1</td>
+<td>Adam Smith</td>
+<td>Fireman</td>
+<td>4389 Boul. Faraway App 6</td>
+</tr>
+<tr>
+<td style="text-align:center">2</td>
+<td>John Smith</td>
+<td>Croupier</td>
+<td>4389 Boul. Faraway App 1</td>
+</tr>
+<tr>
+<td style="text-align:center">3</td>
+<td>Juliette Bull</td>
+<td>Saleswoman</td>
+<td>64 Holest Nawy App 6</td>
+</tr>
+<tr>
+<td style="text-align:center">4</td>
+<td>Lucille</td>
+<td>Croupier</td>
+<td>1234 Runaway Train</td>
+</tr>
+<tr>
+<td style="text-align:center">5</td>
+<td>Samantha</td>
+<td>Policewoman</td>
+<td>4389 Galway Road</td>
+</tr>
+<tr>
+<td style="text-align:center"><br/></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Nous pouvons utiliser une combinaison de <strong>Nom</strong> et <strong>Profession</strong> dans cet exemple. Ce sont les <strong>clés commerciales</strong> ou les champs qui donnent une unicité à des fins commerciales.</p>
+<p>Par exemple, nous pouvons utiliser l&rsquo;identifiant ou <em>ID</em> comme <em>clé primaire unique</em>, mais cela ne servira pas à grand-chose s&rsquo;il fait référence à un enregistrement différent de ceux de l&rsquo;exemple ci-dessus.</p>
+<p>Une fois que les clés métier sont claires, nous pouvons définir nos attributs et nos métriques : sur la base desquels nous pouvons comprendre les tendances des données dans nos sources de données, comme les métriques et attributs pertinents qui donnent des informations précises.
+<br /></p>
+<h2 id="h3quel-est-le-rapport-entre-les-clés-commerciales-et-les-clés-incrémentielles-h3br-"><h3>Quel est le rapport entre les clés commerciales et les clés incrémentielles ?</h3><br /><a hidden class="anchor" aria-hidden="true" href="#h3quel-est-le-rapport-entre-les-clés-commerciales-et-les-clés-incrémentielles-h3br-">#</a></h2>
+<p>Une fois que vous savez comment identifier les clés métier de votre source de données, vous devez déterminer quel champ correspondra à la clé incrémentielle de votre chargement. En plus des clés métier, la clé incrémentielle est responsable du chargement de la <strong>nouvelle version de vos données</strong>.</p>
+<p>Sur la base des clés métier et incrémentielles, vous serez correctement en mesure de charger uniquement la dernière version des données. Cette version mettra à jour sa version existante dans la phase de staging/ODS.</p>
+<p>Ce faisant, votre entrepôt de données sera mis à jour avec une nouvelle version de votre enregistrement, laissant la version précédente avec un drapeau déprécié sur elle.</p>
+<p>Dans ce scénario, je ne parle pas des dimensions qui changent lentement. Les clés métier et d&rsquo;intégration sont celles qui nous donnent ce que nous appelons la <em><strong>unicité de l&rsquo;enregistrement</strong></em>, ou ce qui le rend unique, créant ce que l&rsquo;on appelle <strong>le versionnage des données</strong>.</p>
+<p>Le versionnage des données nous permet de faire la différence entre l&rsquo;état actuel de l&rsquo;enregistrement et ses états précédents. Il permet ce que l&rsquo;on appelle l&rsquo;&ldquo;analyse temporelle&rdquo; du document. Le versionnement des données sur les systèmes sources est censé exister sur la phase ODS de vos processus de pipelines de données.</p>
+<h2 id="h3conclusionh3br-"><h3>Conclusion</h3><br /><a hidden class="anchor" aria-hidden="true" href="#h3conclusionh3br-">#</a></h2>
+<p>Dans cet article, nous avons abordé le <strong>chargement incrémental</strong> et son importance pour l&rsquo;<strong>intégrité des données</strong>.</p>
+<p>Nous avons commencé par présenter d&rsquo;autres noms pour ce type de chargement - le chargement delta et la capture des données de changement - et avons passé en revue ce qui constitue un entrepôt de données basé sur la méthodologie Kimball, puis les types d&rsquo;approches pour les chargements de données en continu ou en masse.</p>
+<p>Nous avons terminé en expliquant les <strong>clés métier et incrémentales</strong> et en les distinguant des clés système.</p>
+<p>Il est toujours bon de vous conseiller d&rsquo;utiliser l&rsquo;option de chargement incrémentiel lorsque vous interrogez vos données. En procédant ainsi, vous supprimez les vues dupliquées de votre instantané de données, ce qui réduit la charge lors de la gestion de vos pipelines d&rsquo;ingestion de données.</p>
+<p>Le chargement incrémentiel est <strong>fortement recommandé</strong> (voire obligatoire) lors de la définition et du développement de vos pipelines de données, en particulier dans la phase ODS. Il peut vous aider à charger correctement les données de vos sources de données en <strong>chargeant correctement votre table</strong> et même en échelonnant vos pics d&rsquo;ingestion de données. En divisant les données qui donnent ces goulots d&rsquo;étranglement sur vos processus de chargement dans différents pipelines.</p>
+<p>À+!</p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+<nav class="paginav">
+  <a class="prev" href="https://www.dawrlog.com/fr/articles/9/">
+    <span class="title">« Page précédente</span>
+    <br>
+    <span>Files d&#39;attente de requêtes SQL sur Redshift : Le guide complet</span>
+  </a>
+  <a class="next" href="https://www.dawrlog.com/fr/articles/13/">
+    <span class="title">Page suivante »</span>
+    <br>
+    <span>gRPC vs REST: Lequel dois-je choisir pour mon application et pourquoi?</span>
+  </a>
+</nav>
+
+
+<div class="share-buttons">
+    <a target="_blank" rel="noopener noreferrer" aria-label="share Chargements des données incrementels: Un moyen nickel de charger vos données. on twitter"
+        href="https://twitter.com/intent/tweet/?text=Chargements%20des%20donn%c3%a9es%20incrementels%3a%20Un%20moyen%20nickel%20de%20charger%20vos%20donn%c3%a9es.&amp;url=https%3a%2f%2fwww.dawrlog.com%2ffr%2farticles%2f8%2f&amp;hashtags=DataWarehouse%2cBestPractices">
+        <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+            <path
+                d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-253.927,424.544c135.939,0 210.268,-112.643 210.268,-210.268c0,-3.218 0,-6.437 -0.153,-9.502c14.406,-10.421 26.973,-23.448 36.935,-38.314c-13.18,5.824 -27.433,9.809 -42.452,11.648c15.326,-9.196 26.973,-23.602 32.49,-40.92c-14.252,8.429 -30.038,14.56 -46.896,17.931c-13.487,-14.406 -32.644,-23.295 -53.946,-23.295c-40.767,0 -73.87,33.104 -73.87,73.87c0,5.824 0.613,11.494 1.992,16.858c-61.456,-3.065 -115.862,-32.49 -152.337,-77.241c-6.284,10.881 -9.962,23.601 -9.962,37.088c0,25.594 13.027,48.276 32.95,61.456c-12.107,-0.307 -23.448,-3.678 -33.41,-9.196l0,0.92c0,35.862 25.441,65.594 59.311,72.49c-6.13,1.686 -12.72,2.606 -19.464,2.606c-4.751,0 -9.348,-0.46 -13.946,-1.38c9.349,29.426 36.628,50.728 68.965,51.341c-25.287,19.771 -57.164,31.571 -91.8,31.571c-5.977,0 -11.801,-0.306 -17.625,-1.073c32.337,21.15 71.264,33.41 112.95,33.41Z" />
+        </svg>
+    </a>
+    <a target="_blank" rel="noopener noreferrer" aria-label="share Chargements des données incrementels: Un moyen nickel de charger vos données. on linkedin"
+        href="https://www.linkedin.com/shareArticle?mini=true&amp;url=https%3a%2f%2fwww.dawrlog.com%2ffr%2farticles%2f8%2f&amp;title=Chargements%20des%20donn%c3%a9es%20incrementels%3a%20Un%20moyen%20nickel%20de%20charger%20vos%20donn%c3%a9es.&amp;summary=Chargements%20des%20donn%c3%a9es%20incrementels%3a%20Un%20moyen%20nickel%20de%20charger%20vos%20donn%c3%a9es.&amp;source=https%3a%2f%2fwww.dawrlog.com%2ffr%2farticles%2f8%2f">
+        <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+            <path
+                d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-288.985,423.278l0,-225.717l-75.04,0l0,225.717l75.04,0Zm270.539,0l0,-129.439c0,-69.333 -37.018,-101.586 -86.381,-101.586c-39.804,0 -57.634,21.891 -67.617,37.266l0,-31.958l-75.021,0c0.995,21.181 0,225.717 0,225.717l75.02,0l0,-126.056c0,-6.748 0.486,-13.492 2.474,-18.315c5.414,-13.475 17.767,-27.434 38.494,-27.434c27.135,0 38.007,20.707 38.007,51.037l0,120.768l75.024,0Zm-307.552,-334.556c-25.674,0 -42.448,16.879 -42.448,39.002c0,21.658 16.264,39.002 41.455,39.002l0.484,0c26.165,0 42.452,-17.344 42.452,-39.002c-0.485,-22.092 -16.241,-38.954 -41.943,-39.002Z" />
+        </svg>
+    </a>
+    <a target="_blank" rel="noopener noreferrer" aria-label="share Chargements des données incrementels: Un moyen nickel de charger vos données. on reddit"
+        href="https://reddit.com/submit?url=https%3a%2f%2fwww.dawrlog.com%2ffr%2farticles%2f8%2f&title=Chargements%20des%20donn%c3%a9es%20incrementels%3a%20Un%20moyen%20nickel%20de%20charger%20vos%20donn%c3%a9es.">
+        <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+            <path
+                d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-3.446,265.638c0,-22.964 -18.616,-41.58 -41.58,-41.58c-11.211,0 -21.361,4.457 -28.841,11.666c-28.424,-20.508 -67.586,-33.757 -111.204,-35.278l18.941,-89.121l61.884,13.157c0.756,15.734 13.642,28.29 29.56,28.29c16.407,0 29.706,-13.299 29.706,-29.701c0,-16.403 -13.299,-29.702 -29.706,-29.702c-11.666,0 -21.657,6.792 -26.515,16.578l-69.105,-14.69c-1.922,-0.418 -3.939,-0.042 -5.585,1.036c-1.658,1.073 -2.811,2.761 -3.224,4.686l-21.152,99.438c-44.258,1.228 -84.046,14.494 -112.837,35.232c-7.468,-7.164 -17.589,-11.591 -28.757,-11.591c-22.965,0 -41.585,18.616 -41.585,41.58c0,16.896 10.095,31.41 24.568,37.918c-0.639,4.135 -0.99,8.328 -0.99,12.576c0,63.977 74.469,115.836 166.33,115.836c91.861,0 166.334,-51.859 166.334,-115.836c0,-4.218 -0.347,-8.387 -0.977,-12.493c14.564,-6.47 24.735,-21.034 24.735,-38.001Zm-119.474,108.193c-20.27,20.241 -59.115,21.816 -70.534,21.816c-11.428,0 -50.277,-1.575 -70.522,-21.82c-3.007,-3.008 -3.007,-7.882 0,-10.889c3.003,-2.999 7.882,-3.003 10.885,0c12.777,12.781 40.11,17.317 59.637,17.317c19.522,0 46.86,-4.536 59.657,-17.321c3.016,-2.999 7.886,-2.995 10.885,0.008c3.008,3.011 3.003,7.882 -0.008,10.889Zm-5.23,-48.781c-16.373,0 -29.701,-13.324 -29.701,-29.698c0,-16.381 13.328,-29.714 29.701,-29.714c16.378,0 29.706,13.333 29.706,29.714c0,16.374 -13.328,29.698 -29.706,29.698Zm-160.386,-29.702c0,-16.381 13.328,-29.71 29.714,-29.71c16.369,0 29.689,13.329 29.689,29.71c0,16.373 -13.32,29.693 -29.689,29.693c-16.386,0 -29.714,-13.32 -29.714,-29.693Z" />
+        </svg>
+    </a>
+    <a target="_blank" rel="noopener noreferrer" aria-label="share Chargements des données incrementels: Un moyen nickel de charger vos données. on facebook"
+        href="https://facebook.com/sharer/sharer.php?u=https%3a%2f%2fwww.dawrlog.com%2ffr%2farticles%2f8%2f">
+        <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+            <path
+                d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-106.468,0l0,-192.915l66.6,0l12.672,-82.621l-79.272,0l0,-53.617c0,-22.603 11.073,-44.636 46.58,-44.636l36.042,0l0,-70.34c0,0 -32.71,-5.582 -63.982,-5.582c-65.288,0 -107.96,39.569 -107.96,111.204l0,62.971l-72.573,0l0,82.621l72.573,0l0,192.915l-191.104,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Z" />
+        </svg>
+    </a>
+    <a target="_blank" rel="noopener noreferrer" aria-label="share Chargements des données incrementels: Un moyen nickel de charger vos données. on whatsapp"
+        href="https://api.whatsapp.com/send?text=Chargements%20des%20donn%c3%a9es%20incrementels%3a%20Un%20moyen%20nickel%20de%20charger%20vos%20donn%c3%a9es.%20-%20https%3a%2f%2fwww.dawrlog.com%2ffr%2farticles%2f8%2f">
+        <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+            <path
+                d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-58.673,127.703c-33.842,-33.881 -78.847,-52.548 -126.798,-52.568c-98.799,0 -179.21,80.405 -179.249,179.234c-0.013,31.593 8.241,62.428 23.927,89.612l-25.429,92.884l95.021,-24.925c26.181,14.28 55.659,21.807 85.658,21.816l0.074,0c98.789,0 179.206,-80.413 179.247,-179.243c0.018,-47.895 -18.61,-92.93 -52.451,-126.81Zm-126.797,275.782l-0.06,0c-26.734,-0.01 -52.954,-7.193 -75.828,-20.767l-5.441,-3.229l-56.386,14.792l15.05,-54.977l-3.542,-5.637c-14.913,-23.72 -22.791,-51.136 -22.779,-79.287c0.033,-82.142 66.867,-148.971 149.046,-148.971c39.793,0.014 77.199,15.531 105.329,43.692c28.128,28.16 43.609,65.592 43.594,105.4c-0.034,82.149 -66.866,148.983 -148.983,148.984Zm81.721,-111.581c-4.479,-2.242 -26.499,-13.075 -30.604,-14.571c-4.105,-1.495 -7.091,-2.241 -10.077,2.241c-2.986,4.483 -11.569,14.572 -14.182,17.562c-2.612,2.988 -5.225,3.364 -9.703,1.12c-4.479,-2.241 -18.91,-6.97 -36.017,-22.23c-13.314,-11.876 -22.304,-26.542 -24.916,-31.026c-2.612,-4.484 -0.279,-6.908 1.963,-9.14c2.016,-2.007 4.48,-5.232 6.719,-7.847c2.24,-2.615 2.986,-4.484 4.479,-7.472c1.493,-2.99 0.747,-5.604 -0.374,-7.846c-1.119,-2.241 -10.077,-24.288 -13.809,-33.256c-3.635,-8.733 -7.327,-7.55 -10.077,-7.688c-2.609,-0.13 -5.598,-0.158 -8.583,-0.158c-2.986,0 -7.839,1.121 -11.944,5.604c-4.105,4.484 -15.675,15.32 -15.675,37.364c0,22.046 16.048,43.342 18.287,46.332c2.24,2.99 31.582,48.227 76.511,67.627c10.685,4.615 19.028,7.371 25.533,9.434c10.728,3.41 20.492,2.929 28.209,1.775c8.605,-1.285 26.499,-10.833 30.231,-21.295c3.732,-10.464 3.732,-19.431 2.612,-21.298c-1.119,-1.869 -4.105,-2.99 -8.583,-5.232Z" />
+        </svg>
+    </a>
+    <a target="_blank" rel="noopener noreferrer" aria-label="share Chargements des données incrementels: Un moyen nickel de charger vos données. on telegram"
+        href="https://telegram.me/share/url?text=Chargements%20des%20donn%c3%a9es%20incrementels%3a%20Un%20moyen%20nickel%20de%20charger%20vos%20donn%c3%a9es.&amp;url=https%3a%2f%2fwww.dawrlog.com%2ffr%2farticles%2f8%2f">
+        <svg version="1.1" xml:space="preserve" viewBox="2 2 28 28" height="30px" width="30px" fill="currentColor">
+            <path
+                d="M26.49,29.86H5.5a3.37,3.37,0,0,1-2.47-1,3.35,3.35,0,0,1-1-2.47V5.48A3.36,3.36,0,0,1,3,3,3.37,3.37,0,0,1,5.5,2h21A3.38,3.38,0,0,1,29,3a3.36,3.36,0,0,1,1,2.46V26.37a3.35,3.35,0,0,1-1,2.47A3.38,3.38,0,0,1,26.49,29.86Zm-5.38-6.71a.79.79,0,0,0,.85-.66L24.73,9.24a.55.55,0,0,0-.18-.46.62.62,0,0,0-.41-.17q-.08,0-16.53,6.11a.59.59,0,0,0-.41.59.57.57,0,0,0,.43.52l4,1.24,1.61,4.83a.62.62,0,0,0,.63.43.56.56,0,0,0,.4-.17L16.54,20l4.09,3A.9.9,0,0,0,21.11,23.15ZM13.8,20.71l-1.21-4q8.72-5.55,8.78-5.55c.15,0,.23,0,.23.16a.18.18,0,0,1,0,.06s-2.51,2.3-7.52,6.8Z" />
+        </svg>
+    </a>
+</div>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+    <span>&copy; 2023 <a href="https://www.dawrlog.com/fr/">Logistique Dataware</a>; <br /> created with 🧡 on 🐧 machines running ☸️ pods.</span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a><script src='https://storage.ko-fi.com/cdn/scripts/overlay-widget.js'></script>
+<script>
+  kofiWidgetOverlay.draw('dawrlog', {
+    'type': 'floating-chat',
+    'floating-chat.donateButton.text': 'Tip jar',
+    'floating-chat.donateButton.background-color': '#794bc4',
+    'floating-chat.donateButton.text-color': '#fff'
+  });
+</script>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = 'Copier';
+
+        function copyingDone() {
+            copybutton.innerHTML = 'Copié !';
+            setTimeout(() => {
+                copybutton.innerHTML = 'Copier';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script>
+</body>
+
+</html>

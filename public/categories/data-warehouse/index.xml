@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Data warehouse on Dataware Logistics</title>
+    <link>https://www.dawrlog.com/categories/data-warehouse/</link>
+    <description>Recent content in Data warehouse on Dataware Logistics</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Sun, 14 Aug 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://www.dawrlog.com/categories/data-warehouse/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Argo Workflow ETL Examples.</title>
+      <link>https://www.dawrlog.com/posts/5/</link>
+      <pubDate>Sun, 14 Aug 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/posts/5/</guid>
+      <description>This post explores using Argo Workflows to orchestrate your data pipelines. To start, let&amp;rsquo;s refresh on what ETL is while designing our work&amp;rsquo;s high-level architecture. I&amp;rsquo;ll demonstrate how to set up your data pipelines to follow the structure more naturally. Then, we&amp;rsquo;ll see how to achieve the same result using directed acyclic graphs (DAGs). Last, I&amp;rsquo;ll summarize what we saw and present reasons to guide your choice of approach based on your project complexity.</description>
+    </item>
+    
+    <item>
+      <title>Top 10 Argo Workflows Examples.</title>
+      <link>https://www.dawrlog.com/posts/6/</link>
+      <pubDate>Tue, 12 Jul 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/posts/6/</guid>
+      <description>We all know how Argo Workflows makes it easy to orchestrate parallel jobs on Kubernetes. While it’s most often associated with data processing and ETL projects, it’s useful for a lot more! These 10 workflows will change the way you see this Kubernetes orchestrator.
+Let’s dive in!
+Argo Workflows Setup
+If you don&amp;rsquo;t currently have a workflow running, I suggest you create your first Argo Workflow to understand what we&amp;rsquo;ll discuss in this post.</description>
+    </item>
+    
+    <item>
+      <title>BigQuery Data Types Examined &amp; Explained</title>
+      <link>https://www.dawrlog.com/posts/10/</link>
+      <pubDate>Wed, 12 Jan 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/posts/10/</guid>
+      <description>Hey everyone, today I would like to talk about Bigquery, the datawarehouse managed service by Google Cloud. And I would like to explore its datatypes.
+Google Cloud Platform has long been the cloud provider of choice for web analytics, with the impressive BigQuery being Google&amp;rsquo;s massively parallel processing (aka MPP) option. MPP databases are very common on Hadoop ecosystems.
+BigQuery is very friendly to its users (let&amp;rsquo;s agree that BigQuery is as pleasant as its SQL knowledge), which fosters new users.</description>
+    </item>
+    
+    <item>
+      <title>How To Analyze PostgreSQL Data in Power BI.</title>
+      <link>https://www.dawrlog.com/posts/7/</link>
+      <pubDate>Tue, 31 Aug 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/posts/7/</guid>
+      <description>Hello all!
+Today I want to discuss one of the dataviz tools that is getting more and more adoption; Power BI. Power BI increases its adoption among the most experienced users each day. Thanks to being a user-friendly tool with various data sources to connect to, it helps analyze distinct data sources within the same console.
+In this post, I&amp;rsquo;ll show you how to import your data stored on PostgreSQL with a desktop version of Power BI.</description>
+    </item>
+    
+    <item>
+      <title>AWS Redshift Spectrum, Athena, and S3: Everything You Need to Know</title>
+      <link>https://www.dawrlog.com/posts/11/</link>
+      <pubDate>Thu, 08 Jul 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/posts/11/</guid>
+      <description>Hey everyone, today I would like to present you how to explore your raw data stored by AWS S3 by using AWS managed analytical managed services. Today we will cover both AWS Redshift Spectrum and AWS Athena on our tutorial.
+One of the significant challenges to data-driven companies comes when integrating different application systems.
+Major public cloud providers, such as Amazon Web Services or Google Cloud Platform, offer robust products that are ready for your analytics needs.</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Tags on Dataware Logistics</title>
+    <link>https://www.dawrlog.com/tags/</link>
+    <description>Recent content in Tags on Dataware Logistics</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Sat, 24 Dec 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://www.dawrlog.com/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Best Practices</title>
+      <link>https://www.dawrlog.com/tags/best-practices/</link>
+      <pubDate>Sat, 24 Dec 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/tags/best-practices/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Data Warehouse</title>
+      <link>https://www.dawrlog.com/tags/data-warehouse/</link>
+      <pubDate>Sat, 24 Dec 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/tags/data-warehouse/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>API Development</title>
+      <link>https://www.dawrlog.com/tags/api-development/</link>
+      <pubDate>Sun, 18 Dec 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/tags/api-development/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Security</title>
+      <link>https://www.dawrlog.com/tags/security/</link>
+      <pubDate>Sun, 18 Dec 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/tags/security/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Argo</title>
+      <link>https://www.dawrlog.com/tags/argo/</link>
+      <pubDate>Sun, 14 Aug 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/tags/argo/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Development</title>
+      <link>https://www.dawrlog.com/tags/development/</link>
+      <pubDate>Sun, 14 Aug 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/tags/development/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Kubernetes</title>
+      <link>https://www.dawrlog.com/tags/kubernetes/</link>
+      <pubDate>Sun, 14 Aug 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/tags/kubernetes/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Infrastructure Observability</title>
+      <link>https://www.dawrlog.com/tags/infrastructure-observability/</link>
+      <pubDate>Tue, 12 Jul 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/tags/infrastructure-observability/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Data Security</title>
+      <link>https://www.dawrlog.com/tags/data-security/</link>
+      <pubDate>Fri, 18 Mar 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/tags/data-security/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>BigQuery</title>
+      <link>https://www.dawrlog.com/tags/bigquery/</link>
+      <pubDate>Wed, 12 Jan 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/tags/bigquery/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>GCP</title>
+      <link>https://www.dawrlog.com/tags/gcp/</link>
+      <pubDate>Wed, 12 Jan 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/tags/gcp/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>DataOps</title>
+      <link>https://www.dawrlog.com/tags/dataops/</link>
+      <pubDate>Wed, 24 Nov 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/tags/dataops/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Lean Agile</title>
+      <link>https://www.dawrlog.com/tags/lean-agile/</link>
+      <pubDate>Wed, 24 Nov 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/tags/lean-agile/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>AWS</title>
+      <link>https://www.dawrlog.com/tags/aws/</link>
+      <pubDate>Fri, 19 Nov 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/tags/aws/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Redshift</title>
+      <link>https://www.dawrlog.com/tags/redshift/</link>
+      <pubDate>Fri, 19 Nov 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/tags/redshift/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Auth</title>
+      <link>https://www.dawrlog.com/tags/auth/</link>
+      <pubDate>Sat, 02 Oct 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/tags/auth/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>CISSP</title>
+      <link>https://www.dawrlog.com/tags/cissp/</link>
+      <pubDate>Sat, 02 Oct 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/tags/cissp/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>PowerBI</title>
+      <link>https://www.dawrlog.com/tags/powerbi/</link>
+      <pubDate>Tue, 31 Aug 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/tags/powerbi/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Athena</title>
+      <link>https://www.dawrlog.com/tags/athena/</link>
+      <pubDate>Thu, 08 Jul 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/tags/athena/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Data Modeling</title>
+      <link>https://www.dawrlog.com/tags/data-modeling/</link>
+      <pubDate>Thu, 08 Jul 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/tags/data-modeling/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>S3</title>
+      <link>https://www.dawrlog.com/tags/s3/</link>
+      <pubDate>Thu, 08 Jul 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/tags/s3/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>

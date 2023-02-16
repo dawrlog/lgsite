@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Dataware Logistics</title>
+    <link>https://dawrlog.com/</link>
+    <description>Recent content on Dataware Logistics</description>
+    <image>
+      <url>https://dawrlog.com/papermod-cover.png</url>
+      <link>https://dawrlog.com/papermod-cover.png</link>
+    </image>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Fri, 19 Nov 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://dawrlog.com/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Our Difference</title>
+      <link>https://dawrlog.com/about/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://dawrlog.com/about/</guid>
+      <description>Data company which helps their clients on their storage for on premises applications and servers into cloud environments. We also provide guidance and best practices to optimize existing data pipelines but also provides guidance while architect and designing new data ingestion patterns.
+We have more than a decade on developing and optimizing Database applications on Enterprise level on different domains.</description>
+    </item>
+    
+    <item>
+      <title>Voici nos services</title>
+      <link>https://dawrlog.com/work-fr/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://dawrlog.com/work-fr/</guid>
+      <description>Lorem ipsum dolor sit amet, et essent mediocritatem quo, choro volumus oporteat an mei. Ipsum dolor sit amet, et essent mediocritatem quo.</description>
+    </item>
+    
+    <item>
+      <title>Voici nos services</title>
+      <link>https://dawrlog.com/work/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://dawrlog.com/work/</guid>
+      <description>🐧
+Lorem ipsum dolor sit amet, et essent mediocritatem quo, choro volumus oporteat an mei. Ipsum dolor sit amet, et essent mediocritatem quo.</description>
+    </item>
+    
+    <item>
+      <title>Data Warehouse Design: The good, the bad, the ugly</title>
+      <link>https://dawrlog.com/posts/1/</link>
+      <pubDate>Fri, 19 Nov 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://dawrlog.com/posts/1/</guid>
+      <description>One of the significant challenges in handling data comes from the massive amount of data your organization is most likely generating constantly. Having the ability to react quickly and accurately turns into a differential item among competitors.
+More and more companies are becoming aware of the need to handle data wisely.
+They&amp;rsquo;re looking for ways of getting the most out of their information. And this is probably where they first hear about data warehouses.</description>
+    </item>
+    
+    <item>
+      <title>What are CRUD OData Warehouse Design: The good, the bad, the ugly</title>
+      <link>https://dawrlog.com/posts/2/</link>
+      <pubDate>Fri, 19 Nov 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://dawrlog.com/posts/2/</guid>
+      <description>One of the significant challenges in handling data comes from the massive amount of data your organization is most likely generating constantly. Having the ability to react quickly and accurately turns into a differential item among competitors.
+More and more companies are becoming aware of the need to handle data wisely.
+They&amp;rsquo;re looking for ways of getting the most out of their information. And this is probably where they first hear about data warehouses.</description>
+    </item>
+    
+    <item>
+      <title>My 1st post</title>
+      <link>https://dawrlog.com/posts/template/</link>
+      <pubDate>Tue, 15 Sep 2020 11:30:03 +0000</pubDate>
+      
+      <guid>https://dawrlog.com/posts/template/</guid>
+      <description>Desc Text.</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://dawrlog.com/training/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://dawrlog.com/training/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://dawrlog.com/writing/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://dawrlog.com/writing/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>

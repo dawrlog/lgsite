@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="fr" dir="fr">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Comment bien evaluer vos Value Stream pour votre pratique DataOps? | Logistique Dataware</title>
+<meta name="keywords" content="DataOps, Lean Agile, Best Practices">
+<meta name="description" content="Bonjour à tous, aujourd&rsquo;hui nous allons vérifier comment valoriser correctement votre initiative DataOps.
+Les améliorations apportées à l&rsquo;ingestion des données ont rendu évidente la quantité de données perdues lors de la génération d&rsquo;insights. Cependant, en l&rsquo;absence de méthodologies telles que The DataOps Manifesto, certaines entreprises s&rsquo;efforcent encore de combiner les pipelines de données des anciennes bases de données, telles qu&rsquo;une base de données ADABAS, avec les nouvelles bases de données, telles que MongoDB ou Neo4j.">
+<meta name="author" content="Daniel Paes">
+<link rel="canonical" href="https://www.enov8.com/blog/how-to-value-stream-dataops-2/">
+<meta name="google-site-verification" content="4599922566">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.css" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://www.dawrlog.com/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://www.dawrlog.com/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://www.dawrlog.com/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://www.dawrlog.com/apple-touch-icon.png">
+<link rel="mask-icon" href="https://www.dawrlog.com/apple-touch-icon.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="fr" href="https://www.dawrlog.com/fr/articles/12/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --hljs-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><meta property="og:title" content="Comment bien evaluer vos Value Stream pour votre pratique DataOps?" />
+<meta property="og:description" content="Bonjour à tous, aujourd&rsquo;hui nous allons vérifier comment valoriser correctement votre initiative DataOps.
+Les améliorations apportées à l&rsquo;ingestion des données ont rendu évidente la quantité de données perdues lors de la génération d&rsquo;insights. Cependant, en l&rsquo;absence de méthodologies telles que The DataOps Manifesto, certaines entreprises s&rsquo;efforcent encore de combiner les pipelines de données des anciennes bases de données, telles qu&rsquo;une base de données ADABAS, avec les nouvelles bases de données, telles que MongoDB ou Neo4j." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://www.dawrlog.com/fr/articles/12/" />
+<meta property="og:image" content="https://user-images.githubusercontent.com/78096758/217092056-02f22c71-de93-4223-88c0-fc60f8f662b1.png" /><meta property="article:section" content="articles" />
+<meta property="article:published_time" content="2021-11-24T00:00:00+00:00" />
+<meta property="article:modified_time" content="2021-11-24T00:00:00+00:00" /><meta property="og:site_name" content="Logistique Dataware" />
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="https://user-images.githubusercontent.com/78096758/217092056-02f22c71-de93-4223-88c0-fc60f8f662b1.png" />
+<meta name="twitter:title" content="Comment bien evaluer vos Value Stream pour votre pratique DataOps?"/>
+<meta name="twitter:description" content="Bonjour à tous, aujourd&rsquo;hui nous allons vérifier comment valoriser correctement votre initiative DataOps.
+Les améliorations apportées à l&rsquo;ingestion des données ont rendu évidente la quantité de données perdues lors de la génération d&rsquo;insights. Cependant, en l&rsquo;absence de méthodologies telles que The DataOps Manifesto, certaines entreprises s&rsquo;efforcent encore de combiner les pipelines de données des anciennes bases de données, telles qu&rsquo;une base de données ADABAS, avec les nouvelles bases de données, telles que MongoDB ou Neo4j."/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Articles",
+      "item": "https://www.dawrlog.com/fr/articles/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Comment bien evaluer vos Value Stream pour votre pratique DataOps?",
+      "item": "https://www.dawrlog.com/fr/articles/12/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Comment bien evaluer vos Value Stream pour votre pratique DataOps?",
+  "name": "Comment bien evaluer vos Value Stream pour votre pratique DataOps?",
+  "description": "Bonjour à tous, aujourd\u0026rsquo;hui nous allons vérifier comment valoriser correctement votre initiative DataOps.\nLes améliorations apportées à l\u0026rsquo;ingestion des données ont rendu évidente la quantité de données perdues lors de la génération d\u0026rsquo;insights. Cependant, en l\u0026rsquo;absence de méthodologies telles que The DataOps Manifesto, certaines entreprises s\u0026rsquo;efforcent encore de combiner les pipelines de données des anciennes bases de données, telles qu\u0026rsquo;une base de données ADABAS, avec les nouvelles bases de données, telles que MongoDB ou Neo4j.",
+  "keywords": [
+    "DataOps", "Lean Agile", "Best Practices"
+  ],
+  "articleBody": "Bonjour à tous, aujourd’hui nous allons vérifier comment valoriser correctement votre initiative DataOps.\nLes améliorations apportées à l’ingestion des données ont rendu évidente la quantité de données perdues lors de la génération d’insights. Cependant, en l’absence de méthodologies telles que The DataOps Manifesto, certaines entreprises s’efforcent encore de combiner les pipelines de données des anciennes bases de données, telles qu’une base de données ADABAS, avec les nouvelles bases de données, telles que MongoDB ou Neo4j.\nEt il est toujours bon de rappeler que ces anciens systèmes ne sont pas faciles à abandonner. La plupart d’entre eux sont responsables du traitement de base (comme les transactions bancaires en Cobol, par exemple). En tant que tels, il n’est pas intéressant de les changer, car c’est trop problématique.\nCela dit, je pense que l’intégration des nouvelles applications et des bases de données existantes est l’un des plus grands défis pour les entreprises axées sur les données. Cependant, les méthodologies et les cadres d’ingestion de données ont connu des avancées significatives au cours des dernières années. Pourquoi est-il si essentiel de disposer de données précises ? Avec des pipelines d’ingestion de données optimisés, vous pouvez améliorer votre prise de décision. Dans le même temps, la mise à jour de vos anciens systèmes centrés sur le sujet en applications modulaires semble prometteuse, non ?\nLa bonne nouvelle, c’est qu’il ne s’agit pas d’un rêve irréalisable ! Grâce aux progrès de la puissance informatique, il est désormais possible de faire beaucoup plus avec très peu. Nous pouvons maintenant déconstruire les applications gonflées en versions plus fines.\nEn utilisant des concepts qui n’étaient possibles qu’en théorie, nous pouvons maintenant ingérer des données provenant d’endroits inhabituels. Par exemple, nous pouvons avoir un pipeline automatisé pour ingérer des données à partir de documents numérisés grâce à la reconnaissance optique de caractères, ou OCR. C’est génial, non ?\nDans ce billet, je veux vous aider à comprendre comment votre organisation pourra bénéficier d’un environnement DataOps mature. Tout d’abord, je présenterai ce qu’est DataOps et pourquoi il ne s’agit pas seulement de DevOps pour les données. Ensuite, j’expliquerai certains avantages importants qui découlent de la cartographie des flux de valeur pour votre propre pratique DataOps. Enfin, je présenterai quelques considérations relatives à l’application du cadre DataOps à votre équipe. Qu’est-ce que DataOps ? Il est difficile de fournir à vos utilisateurs les mesures les plus précises pour les tableaux de bord existants avec plusieurs fournisseurs de données. La situation s’aggrave lorsque votre base de données est si lourdement grevée de dettes techniques que la réalisation d’une tâche aussi simple que la création d’un indicateur clé de processus, ou KPI, est un véritable cauchemar.\nEt c’est là que DataOps vient à la rescousse ! Il permet à vos utilisateurs de consommer vos données plus rapidement et dans un environnement automatisé intégré à la version la plus récente de vos fournisseurs de données. Pas mal, non ?\nJ’aime à rappeler que ce n’est pas quelque chose de nouveau, car le système d’aide à la décision (SAD) consiste en un environnement automatisé pour vos pipelines analytiques. Et je crois que les DSS ont toujours joué un rôle essentiel dans toute entreprise. Les avantages pour les parties prenantes comprennent une compréhension complète du processus de votre chaîne d’approvisionnement ou la possibilité de savoir plus rapidement quel département ou produit est le plus rentable, pour n’en citer que quelques-uns.\nLes fournisseurs de données chargent ces systèmes, qui peuvent être n’importe quelle source d’information pour vos besoins. Voici quelques exemples d’informations fournies par les fournisseurs de données\nDonnées sur les ressources humaines Données de campagnes d’agences Dispositifs IoT de la chaîne d’approvisionnement Systèmes de facturation Journaux de serveur et de trafic DataOps vs systèmes d’aide à la décision. Vous voyez souvent des pipelines de données orchestrés provenant de différents fournisseurs de données dans les systèmes de gestion des données existants. Ainsi, chaque fournisseur de données charge ses données dans cette base de données centralisée. Mais ces flux de données indépendants entraînent des données incohérentes, ce qui rend difficile la confiance dans les résultats présentés par le DSS.\nCe que DataOps facilite, c’est de meilleurs résultats avec un DSS optimisé ! Grâce à l’approche agile, DataOps renforce une approche plus centrée sur le client par rapport au DSS en raison de son architecture modulaire. En outre, DataOps allège les contraintes d’évolutivité, d’automatisation et de sécurité grâce à la réutilisation de composants utilisés par d’autres pipelines de données.\nCes composants peuvent aller d’une simple connectivité de base de données à une règle de gestion utilisée par le département des finances et dont les ressources humaines pourraient bénéficier. Tout cela grâce à des référentiels centralisés, standardisés et réutilisables. Les points d’intersection et de divergence entre DataOps et DevOps\nAlors que DataOps ressemble à DevOps pour les données, j’aime à rappeler que les objectifs de DevOps et DataOps sont différents, bien que les méthodologies partagent les mêmes principes.\nDevOps se concentre sur l’assouplissement du développement pour inclure les opérations. En revanche, l’objectif de DataOps est de rendre le développement analytique plus fonctionnel. DataOps utilise le contrôle statistique des processus, l’approche mathématique utilisée dans la production allégée, les disciplines DevOps et les meilleures pratiques du Manifeste Agile.\nAvec ces stratégies en place, vous pouvez découpler votre environnement ; DataOps facilite le détachement de votre logique métier et des contraintes techniques de vos pipelines de données. Ainsi, vous êtes plus confiant dans vos données tout en permettant à vos équipes de mieux réagir aux tendances des données.\nVous bénéficierez de l’efficacité et des résultats plus rapidement lors de la conception des composants de votre pipeline de données. Et vos équipes se concentreront davantage sur la création de valeur plutôt que d’être liées par des décisions techniques prises dans le passé.\nPar ailleurs, j’aime toujours évoquer les gains de sécurité résultant d’un déploiement correct des DataOps : des systèmes robustes et sécurisés, moins sujets aux violations et aux fuites ! Avantages à considérer lors de la cartographie de vos flux de valeur\nMaintenant que nous savons ce qu’est DataOps, je veux présenter les avantages d’une cartographie correcte de vos flux de valeurs.\nJe me concentre ici sur les avantages pour vos pipelines de données, bien qu’ils puissent également s’appliquer à vos déploiements d’applications. Du point de vue de l’entreprise, la principale valeur ajoutée par l’adoption de DataOps est la possibilité d’explorer rapidement de nouvelles sources de données.\nVoici les avantages de la valeur ajoutée pour le client lors de la cartographie de vos flux de valeur. Un meilleur contrôle grâce au découplage technique.\nComme je l’ai déjà mentionné, les fournisseurs de données sont toutes les applications sources contenant des données pertinentes pour votre analyse. En d’autres termes, ce sont les points d’entrée des données qui alimentent votre pipeline de données.\nCes applications produisent des données à l’état brut. Et comme leur nom l’indique, ces données doivent être laissées aussi intactes que possible. C’est utile en cas de retraitement ou d’analyse de la lignée des données.\nCes données nécessitent des étapes de traitement supplémentaires afin de les débarrasser des bruits inutiles, car leur forme originale peut ne pas correspondre à vos besoins. Cependant, à partir de cette sortie, vous pouvez extraire les métriques nécessaires pour couvrir les besoins de vos utilisateurs.\nJe souhaite également évoquer l’une des valeurs du découplage conscient : son contrôle automatisé robuste du pipeline de données de chaque composant. Cette orchestration apporte des mesures de qualité supplémentaires, permettant d’augmenter la productivité puisque vos utilisateurs n’auront pas à effectuer des tâches répétitives. Exploration rapide des fournisseurs de données existants et nouveaux.\nSur les systèmes patrimoniaux, le développement de nouveaux pipelines est chaotique, comme mentionné précédemment. L’approche DataOps permet également une exploration rapide de vos fournisseurs de données.\nDataOps facilite la création de composants conformes grâce à son déploiement modulaire. Ce que je veux dire par là, c’est que vous pouvez réutiliser des composants déjà déployés et testés.\nEn d’autres termes, DataOps permet un état d’esprit d’amélioration continue. Par conséquent, il réduira considérablement vos coûts de développement et augmentera en même temps votre retour sur investissement.\nVotre équipe s’occupera de tâches plus difficiles pour apporter de la valeur à l’entreprise, et non plus des activités quotidiennes de traitement des données. En conséquence, vous bénéficiez d’un gain de productivité instantané grâce au déploiement automatisé de votre application. Gouvernance fiable des données.\nGrâce aux pipelines de données automatisés déployés par DataOps, il devient plus facile de retracer comment vos utilisateurs consomment vos données. Ces informations peuvent vous aider à répondre rapidement à des questions récurrentes.\nVos utilisateurs peuvent voir où se trouve la logique métier en un clin d’œil. De plus, la référence entre son nom canonique et son nom d’implémentation technique devient facile à assimiler puisque les nouveaux analystes qui se joignent à vos projets en font une source attrayante pour le profilage de vos données.\nPar conséquent, un solide datalog de vos fournisseurs de données est une étape obligatoire à laquelle il faut penser lors de la cartographie de vos flux de valeur, à mon avis. Il devient facile de gérer vos pipelines de données lorsque vous créez un catalogue métier conforme au niveau de l’entreprise. Toutes ces informations structurées sur vos fournisseurs de données créent un catalogue de données intuitif.\nCes informations, également appelées métadonnées, fournissent le contexte commercial dans lequel ces données donnent leur valeur. En d’autres termes, vos informations deviennent plus précises. Considérations importantes concernant votre propre déploiement de DataOps.\nCe que nous avons vu jusqu’à présent montre comment des modules détachés conformes permettent de créer un catalogue de données plus robuste pour votre entreprise. En outre, la cohérence entre vos composants analytiques permet de clarifier les points sur lesquels vous pouvez améliorer votre ingestion de données.\nJ’aime toujours rappeler que ces améliorations ne sont pas gratuites. Comme vous réagirez plus rapidement et plus judicieusement, soyez prêt à remodeler certains des processus internes de votre entreprise. N’oubliez pas qu’il est difficile d’apprendre de nouveaux tours à un vieux chien. Attendez-vous donc à une certaine résistance de la part de vos coéquipiers plus expérimentés.\nUn pipeline de données auto-réparateur évolue horizontalement ou verticalement selon les besoins. Ainsi, vous pouvez ajouter des unités supplémentaires pour la puissance de traitement (ce que l’on appelle la mise à l’échelle horizontale) ou améliorer vos clusters (ce que l’on appelle la mise à l’échelle verticale) lorsque vos ensembles commencent à avoir des problèmes de goulot d’étranglement lors du traitement de vos données ; Remember the rule of thumb :\nIl est plus facile d’enrichir vos sorties lorsque vous êtes pleinement conscient de l’étendue de vos données. Ainsi, en plus de ses composants modulaires, DataOps permet d’effectuer des actions telles que le masquage et l’obscurcissement de vos données de manière plus fluide dans les premières étapes de leur traitement.\nAvec DataOps, vous construisez un pipe de données fiable capable de réagir aux nouveaux concepts et technologies à la même vitesse que l’évolution de votre entreprise. Réflexions finales.\nDans ce billet, j’ai donné un aperçu de ce que vous gagnerez en déployant correctement DataOps. Le résultat est un mélange de valeur ajoutée commerciale et technique, car vous disposerez de pipelines de données orchestrés minces et robustes.\nJ’ai commencé par présenter ce qu’est DataOps et la valeur commerciale qu’elle apporte. Ensuite, j’ai expliqué où elle se recoupe et où ses objectifs diffèrent des méthodologies agiles et DevOps.\nNous avons également jeté un rapide coup d’œil à ce que je crois être les avantages à court terme du déploiement correct d’une mise en œuvre DataOps mature et comment les déploiements automatisés peuvent ajouter de la valeur technique.\nEnfin, nous avons vu certains défis que votre équipe peut rencontrer lorsque vous adoptez DataOps. Par exemple, votre unité peut être résistante à adopter de nouvelles technologies et méthodologies. Cependant, nous avons également vu les avantages d’un déploiement correct en tant que catalogue de données concis.\nRappelez-vous simplement que vous devez mettre en œuvre l’intégralité des exigences de DataOps. Ne vous attendez donc pas à une mise en œuvre fiable de DataOps avec des déploiements partiels des disciplines agiles ou DevOps.\nSi vous avez besoin d’aide pour transformer vos données, vous pouvez nous contacter pour toute question et même découvrir de nouvelles informations dont vous n’étiez pas conscient grâce à une meilleure compréhension de vos données.\nÀ+!\n",
+  "wordCount" : "2044",
+  "inLanguage": "fr",
+  "image":"https://user-images.githubusercontent.com/78096758/217092056-02f22c71-de93-4223-88c0-fc60f8f662b1.png","datePublished": "2021-11-24T00:00:00Z",
+  "dateModified": "2021-11-24T00:00:00Z",
+  "author":{
+    "@type": "Person",
+    "name": "Daniel Paes"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://www.dawrlog.com/fr/articles/12/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Logistique Dataware",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://www.dawrlog.com/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://www.dawrlog.com/fr/" accesskey="h" title="Logistique Dataware (Alt + H)">Logistique Dataware</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+                <ul class="lang-switch"><li>|</li>
+                    <li>
+                        <a href="https://www.dawrlog.com/" title="English"
+                            aria-label=":us:">🇺🇸</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://www.dawrlog.com/fr/apropos" title="À Propos">
+                    <span>À Propos</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://www.dawrlog.com/fr/articles/" title="Articles">
+                    <span>Articles</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://calendly.com/dawrlog" title="Contactez-nous">
+                    <span>Contactez-nous</span>&nbsp;
+                    <svg fill="none" shape-rendering="geometricPrecision" stroke="currentColor" stroke-linecap="round"
+                        stroke-linejoin="round" stroke-width="2.5" viewBox="0 0 24 24" height="12" width="12">
+                        <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"></path>
+                        <path d="M15 3h6v6"></path>
+                        <path d="M10 14L21 3"></path>
+                    </svg>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    <div class="breadcrumbs"><a href="https://www.dawrlog.com/fr/">Accueil</a>&nbsp;»&nbsp;<a href="https://www.dawrlog.com/fr/articles/">Articles</a></div>
+    <h1 class="post-title">
+      Comment bien evaluer vos Value Stream pour votre pratique DataOps?
+    </h1>
+    <div class="post-meta"><span title='2021-11-24 00:00:00 +0000 UTC'>novembre 24, 2021</span>&nbsp;·&nbsp;10 min&nbsp;·&nbsp;Daniel Paes
+
+</div>
+  </header> 
+<figure class="entry-cover"><img loading="lazy" src="https://user-images.githubusercontent.com/78096758/217092056-02f22c71-de93-4223-88c0-fc60f8f662b1.png" alt="">
+        
+</figure><div class="toc">
+    <details >
+        <summary accesskey="c" title="(Alt + C)">
+            <span class="details">Table des matières</span>
+        </summary>
+
+        <div class="inner"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#h2pourquoi-est-il-si-essentiel-de-disposer-de-données-précises--h2br-"><h2>Pourquoi est-il si essentiel de disposer de données précises ? </h2><br /></a></li>
+    <li><a href="#h2quest-ce-que-dataops--h2br-"><h2>Qu&rsquo;est-ce que DataOps ? </h2><br /></a></li>
+    <li><a href="#h2dataops-vs-systèmes-daide-à-la-décision-h2br-"><h2>DataOps vs systèmes d&rsquo;aide à la décision. </h2><br /></a></li>
+    <li><a href="#h2les-points-dintersection-et-de-divergence-entre-dataops-et-devopsh2br-"><h2>Les points d&rsquo;intersection et de divergence entre DataOps et DevOps</h2><br /></a></li>
+    <li><a href="#h2avantages-à-considérer-lors-de-la-cartographie-de-vos-flux-de-valeurh2br-"><h2>Avantages à considérer lors de la cartographie de vos flux de valeur</h2><br /></a></li>
+    <li><a href="#h3un-meilleur-contrôle-grâce-au-découplage-techniqueh3br-"><h3>Un meilleur contrôle grâce au découplage technique.</h3><br /></a></li>
+    <li><a href="#h3exploration-rapide-des-fournisseurs-de-données-existants-et-nouveauxh3br-"><h3>Exploration rapide des fournisseurs de données existants et nouveaux.</h3><br /></a></li>
+    <li><a href="#h3gouvernance-fiable-des-donnéesh3br-"><h3>Gouvernance fiable des données.</h3><br /></a></li>
+    <li><a href="#h2considérations-importantes-concernant-votre-propre-déploiement-de-dataopsh2br-"><h2>Considérations importantes concernant votre propre déploiement de DataOps.</h2><br /></a></li>
+    <li><a href="#h2réflexions-finalesh2br-"><h2>Réflexions finales.</h2><br /></a></li>
+  </ul>
+</nav>
+        </div>
+    </details>
+</div>
+
+  <div class="post-content"><p>Bonjour à tous, aujourd&rsquo;hui nous allons vérifier comment valoriser correctement votre initiative DataOps.</p>
+<p>Les améliorations apportées à l&rsquo;ingestion des données ont rendu évidente la quantité de données perdues lors de la génération d&rsquo;insights. Cependant, en l&rsquo;absence de méthodologies telles que <a href="https://www.dataopsmanifesto.org/">The DataOps Manifesto</a>, certaines entreprises s&rsquo;efforcent encore de combiner les pipelines de données des anciennes bases de données, telles qu&rsquo;une base de données ADABAS, avec les nouvelles bases de données, telles que MongoDB ou Neo4j.</p>
+<p>Et il est toujours bon de rappeler que ces anciens systèmes ne sont pas faciles à abandonner. La plupart d&rsquo;entre eux sont responsables du traitement de base (comme les transactions bancaires en Cobol, par exemple). En tant que tels, il n&rsquo;est pas intéressant de les changer, car c&rsquo;est trop problématique.</p>
+<p>Cela dit, je pense que l&rsquo;intégration des nouvelles applications et des bases de données existantes est l&rsquo;un des <a href="https://www.docshifter.com/blog/what-to-do-with-legacy-data/">plus grands défis</a> pour les entreprises axées sur les données. Cependant, les méthodologies et les cadres d&rsquo;ingestion de données ont connu des avancées significatives au cours des dernières années.
+<br /><br /></p>
+<h2 id="h2pourquoi-est-il-si-essentiel-de-disposer-de-données-précises--h2br-"><h2>Pourquoi est-il si essentiel de disposer de données précises ? </h2><br /><a hidden class="anchor" aria-hidden="true" href="#h2pourquoi-est-il-si-essentiel-de-disposer-de-données-précises--h2br-">#</a></h2>
+<p>Avec des pipelines d&rsquo;ingestion de données optimisés, vous pouvez améliorer votre prise de décision. Dans le même temps, la mise à jour de vos anciens systèmes centrés sur le sujet en applications modulaires semble prometteuse, non ?</p>
+<p>La bonne nouvelle, c&rsquo;est qu&rsquo;il ne s&rsquo;agit pas d&rsquo;un rêve irréalisable ! Grâce aux progrès de la puissance informatique, il est désormais possible de faire beaucoup plus avec très peu. Nous pouvons maintenant déconstruire les applications gonflées en versions plus fines.</p>
+<p>En utilisant des concepts qui n&rsquo;étaient possibles qu&rsquo;en théorie, nous pouvons maintenant ingérer des données provenant d&rsquo;endroits inhabituels. Par exemple, nous pouvons avoir un pipeline automatisé pour ingérer des données à partir de documents numérisés grâce à la <a href="https://en.wikipedia.org/wiki/Optical_character_recognition">reconnaissance optique de caractères</a>, ou OCR. C&rsquo;est génial, non ?</p>
+<p>Dans ce billet, je veux vous aider à comprendre comment votre organisation pourra bénéficier d&rsquo;un environnement DataOps mature. Tout d&rsquo;abord, je présenterai ce qu&rsquo;est DataOps et pourquoi il ne s&rsquo;agit pas seulement de DevOps pour les données. Ensuite, j&rsquo;expliquerai certains avantages importants qui découlent de la cartographie des flux de valeur pour votre propre pratique DataOps. Enfin, je présenterai quelques considérations relatives à l&rsquo;application du cadre DataOps à votre équipe.
+<br /><br /></p>
+<h2 id="h2quest-ce-que-dataops--h2br-"><h2>Qu&rsquo;est-ce que DataOps ? </h2><br /><a hidden class="anchor" aria-hidden="true" href="#h2quest-ce-que-dataops--h2br-">#</a></h2>
+<p>Il est difficile de fournir à vos utilisateurs les mesures les plus précises pour les tableaux de bord existants avec plusieurs fournisseurs de données. La situation s&rsquo;aggrave lorsque votre base de données est si lourdement grevée de dettes techniques que la réalisation d&rsquo;une tâche aussi simple que la création d&rsquo;un <a href="https://kpi.org/KPI-Basics">indicateur clé de processus</a>, ou KPI, est un véritable cauchemar.</p>
+<p>Et c&rsquo;est là que DataOps vient à la rescousse ! Il permet à vos utilisateurs de consommer vos données plus rapidement et dans un environnement automatisé intégré à la version la plus récente de vos fournisseurs de données. Pas mal, non ?</p>
+<p>J&rsquo;aime à rappeler que ce n&rsquo;est pas quelque chose de nouveau, car le <a href="https://www.investopedia.com/terms/d/decision-support-system.asp">système d&rsquo;aide à la décision</a> (SAD) consiste en un environnement automatisé pour vos pipelines analytiques. Et je crois que les DSS ont toujours joué un rôle essentiel dans toute entreprise. Les avantages pour les parties prenantes comprennent une compréhension complète du processus de votre chaîne d&rsquo;approvisionnement ou la possibilité de savoir plus rapidement quel département ou produit est le plus rentable, pour n&rsquo;en citer que quelques-uns.</p>
+<p>Les fournisseurs de données chargent ces systèmes, qui peuvent être n&rsquo;importe quelle source d&rsquo;information pour vos besoins. Voici quelques exemples d&rsquo;informations fournies par les fournisseurs de données</p>
+<ul>
+<li>Données sur les ressources humaines</li>
+<li>Données de campagnes d&rsquo;agences</li>
+<li>Dispositifs IoT de la chaîne d&rsquo;approvisionnement</li>
+<li>Systèmes de facturation</li>
+<li>Journaux de serveur et de trafic
+<br /><br /></li>
+</ul>
+<h2 id="h2dataops-vs-systèmes-daide-à-la-décision-h2br-"><h2>DataOps vs systèmes d&rsquo;aide à la décision. </h2><br /><a hidden class="anchor" aria-hidden="true" href="#h2dataops-vs-systèmes-daide-à-la-décision-h2br-">#</a></h2>
+<p>Vous voyez souvent des pipelines de données orchestrés provenant de différents fournisseurs de données dans les systèmes de gestion des données existants. Ainsi, chaque fournisseur de données charge ses données dans cette base de données centralisée. Mais ces flux de données indépendants entraînent des données incohérentes, ce qui rend difficile la confiance dans les résultats présentés par le DSS.</p>
+<p>Ce que DataOps facilite, c&rsquo;est <strong>de meilleurs résultats avec un DSS optimisé</strong> ! Grâce à l&rsquo;approche agile, DataOps renforce une approche plus centrée sur le client par rapport au DSS en raison de son architecture modulaire. En outre, DataOps allège les contraintes d&rsquo;évolutivité, d&rsquo;automatisation et de sécurité grâce à la réutilisation de composants utilisés par d&rsquo;autres pipelines de données.</p>
+<p>Ces composants peuvent aller d&rsquo;une simple connectivité de base de données à une règle de gestion utilisée par le département des finances et dont les ressources humaines pourraient bénéficier. Tout cela grâce à des référentiels centralisés, standardisés et réutilisables.
+<br /><br /></p>
+<h2 id="h2les-points-dintersection-et-de-divergence-entre-dataops-et-devopsh2br-"><h2>Les points d&rsquo;intersection et de divergence entre DataOps et DevOps</h2><br /><a hidden class="anchor" aria-hidden="true" href="#h2les-points-dintersection-et-de-divergence-entre-dataops-et-devopsh2br-">#</a></h2>
+<p>Alors que DataOps ressemble à DevOps pour les données, j&rsquo;aime à rappeler que les objectifs de DevOps et DataOps sont différents, bien que les méthodologies partagent les mêmes principes.</p>
+<p>DevOps se concentre sur l&rsquo;assouplissement du développement pour inclure les opérations. En revanche, l&rsquo;objectif de DataOps est de rendre le développement analytique plus fonctionnel. DataOps utilise le <a href="https://en.wikipedia.org/wiki/Statistical_process_control">contrôle statistique des processus</a>, l&rsquo;approche mathématique utilisée dans la <a href="https://en.wikipedia.org/wiki/Lean_manufacturing">production allégée</a>, les disciplines DevOps et les meilleures pratiques du <a href="https://en.wikipedia.org/wiki/Agile_software_development#The_Manifesto_for_Agile_Software_Development">Manifeste Agile</a>.</p>
+<p>Avec ces stratégies en place, vous pouvez découpler votre environnement ; DataOps facilite le détachement de votre logique métier et des contraintes techniques de vos pipelines de données. Ainsi, vous êtes plus confiant dans vos données tout en permettant à vos équipes de mieux réagir aux tendances des données.</p>
+<p>Vous bénéficierez de l&rsquo;efficacité et des résultats plus rapidement lors de la conception des composants de votre pipeline de données. Et vos équipes se concentreront davantage sur la création de valeur plutôt que d&rsquo;être liées par des décisions techniques prises dans le passé.</p>
+<p>Par ailleurs, j&rsquo;aime toujours évoquer les gains de sécurité résultant d&rsquo;un déploiement correct des DataOps : des systèmes robustes et sécurisés, moins sujets aux violations et aux fuites !
+<br /><br /></p>
+<h2 id="h2avantages-à-considérer-lors-de-la-cartographie-de-vos-flux-de-valeurh2br-"><h2>Avantages à considérer lors de la cartographie de vos flux de valeur</h2><br /><a hidden class="anchor" aria-hidden="true" href="#h2avantages-à-considérer-lors-de-la-cartographie-de-vos-flux-de-valeurh2br-">#</a></h2>
+<p>Maintenant que nous savons ce qu&rsquo;est DataOps, je veux présenter les avantages d&rsquo;une cartographie correcte de vos <a href="https://www.atlassian.com/continuous-delivery/principles/value-stream-mapping">flux de valeurs</a>.</p>
+<p>Je me concentre ici sur les avantages pour vos pipelines de données, bien qu&rsquo;ils puissent également s&rsquo;appliquer à vos déploiements d&rsquo;applications. Du point de vue de l&rsquo;entreprise, la principale valeur ajoutée par l&rsquo;adoption de DataOps est la possibilité d&rsquo;explorer rapidement de nouvelles sources de données.</p>
+<p>Voici les avantages de la <a href="https://berteig.com/how-to-apply-agile/value-added-work-basic-lean-concepts/">valeur ajoutée</a> pour le client lors de la cartographie de vos flux de valeur.
+<br /><br /></p>
+<h2 id="h3un-meilleur-contrôle-grâce-au-découplage-techniqueh3br-"><h3>Un meilleur contrôle grâce au découplage technique.</h3><br /><a hidden class="anchor" aria-hidden="true" href="#h3un-meilleur-contrôle-grâce-au-découplage-techniqueh3br-">#</a></h2>
+<p>Comme je l&rsquo;ai déjà mentionné, les fournisseurs de données sont toutes les applications sources contenant des données pertinentes pour votre analyse. En d&rsquo;autres termes, ce sont les points d&rsquo;entrée des données qui alimentent votre pipeline de données.</p>
+<p>Ces applications produisent des données à l&rsquo;état brut. Et comme leur nom l&rsquo;indique, ces données doivent être laissées aussi intactes que possible. C&rsquo;est utile en cas de retraitement ou d&rsquo;analyse de la lignée des données.</p>
+<p>Ces données nécessitent des étapes de traitement supplémentaires afin de les débarrasser des bruits inutiles, car leur forme originale peut ne pas correspondre à vos besoins. Cependant, à partir de cette sortie, vous pouvez extraire les métriques nécessaires pour couvrir les besoins de vos utilisateurs.</p>
+<p>Je souhaite également évoquer l&rsquo;une des valeurs du découplage conscient : son contrôle automatisé robuste du pipeline de données de chaque composant. Cette orchestration apporte des mesures de qualité supplémentaires, permettant d&rsquo;augmenter la productivité puisque vos utilisateurs n&rsquo;auront pas à effectuer des tâches répétitives.
+<br /><br /></p>
+<h2 id="h3exploration-rapide-des-fournisseurs-de-données-existants-et-nouveauxh3br-"><h3>Exploration rapide des fournisseurs de données existants et nouveaux.</h3><br /><a hidden class="anchor" aria-hidden="true" href="#h3exploration-rapide-des-fournisseurs-de-données-existants-et-nouveauxh3br-">#</a></h2>
+<p>Sur les systèmes patrimoniaux, le développement de nouveaux pipelines est chaotique, comme mentionné précédemment. L&rsquo;approche DataOps permet également une exploration rapide de vos fournisseurs de données.</p>
+<p>DataOps facilite la création de composants conformes grâce à son déploiement modulaire. Ce que je veux dire par là, c&rsquo;est que vous pouvez réutiliser des composants déjà déployés et testés.</p>
+<p>En d&rsquo;autres termes, DataOps permet un état d&rsquo;esprit d&rsquo;amélioration continue. Par conséquent, il réduira considérablement vos coûts de développement et augmentera en même temps votre retour sur investissement.</p>
+<p>Votre équipe s&rsquo;occupera de tâches plus difficiles pour apporter de la valeur à l&rsquo;entreprise, et non plus des activités quotidiennes de traitement des données. En conséquence, vous bénéficiez d&rsquo;un gain de productivité instantané grâce au déploiement automatisé de votre application.
+<br /><br /></p>
+<h2 id="h3gouvernance-fiable-des-donnéesh3br-"><h3>Gouvernance fiable des données.</h3><br /><a hidden class="anchor" aria-hidden="true" href="#h3gouvernance-fiable-des-donnéesh3br-">#</a></h2>
+<p>Grâce aux pipelines de données automatisés déployés par DataOps, il devient plus facile de retracer comment vos utilisateurs consomment vos données. Ces informations peuvent vous aider à répondre rapidement à des questions récurrentes.</p>
+<p>Vos utilisateurs peuvent voir où se trouve la logique métier en un clin d&rsquo;œil. De plus, la référence entre son nom canonique et son nom d&rsquo;implémentation technique devient facile à assimiler puisque les nouveaux analystes qui se joignent à vos projets en font une source attrayante pour le profilage de vos données.</p>
+<p>Par conséquent, un solide datalog de vos fournisseurs de données est une étape obligatoire à laquelle il faut penser lors de la cartographie de vos flux de valeur, à mon avis. Il devient facile de gérer vos pipelines de données lorsque vous créez un catalogue métier conforme au niveau de l&rsquo;entreprise. Toutes ces informations structurées sur vos fournisseurs de données créent un catalogue de données intuitif.</p>
+<p>Ces informations, également appelées métadonnées, fournissent le contexte commercial dans lequel ces données donnent leur valeur. En d&rsquo;autres termes, vos informations deviennent plus précises.
+<br /><br /></p>
+<h2 id="h2considérations-importantes-concernant-votre-propre-déploiement-de-dataopsh2br-"><h2>Considérations importantes concernant votre propre déploiement de DataOps.</h2><br /><a hidden class="anchor" aria-hidden="true" href="#h2considérations-importantes-concernant-votre-propre-déploiement-de-dataopsh2br-">#</a></h2>
+<p>Ce que nous avons vu jusqu&rsquo;à présent montre comment des modules détachés conformes permettent de créer un catalogue de données plus robuste pour votre entreprise. En outre, la cohérence entre vos composants analytiques permet de clarifier les points sur lesquels vous pouvez améliorer votre ingestion de données.</p>
+<p>J&rsquo;aime toujours rappeler que ces améliorations ne sont pas gratuites. Comme vous réagirez plus rapidement et plus judicieusement, soyez prêt à remodeler certains des processus internes de votre entreprise. N&rsquo;oubliez pas qu&rsquo;il est difficile d&rsquo;apprendre de nouveaux tours à un vieux chien. Attendez-vous donc à une certaine résistance de la part de vos coéquipiers plus expérimentés.</p>
+<p>Un pipeline de données auto-réparateur évolue horizontalement ou verticalement selon les besoins. Ainsi, vous pouvez ajouter des unités supplémentaires pour la puissance de traitement (ce que l&rsquo;on appelle la mise à l&rsquo;échelle horizontale) ou améliorer vos clusters (ce que l&rsquo;on appelle la mise à l&rsquo;échelle verticale) lorsque vos ensembles commencent à avoir des problèmes de goulot d&rsquo;étranglement lors du traitement de vos données ; <strong><em>Remember the rule of thumb</em></strong> :</p>
+<blockquote>
+<p>Il est plus facile d&rsquo;enrichir vos sorties lorsque vous êtes pleinement conscient de l&rsquo;étendue de vos données. Ainsi, en plus de ses composants modulaires, DataOps permet d&rsquo;effectuer des actions telles que le masquage et l&rsquo;obscurcissement de vos données de manière plus fluide dans les premières étapes de leur traitement.</p>
+</blockquote>
+<p>Avec DataOps, vous construisez un <strong>pipe de données fiable</strong> capable de réagir aux nouveaux concepts et technologies à la <strong><em>même vitesse</em></strong> que l&rsquo;évolution de votre <strong><em>entreprise</em></strong>.
+<br /><br /></p>
+<h2 id="h2réflexions-finalesh2br-"><h2>Réflexions finales.</h2><br /><a hidden class="anchor" aria-hidden="true" href="#h2réflexions-finalesh2br-">#</a></h2>
+<p>Dans ce billet, j&rsquo;ai donné un aperçu de ce que vous gagnerez en déployant correctement DataOps. Le résultat est un mélange de valeur ajoutée commerciale et technique, car vous disposerez de pipelines de données orchestrés minces et robustes.</p>
+<p>J&rsquo;ai commencé par présenter ce qu&rsquo;est DataOps et la valeur commerciale qu&rsquo;elle apporte. Ensuite, j&rsquo;ai expliqué où elle se recoupe et où ses objectifs diffèrent des méthodologies agiles et DevOps.</p>
+<p>Nous avons également jeté un rapide coup d&rsquo;œil à ce que je crois être les avantages à court terme du déploiement correct d&rsquo;une mise en œuvre DataOps mature et comment les déploiements automatisés peuvent ajouter de la valeur technique.</p>
+<p>Enfin, nous avons vu certains défis que votre équipe peut rencontrer lorsque vous adoptez DataOps. Par exemple, votre unité peut être <strong>résistante</strong> à <strong><em>adopter de nouvelles technologies et méthodologies</em></strong>. Cependant, nous avons également vu les avantages d&rsquo;un déploiement correct en tant que <strong><em>catalogue de données concis</em></strong>.</p>
+<p>Rappelez-vous simplement que vous devez mettre en œuvre l&rsquo;intégralité des exigences de DataOps. Ne vous attendez donc pas à une mise en œuvre fiable de DataOps avec des déploiements partiels des disciplines agiles ou DevOps.</p>
+<p>Si vous avez besoin d&rsquo;aide pour transformer vos données, vous pouvez <a href="https://calendly.com/dawrlog">nous contacter</a> pour toute question et même découvrir de nouvelles informations dont vous n&rsquo;étiez pas conscient grâce à une meilleure compréhension de vos données.</p>
+<p>À+!</p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+<nav class="paginav">
+  <a class="prev" href="https://www.dawrlog.com/fr/articles/10/">
+    <span class="title">« Page précédente</span>
+    <br>
+    <span>Les types de données BigQuery examinés et expliqués</span>
+  </a>
+  <a class="next" href="https://www.dawrlog.com/fr/articles/14/">
+    <span class="title">Page suivante »</span>
+    <br>
+    <span>Qu&#39;est-ce que ce le cycle de vie des identitées et provisionement d&#39;access?</span>
+  </a>
+</nav>
+
+
+<div class="share-buttons">
+    <a target="_blank" rel="noopener noreferrer" aria-label="share Comment bien evaluer vos Value Stream pour votre pratique DataOps? on twitter"
+        href="https://twitter.com/intent/tweet/?text=Comment%20bien%20evaluer%20vos%20Value%20Stream%20pour%20votre%20pratique%20DataOps%3f&amp;url=https%3a%2f%2fwww.dawrlog.com%2ffr%2farticles%2f12%2f&amp;hashtags=DataOps%2cLeanAgile%2cBestPractices">
+        <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+            <path
+                d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-253.927,424.544c135.939,0 210.268,-112.643 210.268,-210.268c0,-3.218 0,-6.437 -0.153,-9.502c14.406,-10.421 26.973,-23.448 36.935,-38.314c-13.18,5.824 -27.433,9.809 -42.452,11.648c15.326,-9.196 26.973,-23.602 32.49,-40.92c-14.252,8.429 -30.038,14.56 -46.896,17.931c-13.487,-14.406 -32.644,-23.295 -53.946,-23.295c-40.767,0 -73.87,33.104 -73.87,73.87c0,5.824 0.613,11.494 1.992,16.858c-61.456,-3.065 -115.862,-32.49 -152.337,-77.241c-6.284,10.881 -9.962,23.601 -9.962,37.088c0,25.594 13.027,48.276 32.95,61.456c-12.107,-0.307 -23.448,-3.678 -33.41,-9.196l0,0.92c0,35.862 25.441,65.594 59.311,72.49c-6.13,1.686 -12.72,2.606 -19.464,2.606c-4.751,0 -9.348,-0.46 -13.946,-1.38c9.349,29.426 36.628,50.728 68.965,51.341c-25.287,19.771 -57.164,31.571 -91.8,31.571c-5.977,0 -11.801,-0.306 -17.625,-1.073c32.337,21.15 71.264,33.41 112.95,33.41Z" />
+        </svg>
+    </a>
+    <a target="_blank" rel="noopener noreferrer" aria-label="share Comment bien evaluer vos Value Stream pour votre pratique DataOps? on linkedin"
+        href="https://www.linkedin.com/shareArticle?mini=true&amp;url=https%3a%2f%2fwww.dawrlog.com%2ffr%2farticles%2f12%2f&amp;title=Comment%20bien%20evaluer%20vos%20Value%20Stream%20pour%20votre%20pratique%20DataOps%3f&amp;summary=Comment%20bien%20evaluer%20vos%20Value%20Stream%20pour%20votre%20pratique%20DataOps%3f&amp;source=https%3a%2f%2fwww.dawrlog.com%2ffr%2farticles%2f12%2f">
+        <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+            <path
+                d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-288.985,423.278l0,-225.717l-75.04,0l0,225.717l75.04,0Zm270.539,0l0,-129.439c0,-69.333 -37.018,-101.586 -86.381,-101.586c-39.804,0 -57.634,21.891 -67.617,37.266l0,-31.958l-75.021,0c0.995,21.181 0,225.717 0,225.717l75.02,0l0,-126.056c0,-6.748 0.486,-13.492 2.474,-18.315c5.414,-13.475 17.767,-27.434 38.494,-27.434c27.135,0 38.007,20.707 38.007,51.037l0,120.768l75.024,0Zm-307.552,-334.556c-25.674,0 -42.448,16.879 -42.448,39.002c0,21.658 16.264,39.002 41.455,39.002l0.484,0c26.165,0 42.452,-17.344 42.452,-39.002c-0.485,-22.092 -16.241,-38.954 -41.943,-39.002Z" />
+        </svg>
+    </a>
+    <a target="_blank" rel="noopener noreferrer" aria-label="share Comment bien evaluer vos Value Stream pour votre pratique DataOps? on reddit"
+        href="https://reddit.com/submit?url=https%3a%2f%2fwww.dawrlog.com%2ffr%2farticles%2f12%2f&title=Comment%20bien%20evaluer%20vos%20Value%20Stream%20pour%20votre%20pratique%20DataOps%3f">
+        <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+            <path
+                d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-3.446,265.638c0,-22.964 -18.616,-41.58 -41.58,-41.58c-11.211,0 -21.361,4.457 -28.841,11.666c-28.424,-20.508 -67.586,-33.757 -111.204,-35.278l18.941,-89.121l61.884,13.157c0.756,15.734 13.642,28.29 29.56,28.29c16.407,0 29.706,-13.299 29.706,-29.701c0,-16.403 -13.299,-29.702 -29.706,-29.702c-11.666,0 -21.657,6.792 -26.515,16.578l-69.105,-14.69c-1.922,-0.418 -3.939,-0.042 -5.585,1.036c-1.658,1.073 -2.811,2.761 -3.224,4.686l-21.152,99.438c-44.258,1.228 -84.046,14.494 -112.837,35.232c-7.468,-7.164 -17.589,-11.591 -28.757,-11.591c-22.965,0 -41.585,18.616 -41.585,41.58c0,16.896 10.095,31.41 24.568,37.918c-0.639,4.135 -0.99,8.328 -0.99,12.576c0,63.977 74.469,115.836 166.33,115.836c91.861,0 166.334,-51.859 166.334,-115.836c0,-4.218 -0.347,-8.387 -0.977,-12.493c14.564,-6.47 24.735,-21.034 24.735,-38.001Zm-119.474,108.193c-20.27,20.241 -59.115,21.816 -70.534,21.816c-11.428,0 -50.277,-1.575 -70.522,-21.82c-3.007,-3.008 -3.007,-7.882 0,-10.889c3.003,-2.999 7.882,-3.003 10.885,0c12.777,12.781 40.11,17.317 59.637,17.317c19.522,0 46.86,-4.536 59.657,-17.321c3.016,-2.999 7.886,-2.995 10.885,0.008c3.008,3.011 3.003,7.882 -0.008,10.889Zm-5.23,-48.781c-16.373,0 -29.701,-13.324 -29.701,-29.698c0,-16.381 13.328,-29.714 29.701,-29.714c16.378,0 29.706,13.333 29.706,29.714c0,16.374 -13.328,29.698 -29.706,29.698Zm-160.386,-29.702c0,-16.381 13.328,-29.71 29.714,-29.71c16.369,0 29.689,13.329 29.689,29.71c0,16.373 -13.32,29.693 -29.689,29.693c-16.386,0 -29.714,-13.32 -29.714,-29.693Z" />
+        </svg>
+    </a>
+    <a target="_blank" rel="noopener noreferrer" aria-label="share Comment bien evaluer vos Value Stream pour votre pratique DataOps? on facebook"
+        href="https://facebook.com/sharer/sharer.php?u=https%3a%2f%2fwww.dawrlog.com%2ffr%2farticles%2f12%2f">
+        <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+            <path
+                d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-106.468,0l0,-192.915l66.6,0l12.672,-82.621l-79.272,0l0,-53.617c0,-22.603 11.073,-44.636 46.58,-44.636l36.042,0l0,-70.34c0,0 -32.71,-5.582 -63.982,-5.582c-65.288,0 -107.96,39.569 -107.96,111.204l0,62.971l-72.573,0l0,82.621l72.573,0l0,192.915l-191.104,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Z" />
+        </svg>
+    </a>
+    <a target="_blank" rel="noopener noreferrer" aria-label="share Comment bien evaluer vos Value Stream pour votre pratique DataOps? on whatsapp"
+        href="https://api.whatsapp.com/send?text=Comment%20bien%20evaluer%20vos%20Value%20Stream%20pour%20votre%20pratique%20DataOps%3f%20-%20https%3a%2f%2fwww.dawrlog.com%2ffr%2farticles%2f12%2f">
+        <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+            <path
+                d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-58.673,127.703c-33.842,-33.881 -78.847,-52.548 -126.798,-52.568c-98.799,0 -179.21,80.405 -179.249,179.234c-0.013,31.593 8.241,62.428 23.927,89.612l-25.429,92.884l95.021,-24.925c26.181,14.28 55.659,21.807 85.658,21.816l0.074,0c98.789,0 179.206,-80.413 179.247,-179.243c0.018,-47.895 -18.61,-92.93 -52.451,-126.81Zm-126.797,275.782l-0.06,0c-26.734,-0.01 -52.954,-7.193 -75.828,-20.767l-5.441,-3.229l-56.386,14.792l15.05,-54.977l-3.542,-5.637c-14.913,-23.72 -22.791,-51.136 -22.779,-79.287c0.033,-82.142 66.867,-148.971 149.046,-148.971c39.793,0.014 77.199,15.531 105.329,43.692c28.128,28.16 43.609,65.592 43.594,105.4c-0.034,82.149 -66.866,148.983 -148.983,148.984Zm81.721,-111.581c-4.479,-2.242 -26.499,-13.075 -30.604,-14.571c-4.105,-1.495 -7.091,-2.241 -10.077,2.241c-2.986,4.483 -11.569,14.572 -14.182,17.562c-2.612,2.988 -5.225,3.364 -9.703,1.12c-4.479,-2.241 -18.91,-6.97 -36.017,-22.23c-13.314,-11.876 -22.304,-26.542 -24.916,-31.026c-2.612,-4.484 -0.279,-6.908 1.963,-9.14c2.016,-2.007 4.48,-5.232 6.719,-7.847c2.24,-2.615 2.986,-4.484 4.479,-7.472c1.493,-2.99 0.747,-5.604 -0.374,-7.846c-1.119,-2.241 -10.077,-24.288 -13.809,-33.256c-3.635,-8.733 -7.327,-7.55 -10.077,-7.688c-2.609,-0.13 -5.598,-0.158 -8.583,-0.158c-2.986,0 -7.839,1.121 -11.944,5.604c-4.105,4.484 -15.675,15.32 -15.675,37.364c0,22.046 16.048,43.342 18.287,46.332c2.24,2.99 31.582,48.227 76.511,67.627c10.685,4.615 19.028,7.371 25.533,9.434c10.728,3.41 20.492,2.929 28.209,1.775c8.605,-1.285 26.499,-10.833 30.231,-21.295c3.732,-10.464 3.732,-19.431 2.612,-21.298c-1.119,-1.869 -4.105,-2.99 -8.583,-5.232Z" />
+        </svg>
+    </a>
+    <a target="_blank" rel="noopener noreferrer" aria-label="share Comment bien evaluer vos Value Stream pour votre pratique DataOps? on telegram"
+        href="https://telegram.me/share/url?text=Comment%20bien%20evaluer%20vos%20Value%20Stream%20pour%20votre%20pratique%20DataOps%3f&amp;url=https%3a%2f%2fwww.dawrlog.com%2ffr%2farticles%2f12%2f">
+        <svg version="1.1" xml:space="preserve" viewBox="2 2 28 28" height="30px" width="30px" fill="currentColor">
+            <path
+                d="M26.49,29.86H5.5a3.37,3.37,0,0,1-2.47-1,3.35,3.35,0,0,1-1-2.47V5.48A3.36,3.36,0,0,1,3,3,3.37,3.37,0,0,1,5.5,2h21A3.38,3.38,0,0,1,29,3a3.36,3.36,0,0,1,1,2.46V26.37a3.35,3.35,0,0,1-1,2.47A3.38,3.38,0,0,1,26.49,29.86Zm-5.38-6.71a.79.79,0,0,0,.85-.66L24.73,9.24a.55.55,0,0,0-.18-.46.62.62,0,0,0-.41-.17q-.08,0-16.53,6.11a.59.59,0,0,0-.41.59.57.57,0,0,0,.43.52l4,1.24,1.61,4.83a.62.62,0,0,0,.63.43.56.56,0,0,0,.4-.17L16.54,20l4.09,3A.9.9,0,0,0,21.11,23.15ZM13.8,20.71l-1.21-4q8.72-5.55,8.78-5.55c.15,0,.23,0,.23.16a.18.18,0,0,1,0,.06s-2.51,2.3-7.52,6.8Z" />
+        </svg>
+    </a>
+</div>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+    <span>&copy; 2023 <a href="https://www.dawrlog.com/fr/">Logistique Dataware</a>; <br /> created with 🧡 on 🐧 machines running ☸️ pods.</span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a><script src='https://storage.ko-fi.com/cdn/scripts/overlay-widget.js'></script>
+<script>
+  kofiWidgetOverlay.draw('dawrlog', {
+    'type': 'floating-chat',
+    'floating-chat.donateButton.text': 'Tip jar',
+    'floating-chat.donateButton.background-color': '#794bc4',
+    'floating-chat.donateButton.text-color': '#fff'
+  });
+</script>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = 'Copier';
+
+        function copyingDone() {
+            copybutton.innerHTML = 'Copié !';
+            setTimeout(() => {
+                copybutton.innerHTML = 'Copier';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script>
+</body>
+
+</html>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>PowerBI on Dataware Logistics</title>
+    <link>https://www.dawrlog.com/categories/powerbi/</link>
+    <description>Recent content in PowerBI on Dataware Logistics</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Tue, 31 Aug 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://www.dawrlog.com/categories/powerbi/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>How To Analyze PostgreSQL Data in Power BI.</title>
+      <link>https://www.dawrlog.com/posts/7/</link>
+      <pubDate>Tue, 31 Aug 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/posts/7/</guid>
+      <description>Hello all!
+Today I want to discuss one of the dataviz tools that is getting more and more adoption; Power BI. Power BI increases its adoption among the most experienced users each day. Thanks to being a user-friendly tool with various data sources to connect to, it helps analyze distinct data sources within the same console.
+In this post, I&amp;rsquo;ll show you how to import your data stored on PostgreSQL with a desktop version of Power BI.</description>
+    </item>
+    
+  </channel>
+</rss>

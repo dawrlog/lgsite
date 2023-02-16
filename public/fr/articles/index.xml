@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Articles on Logistique Dataware</title>
+    <link>https://www.dawrlog.com/fr/articles/</link>
+    <description>Recent content in Articles on Logistique Dataware</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Sat, 24 Dec 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://www.dawrlog.com/fr/articles/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Files d&#39;attente de requêtes SQL sur Redshift : Le guide complet</title>
+      <link>https://www.dawrlog.com/fr/articles/9/</link>
+      <pubDate>Fri, 19 Nov 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/fr/articles/9/</guid>
+      <description>Salut tout le monde, j&amp;rsquo;espère que tout va bien.
+Même la base de données la plus puissante est toujours sujette à l&amp;rsquo;erreur terrifiante que tout système de base de données peut rencontrer : les goulots d&amp;rsquo;étranglement des requêtes.
+Parfois, les systèmes qui gèrent nos requêtes ne peuvent pas traiter de la même manière que nous. Ainsi, nos questions renvoient des résultats précis grâce à une puissance de traitement supplémentaire.
+Dans cet article, je vais présenter le fonctionnement des files d&amp;rsquo;attente de requêtes Redshift.</description>
+    </item>
+    
+    <item>
+      <title>Chargements des données incrementels: Un moyen nickel de charger vos données.</title>
+      <link>https://www.dawrlog.com/fr/articles/8/</link>
+      <pubDate>Sat, 24 Dec 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/fr/articles/8/</guid>
+      <description>Salut à tous, j&amp;rsquo;espère que tout va bien.
+Un entrepôt de données vise à donner du sens à un sujet spécifique dans le temps en analysant les données historiques. Ce système, également appelé système d&amp;rsquo;aide à la décision, peut s&amp;rsquo;attaquer à des tendances aussi diverses que le pourcentage de désabonnement des clients ou les tendances de la consommation de bière dans une zone géographique.
+Le chargement incrémentiel est l&amp;rsquo;une de ces questions cruciales que vous devez prendre en compte lorsque vous définissez vos pipelines de chargement.</description>
+    </item>
+    
+    <item>
+      <title>gRPC vs REST: Lequel dois-je choisir pour mon application et pourquoi?</title>
+      <link>https://www.dawrlog.com/fr/articles/13/</link>
+      <pubDate>Sun, 18 Dec 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/fr/articles/13/</guid>
+      <description>Bonjour à tous, aujourd&amp;rsquo;hui nous revisitons l&amp;rsquo;architecture REST, tout en la comparant aux appels gRPC.
+Un framework microservices ressemble parfois à un rêve, mais il peut devenir un cauchemar lors du traitement des données. De nos jours, il ne suffit pas de faire transiter les données avec moins de latence. Il faut aussi qu&amp;rsquo;elles se connectent facilement aux systèmes. La vitesse n&amp;rsquo;est pas le seul critère important, il faut aussi que l&amp;rsquo;application puisse s&amp;rsquo;adapter à vos besoins informatiques sans faire exploser vos coûts d&amp;rsquo;infrastructure.</description>
+    </item>
+    
+    <item>
+      <title>Examples des ETL utilisant des workflows Argo.</title>
+      <link>https://www.dawrlog.com/fr/articles/5/</link>
+      <pubDate>Sun, 14 Aug 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/fr/articles/5/</guid>
+      <description>Bonjour à tous,
+Ce post explore l&amp;rsquo;utilisation des Argo Workflows pour orchestrer vos pipelines de données. Pour commencer, rappelons ce qu&amp;rsquo;est l&amp;rsquo;ETL tout en concevant l&amp;rsquo;architecture de haut niveau de notre travail. Je montrerai comment configurer vos pipelines de données pour qu&amp;rsquo;ils suivent plus naturellement la structure. Ensuite, nous verrons comment obtenir le même résultat en utilisant des graphes acycliques dirigés (DAGs). Enfin, je résumerai ce que nous avons vu et présenterai des raisons pour guider votre choix d&amp;rsquo;approche en fonction de la complexité de votre projet.</description>
+    </item>
+    
+    <item>
+      <title>Les 10 optimales workflows Argo; avec examples.</title>
+      <link>https://www.dawrlog.com/fr/articles/6/</link>
+      <pubDate>Tue, 12 Jul 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/fr/articles/6/</guid>
+      <description>Bonjour à tous,
+Nous savons tous comment Argo Workflows permet d&amp;rsquo;orchestrer facilement des travaux parallèles sur Kubernetes. Bien qu&amp;rsquo;il soit le plus souvent associé aux projets de traitement de données et d&amp;rsquo;ETL, il est utile pour bien d&amp;rsquo;autres choses ! Ces 10 workflows vont changer la façon dont vous voyez cet orchestrateur Kubernetes.
+Allons-y !
+Configuration des Workflows Argo
+Si vous n&amp;rsquo;avez pas actuellement de workflow en cours d&amp;rsquo;exécution, je vous suggère de créer votre premier Argo Workflow pour comprendre ce dont nous allons parler dans ce post.</description>
+    </item>
+    
+    <item>
+      <title>Moyens de debug un workflow Argo.</title>
+      <link>https://www.dawrlog.com/fr/articles/4/</link>
+      <pubDate>Sun, 15 May 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/fr/articles/4/</guid>
+      <description>Bonjour à tous,
+Aujourd&amp;rsquo;hui, je voudrais vous expliquer comment déboguer vos flux de travail Argo, ce qui est pratique lorsque vous avez besoin de plus de détails sur votre environnement. Voyons les deux approches différentes pour déboguer vos déploiements de workflows Argo.
+Tout d&amp;rsquo;abord, nous utiliserons l&amp;rsquo;Interface de ligne de commande Argo, ou CLI pour faire court. Les commandes CLI d&amp;rsquo;Argo couvrent la plupart des erreurs les plus courantes rencontrées avec les workflows, telles que les mauvaises configurations.</description>
+    </item>
+    
+    <item>
+      <title>Archivage des Argo Workflows dans une instance Postgres: Quoi a faire pour configurer votre entrepôt de données</title>
+      <link>https://www.dawrlog.com/fr/articles/2/</link>
+      <pubDate>Mon, 11 Apr 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/fr/articles/2/</guid>
+      <description>Bonjour à tous, j&amp;rsquo;espère que vous allez bien !
+Si vous connaissez Argo Workflows, vous savez déjà qu&amp;rsquo;il peut piloter vos pipelines CI/CD, gérer vos processus ETL et orchestrer tout ensemble de tâches que vous pouvez imaginer pour un cluster Kubernetes. Mais saviez-vous qu&amp;rsquo;Argo sait aussi archiver les résultats de ses workflows dans une base de données SQL ?
+Dans ce billet, je vais montrer comment Argo Workflows archive l&amp;rsquo;état des workflows dans un stockage persistant en utilisant une base de données Postgres.</description>
+    </item>
+    
+    <item>
+      <title>Comment diminuer les attaques DDOS parmis vos APIs.</title>
+      <link>https://www.dawrlog.com/fr/articles/3/</link>
+      <pubDate>Fri, 18 Mar 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/fr/articles/3/</guid>
+      <description>Salut à tous, j&amp;rsquo;espère que vous allez tous bien.
+Il est frustrant de constater que les délais de livraison d&amp;rsquo;un projet sont parfois si serrés que vous négligez la qualité de votre application de développement. En raison de la faiblesse des politiques de sécurité, c&amp;rsquo;est encore pire lorsque votre équipe de sécurité ne parvient pas à détecter les dégâts avant qu&amp;rsquo;il ne soit trop tard. Pour vous aider, je vais vous parler des attaques DDoS ciblées et de leurs effets sur votre interface de programmation d&amp;rsquo;applications, également connue sous le nom de points de terminaison API.</description>
+    </item>
+    
+    <item>
+      <title>Les types de données BigQuery examinés et expliqués</title>
+      <link>https://www.dawrlog.com/fr/articles/10/</link>
+      <pubDate>Wed, 12 Jan 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/fr/articles/10/</guid>
+      <description>Bonjour à tous, aujourd&amp;rsquo;hui je voudrais vous parler de Bigquery, le service géré par Google Cloud pour les entrepôts de données. Et j&amp;rsquo;aimerais explorer ses types de données.
+Google Cloud Platform est depuis longtemps le fournisseur de clouds de prédilection pour l&amp;rsquo;analyse Web, l&amp;rsquo;impressionnant BigQuery étant l&amp;rsquo;option de traitement massivement parallèle (alias MPP) de Google. Les bases de données MPP sont très courantes dans les écosystèmes Hadoop.
+BigQuery est très convivial pour ses utilisateurs (convenons que BigQuery est aussi agréable que sa connaissance de SQL), ce qui favorise l&amp;rsquo;arrivée de nouveaux utilisateurs.</description>
+    </item>
+    
+    <item>
+      <title>Comment bien evaluer vos Value Stream pour votre pratique DataOps?</title>
+      <link>https://www.dawrlog.com/fr/articles/12/</link>
+      <pubDate>Wed, 24 Nov 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/fr/articles/12/</guid>
+      <description>Bonjour à tous, aujourd&amp;rsquo;hui nous allons vérifier comment valoriser correctement votre initiative DataOps.
+Les améliorations apportées à l&amp;rsquo;ingestion des données ont rendu évidente la quantité de données perdues lors de la génération d&amp;rsquo;insights. Cependant, en l&amp;rsquo;absence de méthodologies telles que The DataOps Manifesto, certaines entreprises s&amp;rsquo;efforcent encore de combiner les pipelines de données des anciennes bases de données, telles qu&amp;rsquo;une base de données ADABAS, avec les nouvelles bases de données, telles que MongoDB ou Neo4j.</description>
+    </item>
+    
+    <item>
+      <title>Qu&#39;est-ce que ce le cycle de vie des identitées et provisionement d&#39;access?</title>
+      <link>https://www.dawrlog.com/fr/articles/14/</link>
+      <pubDate>Sat, 02 Oct 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/fr/articles/14/</guid>
+      <description>Bonjour à tous, aujourd&amp;rsquo;hui je veux revenir sur ce que sont les phases du cycle de vie du provisionnement des identités et des accès.
+Avec autant de données générées chaque seconde, il est logique que les fuites de données soient l&amp;rsquo;un des plus grands cauchemars de toute entreprise axée sur les données. De nos jours, nous apprenons rapidement que des politiques de sécurité faibles peuvent coûter cher. Cet article présente l&amp;rsquo;une des techniques permettant de maintenir la sécurité de vos données : le cycle de vie du provisionnement des identités et des accès.</description>
+    </item>
+    
+    <item>
+      <title>Les défis pour l&#39;architecture d&#39;un Data Warehouse.</title>
+      <link>https://www.dawrlog.com/fr/articles/1/</link>
+      <pubDate>Sun, 19 Sep 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/fr/articles/1/</guid>
+      <description>Salut tout le monde, j&amp;rsquo;espère que tout va bien.
+L&amp;rsquo;un des principaux défis de la gestion des données provient de la massive quantité de données que votre organisation génère très probablement en permanence. Avoir la capacité de réagir rapidement et avec précision devient un élément différentiel parmi les concurrents.
+De plus en plus d&amp;rsquo;entreprises prennent conscience de la nécessité de gérer les données avec sagesse.
+Elles cherchent des moyens de tirer le meilleur parti de leurs informations.</description>
+    </item>
+    
+    <item>
+      <title>Comment fouiller vos données utilisant Power BI.</title>
+      <link>https://www.dawrlog.com/fr/articles/7/</link>
+      <pubDate>Tue, 31 Aug 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/fr/articles/7/</guid>
+      <description>Bonjour à tous !
+Aujourd&amp;rsquo;hui, j&amp;rsquo;aimerais vous parler d&amp;rsquo;un des outils de dataviz qui est de plus en plus adopté : Power BI. Power BI augmente chaque jour son adoption parmi les utilisateurs les plus expérimentés. Grâce à sa convivialité et à la possibilité de se connecter à diverses sources de données, il permet d&amp;rsquo;analyser des sources de données distinctes au sein d&amp;rsquo;une même console.
+Dans ce billet, je vais vous montrer comment importer vos données stockées sur PostgreSQL avec une version de bureau de Power BI.</description>
+    </item>
+    
+    <item>
+      <title>Le connaissance de base pour l&#39;exploration des données utilisant AWS Redshift Spectrum, Athena et S3.</title>
+      <link>https://www.dawrlog.com/fr/articles/11/</link>
+      <pubDate>Thu, 08 Jul 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dawrlog.com/fr/articles/11/</guid>
+      <description>Salut tout le monde, aujourd&amp;rsquo;hui je voudrais vous présenter comment explorer vos données brutes stockées par AWS S3 en utilisant les services analytiques gérés par AWS. Aujourd&amp;rsquo;hui, nous allons couvrir à la fois AWS Redshift Spectrum et AWS Athena dans notre tutoriel.
+L&amp;rsquo;un des principaux défis auxquels sont confrontées les entreprises axées sur les données est l&amp;rsquo;intégration de différents systèmes d&amp;rsquo;application.
+Les principaux fournisseurs de clouds publics, tels que Amazon Web Services ou Google Cloud Platform, proposent des produits robustes prêts à répondre à vos besoins en matière d&amp;rsquo;analyse.</description>
+    </item>
+    
+  </channel>
+</rss>
