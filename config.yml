@@ -32,7 +32,7 @@ languages:
         profileMode:
             enabled: true
             title: Dataware Logistics
-            imageUrl: "https://user-images.githubusercontent.com/78096758/217375370-5267a3b9-106d-4943-8f0c-e3a0a21281ea.svg"
+            imageUrl: "https://user-images.githubusercontent.com/78096758/227795271-192ac6e1-6757-4bb5-b54d-2ef4e6a8ff9f.png"
             imageTitle: Dawrlog Mascot  
             imageWidth: 90
             imageHeight: 90
@@ -73,7 +73,7 @@ languages:
         profileMode:
             enabled: true
             title: Logistique Dataware
-            imageUrl: "https://user-images.githubusercontent.com/78096758/217375370-5267a3b9-106d-4943-8f0c-e3a0a21281ea.svg"
+            imageUrl: "https://user-images.githubusercontent.com/78096758/227795271-192ac6e1-6757-4bb5-b54d-2ef4e6a8ff9f.png"
             imageTitle: Dawrlog Mascot  
             imageWidth: 90
             imageHeight: 90
