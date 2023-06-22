@@ -1,0 +1,4 @@
+This is a Brave Rewards publisher verification file.
+
+Domain: dawrlog.com
+Token: 7a7012fd3cb2acb0a75ef46dcea7804dae9e2d6f3d98129f55fec9467fd432cb
